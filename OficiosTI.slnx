@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="OficiosTI.Data/OficiosTI.Data.csproj" />
+  <Project Path="OficiosTI.Documents/OficiosTI.Documents.csproj" />
+  <Project Path="OficiosTI/OficiosTI.csproj" />
+</Solution>
