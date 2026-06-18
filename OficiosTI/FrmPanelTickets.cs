@@ -107,7 +107,6 @@ namespace OficiosTI
                     return;
 
                 new FrmOficioRespuesta(ticket, _context).ShowDialog();
-
                 
             }
             catch (Exception ex)

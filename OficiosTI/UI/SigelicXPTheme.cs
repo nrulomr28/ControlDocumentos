@@ -17,7 +17,7 @@ namespace OficiosTI.UI
         public static void ApplyForm(Form form)
         {
             form.BackColor = Light;
-            form.Font = new Font("Tahoma", 8.25F);
+            form.Font = new Font("Gotham", 8.25F);
 
             ApplyControls(form.Controls);
         }
@@ -63,7 +63,7 @@ namespace OficiosTI.UI
         {
             btn.BackColor = Button;
             btn.FlatStyle = FlatStyle.Standard;
-            btn.Font = new Font("Tahoma", 8.25F);
+            btn.Font = new Font("Gotham", 8.25F);
 
             btn.MouseEnter += (s, e) => btn.BackColor = ButtonHover;
             btn.MouseLeave += (s, e) => btn.BackColor = Button;
@@ -79,7 +79,7 @@ namespace OficiosTI.UI
 
             grid.ColumnHeadersDefaultCellStyle.BackColor = Primary;
             grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            grid.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 8.25F, FontStyle.Bold);
+            grid.ColumnHeadersDefaultCellStyle.Font = new Font("Gotham", 8.25F, FontStyle.Bold);
 
             grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(49, 106, 197);
             grid.DefaultCellStyle.SelectionForeColor = Color.White;
@@ -90,7 +90,7 @@ namespace OficiosTI.UI
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
             btn.ForeColor = Color.White;
-            btn.Font = new Font("Tahoma", 8.75F, FontStyle.Bold);
+            btn.Font = new Font("Gotham", 8.75F, FontStyle.Bold);
             btn.Cursor = Cursors.Hand;
 
             btn.Paint += (s, e) =>

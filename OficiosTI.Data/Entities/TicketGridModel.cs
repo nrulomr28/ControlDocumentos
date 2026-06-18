@@ -20,6 +20,8 @@ namespace OficiosTI.Data.Entities
 
         public int Cat_TicketStatusId { get; set; }
 
-        public string? NumeroOficio { get; set; }
+      public string NumeroOficio { get; set; }
+
+      
     }
 }

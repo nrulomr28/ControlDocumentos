@@ -159,7 +159,7 @@ namespace OficiosTI
 
             return ext switch
             {
-                ".pdf" => "application/pdf",
+                ".pdf" =>  "application/pdf",
                 ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 ".jpg" => "image/jpeg",

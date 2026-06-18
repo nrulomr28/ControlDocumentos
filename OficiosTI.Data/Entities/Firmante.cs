@@ -10,13 +10,15 @@ namespace OficiosTI.Data.Entities
     {
         public int FirmanteId { get; set; }
 
-        public string Nombre { get; set; }
-        public string Cargo { get; set; }
+        public string? Nombre { get; set; }
+        public string? Cargo { get; set; }
 
-        public bool EsTitular { get; set; } // default
+        public bool EsTitular { get; set; } 
         public bool Activo { get; set; }
 
         public string? TipoFirma { get; set; }
-        // Ej: "Titular", "Encargado", "Por ausencia"
+
+        public string NombreCompleto => $"{Nombre} - {Cargo}";
+     
     }
 }

@@ -17,7 +17,13 @@ namespace OficiosTI.Services
             _context = context;
         }
 
-        public List<DestinatarioItem> ObtenerCatalogo()
+
+        /// <summary>
+        /// SE OBTIENE DE LA TABLA DE OFICIOREMITENTE //////
+        /// </summary>
+        /// <returns></returns>
+       
+       public List<DestinatarioItem> ObtenerCatalogo()
         {
             return _context.OficioRespuesta
                 .Select(x => new DestinatarioItem
@@ -28,5 +34,29 @@ namespace OficiosTI.Services
                 .Distinct()
                 .ToList();
         }
+
+
+        /*
+        public List<DestinatarioItem> ObtenerCatalogo()
+        {
+            return _context.OficioRespuesta
+                // 1. Proyectar a un tipo anónimo. EF lo convierte en: SELECT DISTINCT Destinatario, Cargo...
+                .Select(x => new
+                {
+                    x.Destinatario,
+                    x.CargoDestinatario
+                })
+                .Distinct()
+                // 2. Traer los resultados únicos a la memoria del programa
+                .AsEnumerable()
+                // 3. Ahora sí, mapearlos a tu objeto personalizado
+                .Select(x => new DestinatarioItem
+                {
+                    Nombre = x.Destinatario,
+                    Cargo = x.CargoDestinatario
+                })
+                .ToList();
+        }
+        */
     }
 }

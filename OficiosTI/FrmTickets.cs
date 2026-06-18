@@ -9,6 +9,7 @@ namespace OficiosTI
     {
         private readonly OficiosContext _context;
 
+
         public FrmTickets(OficiosContext context)
         {
             InitializeComponent();
@@ -42,11 +43,10 @@ namespace OficiosTI
             string prioridad = ComboPrioridad.Text;
             string status = ComboStatus.Text;
 
-            //var query = _context.Ticket
-            //    .Where(t => t.OficinasId == 3);
 
             var query = _context.Ticket
-                    .Where(t => t.OficinasId == 3 && t.id_of != null);
+
+           .Where(t => t.OficinasId == 3 && t.id_of != null);
 
             if (!string.IsNullOrWhiteSpace(textoBuscar))
             {
@@ -81,14 +81,12 @@ namespace OficiosTI
                         .Select(o => o.NumeroOficio)
                         .FirstOrDefault()
                 })
-                .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-8))
+                .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
                 .OrderByDescending(t => t.TicketFecha)
                 .ToList();
 
-            // limpiar binding anterior
             DataGridTickets.DataSource = null;
 
-            // BindingSource habilita ordenamiento del DataGrid
             var bs = new BindingSource();
             bs.DataSource = tickets;
 
@@ -173,7 +171,6 @@ namespace OficiosTI
                     TicketPrioridad = t.TicketPrioridad,
                     TicketFecha = t.TicketFecha,
                     Cat_TicketStatusId = t.Cat_TicketStatusId,
-
                     NumeroOficio = _context.OficioRespuesta
                         .Where(o => o.TicketId == t.TicketId)
                         .Select(o => o.NumeroOficio)
@@ -190,17 +187,56 @@ namespace OficiosTI
             ConfigurarGrid();
         }
 
+        //private void BtnGenerarOficio_Click(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (DataGridTickets.CurrentRow == null)
+        //            return;
+
+        //        var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
+
+        //        if (gridItem == null)
+        //            return;
+
+        //        if (!string.IsNullOrEmpty(gridItem.NumeroOficio))
+        //        {
+        //            var r = MessageBox.Show(
+        //                "Este ticket ya tiene oficio. ¿Desea editarlo?",
+        //                "Oficio existente",
+        //                MessageBoxButtons.YesNo);
+
+        //            if (r == DialogResult.No)
+        //                return;
+        //        }
+
+        //        var ticket = ObtenerTicketSeleccionado();
+
+        //        if (ticket == null)
+        //            return;
+
+        //        new FrmOficioRespuesta(ticket, _context).ShowDialog();
+
+        //        CargarTickets();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.ToString());
+        //    }
+        //}
+
         private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
             try
             {
                 if (DataGridTickets.CurrentRow == null)
+                {
+                    MessageBox.Show("Falla 1: No hay ninguna fila seleccionada en el DataGrid.", "Depuración");
                     return;
+                }
 
                 var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
 
-                if (gridItem == null)
-                    return;
 
                 if (!string.IsNullOrEmpty(gridItem.NumeroOficio))
                 {
@@ -215,8 +251,7 @@ namespace OficiosTI
 
                 var ticket = ObtenerTicketSeleccionado();
 
-                if (ticket == null)
-                    return;
+
 
                 new FrmOficioRespuesta(ticket, _context).ShowDialog();
 
@@ -224,7 +259,10 @@ namespace OficiosTI
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                MessageBox.Show($"ERROR GRAVE:\n\n{ex.Message}\n\nDetalles técnicos:\n{ex.StackTrace}",
+                    "Error detectado",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -318,7 +356,6 @@ namespace OficiosTI
                 return;
 
             var gridItem = DataGridTickets.Rows[e.RowIndex].DataBoundItem as TicketGridModel;
-
             if (gridItem == null)
                 return;
 
@@ -327,7 +364,6 @@ namespace OficiosTI
                 MessageBox.Show("Este ticket no tiene oficio generado.");
                 return;
             }
-
             var ticket = _context.Ticket.Find(gridItem.TicketId);
 
             if (ticket == null)
@@ -387,7 +423,48 @@ namespace OficiosTI
 
             frm.ShowDialog();
 
-            CargarTickets(); // opcional refrescar
+            CargarTickets();
+        }
+
+
+        private void BtnAbrirTicket_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+
+        /*
+                private void button1_Click(object sender, EventArgs e)
+                {
+                    FrmOficioTicket FormAsignar = new FrmOficioTicket();
+                    FormAsignar.ShowDialog();
+
+                    var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
+                }*/
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (DataGridTickets.CurrentRow == null)
+            {
+                MessageBox.Show("Por favor, seleccione un ticket de la lista primero.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 2. Obtener el item del Grid PRIMERO
+            var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
+
+            Ticket ticketSeleccionado = _context.Ticket.Find(gridItem.TicketId);
+
+            FrmOficioTicket FormAsignar = new FrmOficioTicket(ticketSeleccionado, _context);
+
+            FormAsignar.ShowDialog();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            FrmOficioSin FormOficiosin = new FrmOficioSin();
+            FormOficiosin.ShowDialog();
         }
     }
 }

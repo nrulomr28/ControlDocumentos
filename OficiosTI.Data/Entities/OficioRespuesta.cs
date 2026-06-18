@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,8 +37,13 @@ namespace OficiosTI.Data.Entities
 
         // navegación
         public Ticket Ticket { get; set; }
-
+        [ForeignKey("FirmanteId")]
         public int? FirmanteId { get; set; }
         public Firmante? Firmante { get; set; }
+
+        public int?OficioId { get; set; }   //// OFICIO DE DONDE SALIO EL TICKET
+
+        public int? RespuestaId { get; set; }   /// TABLA DONDE SE ENCUENTRA EL CONSECUTIVO DEL OFICIO 
+
     }
 }

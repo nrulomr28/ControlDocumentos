@@ -1,7 +1,8 @@
-﻿using WordInterop = Microsoft.Office.Interop.Word;
-using System.Runtime.InteropServices;
+﻿using Microsoft.Office.Core;
+using Microsoft.Office.Interop.Word;
 using OficiosTI.Documents;
-using Microsoft.Office.Core;
+using System.Runtime.InteropServices;
+using WordInterop = Microsoft.Office.Interop.Word;
 
 namespace OficiosTI.Services
 {
@@ -13,7 +14,7 @@ namespace OficiosTI.Services
                 Path.GetTempPath(),
                 $"oficio_{Guid.NewGuid()}.docx");
 
-            WordInterop.Application wordApp = null;
+            WordInterop.Application wordApp = null; 
             WordInterop.Document doc = null;
 
             try
@@ -21,7 +22,7 @@ namespace OficiosTI.Services
                 wordApp = new WordInterop.Application
                 {
                     Visible = false,
-                    ScreenUpdating = false,
+                    ScreenUpdating = true,
                     DisplayAlerts = WordInterop.WdAlertLevel.wdAlertsNone
                 };
 
@@ -35,41 +36,63 @@ namespace OficiosTI.Services
                 string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
                 string absoluteHeaderPath = Path.GetFullPath(headerPath);
 
+                // Acceder directamente al rango del encabezado de la primera sección y asignarle el texto
+               
                 if (File.Exists(absoluteHeaderPath))
                 {
+                    
                     foreach (WordInterop.Section section in doc.Sections)
                     {
                         var header = section.Headers[WordInterop.WdHeaderFooterIndex.wdHeaderFooterPrimary];
                         header.LinkToPrevious = false;
-
                         var range = header.Range;
                         range.Text = "";
-                        range.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphCenter;
-
+                        range.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
                         var inline = range.InlineShapes.AddPicture(
                             absoluteHeaderPath,
                             LinkToFile: false,
                             SaveWithDocument: true
                         );
+                                             
+                          inline.LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoTrue;
+                          
 
-                        // 🔥 SOLO esto (NADA de Width)
-                        inline.LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoTrue;
+                        //  inline.Width = wordApp.CentimetersToPoints(8);
                     }
-
-                    doc.PageSetup.TopMargin = wordApp.CentimetersToPoints(3);
+                    doc.PageSetup.TopMargin = wordApp.CentimetersToPoints(2);
+                  //  doc.Sections[1].Headers[WdHeaderFooterIndex.wdHeaderFooterPrimary].Range.Text = "Texto directo en el header";
                 }
+                else
+                {
+                    Console.WriteLine($"\n¡! El logo no existe en la ruta: {absoluteHeaderPath}\n");
+                }
+
+
+                var rangoPrincipal = doc.Range();
+                rangoPrincipal.Collapse(WordInterop.WdCollapseDirection.wdCollapseEnd);
+                rangoPrincipal.Select();
+
+                //  var sel = wordApp.Selection;
+                doc.Activate();
+                wordApp.ActiveWindow.ActivePane.View.SeekView = WordInterop.WdSeekView.wdSeekMainDocument;
 
                 var sel = wordApp.Selection;
 
                 // =========================
                 // ENCABEZADO DERECHO
                 // =========================
-
-                sel.Font.Name = "Arial";
+                sel.ParagraphFormat.LineSpacingRule = WordInterop.WdLineSpacing.wdLineSpaceSingle;
+              
+                sel.Font.Name = "Gotham";
                 sel.Font.Size = 11;
-                sel.Font.Bold = 0;
+                sel.Font.Bold = 2;
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphRight;
 
+                sel.TypeText($"DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN");
+                sel.TypeParagraph();
+                sel.ParagraphFormat.SpaceAfter = 0f;
+                sel.ParagraphFormat.SpaceBefore = 0f;
+               
                 sel.TypeText($"Oficio No. {model.NumeroOficio}");
                 sel.TypeParagraph();
 
@@ -117,26 +140,28 @@ namespace OficiosTI.Services
                 // =========================
 
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphJustify;
+                sel.ParagraphFormat.LineSpacingRule = WordInterop.WdLineSpacing.wdLineSpace1pt5;
 
-                sel.TypeText(model.FundamentoLegal);
-                sel.TypeParagraph();
-                sel.TypeParagraph();
+                //sel.TypeText(model.FundamentoLegal);
+                //sel.ParagraphFormat.SpaceAfter = 12f;
 
                 // =========================
                 // CUERPO
                 // =========================
-
-                sel.TypeText(model.Cuerpo);
+                sel.TypeText($"{model.FundamentoLegal}  {model.Cuerpo}");
+               //sel.TypeText(model.Cuerpo ?? "");
                 sel.TypeParagraph();
                 sel.TypeParagraph();
 
                 // =========================
                 // FIRMA
                 // =========================
+                // sel.ParagraphFormat.SpaceAfter = 12;
+                // sel.ParagraphFormat.SpaceBefore = 12;
+                sel.ParagraphFormat.LineSpacingRule = WordInterop.WdLineSpacing.wdLineSpaceSingle;
+                sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
 
-                sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphCenter;
-
-                sel.TypeText("ATENTAMENTE");
+                sel.TypeText("Atentamente");
                 sel.TypeParagraph();
                 sel.TypeParagraph();
 
@@ -144,23 +169,25 @@ namespace OficiosTI.Services
                 sel.TypeText(model.DirectorNombre);
                 sel.TypeParagraph();
 
-                sel.Font.Bold = 0;
+                sel.Font.Bold = 1;
                 sel.TypeText(model.DirectorCargo);
                 sel.TypeParagraph();
 
                 sel.TypeParagraph();
+                sel.TypeParagraph();              
 
-                // =========================
-                // COPIAS
-                // =========================
 
-                sel.Font.Size = 9;
+              //  sel.ParagraphFormat.SpaceBefore = 54f;
+                sel.ParagraphFormat.SpaceAfter = 0f;
+                sel.ParagraphFormat.LineSpacingRule = WordInterop.WdLineSpacing.wdLineSpaceSingle;
+
+                sel.Font.Name = "Gotham";
+                sel.Font.Size = 8;
+                sel.Font.Bold = 0;
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
-                sel.TypeText(model.Copias);
 
-                // =========================
-                // FOOTER (LOGO)
-                // =========================
+                sel.TypeText(model.Copias);
+                sel.TypeParagraph();
 
                 string footerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_veracruz.png");
                 string absoluteFooterPath = Path.GetFullPath(footerPath);
@@ -171,10 +198,19 @@ namespace OficiosTI.Services
                     {
                         var footer = section.Footers[WordInterop.WdHeaderFooterIndex.wdHeaderFooterPrimary];
                         footer.LinkToPrevious = false;
-
+                        sel.Font.Size = 9;
+                       
                         var range = footer.Range;
+                        sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;              
+                      
                         range.Text = "";
-                        range.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphCenter;
+                        //// CAMPO COPIAS EN EL FOOTER
+                        //    range.Text = model.Copias;            
+                        range.Font.Name = "Gotham";
+                        range.Font.Size = 9;
+                        range.Font.Bold = 0;
+
+                        range.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
 
                         var inline = range.InlineShapes.AddPicture(
                             absoluteFooterPath,
@@ -182,11 +218,15 @@ namespace OficiosTI.Services
                             SaveWithDocument: true,
                             Range: range
                         );
-
-                        inline.LockAspectRatio = MsoTriState.msoTrue;
-                        inline.Width = wordApp.CentimetersToPoints(10); // tamaño estable
+                        
+                        inline.LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoTrue;
+                        inline.Width = wordApp.CentimetersToPoints(16);
+                        range.Collapse(WordInterop.WdCollapseDirection.wdCollapseEnd);
+                        range.InsertParagraphAfter();
+                        range.Collapse(WordInterop.WdCollapseDirection.wdCollapseEnd);
+                        
                     }
-                }
+                }                               
 
                 // =========================
                 // GUARDAR

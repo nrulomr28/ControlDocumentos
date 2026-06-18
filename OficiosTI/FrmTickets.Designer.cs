@@ -40,8 +40,8 @@
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             PanelHeader = new Panel();
             LabelTitulo = new Label();
             PanelFiltros = new Panel();
@@ -55,6 +55,8 @@
             BtnLimpiar = new Button();
             DataGridTickets = new DataGridView();
             PanelAcciones = new Panel();
+            btnOficios = new Button();
+            btnAsignar = new Button();
             BtnAbrirTicket = new Button();
             BtnAdjuntos = new Button();
             BtnGenerarOficio = new Button();
@@ -181,22 +183,22 @@
             DataGridTickets.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             DataGridTickets.BackgroundColor = Color.White;
             DataGridTickets.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.FromArgb(31, 58, 95);
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            DataGridTickets.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(46, 134, 193);
-            dataGridViewCellStyle2.SelectionForeColor = Color.White;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            DataGridTickets.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.FromArgb(31, 58, 95);
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            DataGridTickets.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.FromArgb(46, 134, 193);
+            dataGridViewCellStyle4.SelectionForeColor = Color.White;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            DataGridTickets.DefaultCellStyle = dataGridViewCellStyle4;
             DataGridTickets.Dock = DockStyle.Fill;
             DataGridTickets.EnableHeadersVisualStyles = false;
             DataGridTickets.Location = new Point(220, 90);
@@ -213,6 +215,8 @@
             // PanelAcciones
             // 
             PanelAcciones.BackColor = Color.WhiteSmoke;
+            PanelAcciones.Controls.Add(btnOficios);
+            PanelAcciones.Controls.Add(btnAsignar);
             PanelAcciones.Controls.Add(BtnAbrirTicket);
             PanelAcciones.Controls.Add(BtnAdjuntos);
             PanelAcciones.Controls.Add(BtnGenerarOficio);
@@ -222,6 +226,26 @@
             PanelAcciones.Size = new Size(1000, 50);
             PanelAcciones.TabIndex = 2;
             // 
+            // btnOficios
+            // 
+            btnOficios.Location = new Point(544, 12);
+            btnOficios.Name = "btnOficios";
+            btnOficios.Size = new Size(106, 28);
+            btnOficios.TabIndex = 4;
+            btnOficios.Text = "OFicios";
+            btnOficios.UseVisualStyleBackColor = true;
+            btnOficios.Click += button2_Click;
+            // 
+            // btnAsignar
+            // 
+            btnAsignar.Location = new Point(271, 12);
+            btnAsignar.Name = "btnAsignar";
+            btnAsignar.Size = new Size(121, 28);
+            btnAsignar.TabIndex = 3;
+            btnAsignar.Text = "Asignar Oficio";
+            btnAsignar.UseVisualStyleBackColor = true;
+            btnAsignar.Click += button1_Click;
+            // 
             // BtnAbrirTicket
             // 
             BtnAbrirTicket.Location = new Point(15, 10);
@@ -229,6 +253,7 @@
             BtnAbrirTicket.Size = new Size(120, 30);
             BtnAbrirTicket.TabIndex = 0;
             BtnAbrirTicket.Text = "Abrir Ticket";
+            BtnAbrirTicket.Click += BtnAbrirTicket_Click_1;
             // 
             // BtnAdjuntos
             // 
@@ -241,7 +266,7 @@
             // 
             // BtnGenerarOficio
             // 
-            BtnGenerarOficio.Location = new Point(275, 10);
+            BtnGenerarOficio.Location = new Point(398, 11);
             BtnGenerarOficio.Name = "BtnGenerarOficio";
             BtnGenerarOficio.Size = new Size(140, 30);
             BtnGenerarOficio.TabIndex = 2;
@@ -312,5 +337,8 @@
             PanelIndicadores.PerformLayout();
             ResumeLayout(false);
         }
+
+        private Button btnAsignar;
+        private Button btnOficios;
     }
 }

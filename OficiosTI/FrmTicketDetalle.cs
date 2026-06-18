@@ -21,6 +21,8 @@ namespace OficiosTI
     {
         private readonly Ticket _ticket;
         private readonly OficiosContext _context;
+      //  private OficioRespuesta _oficioActual;
+
 
         public FrmTicketDetalle(Ticket ticket, OficiosContext context)
         {
@@ -37,8 +39,8 @@ namespace OficiosTI
         {
             lblTicketId.Text = $"Ticket #{_ticket.TicketId}";
             txtPersona.Text = _ticket.TicketPersona;
-            txtAsunto.Text = _ticket.TicketAsunto;
-            txtMensaje.Text = _ticket.TicketMensaje;
+            txtAsunto.Text = _ticket.TicketMensaje ;
+            txtMensaje.Text = _ticket.TicketAsunto;
         }
 
         private void CargarHilo()
@@ -60,7 +62,7 @@ namespace OficiosTI
             {
                 TicketId = _ticket.TicketId,
                 HiloTicketFecha = DateTime.Now,
-                HiloTicketAccion = "Respuesta",
+                HiloTicketAccion = "RESPUESTA",
                 HiloTicketMensaje = txtRespuesta.Text,
                 UsuarioId = 1
             };
@@ -73,10 +75,13 @@ namespace OficiosTI
             CargarHilo();
         }
 
-        private void BtnGenerarOficio_Click(object sender, EventArgs e)
+
+        /// BOTON DE GENERAR OFICIO PERO DEENTRO DEL ROW 
+       /* private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
             var modelo = new OficioModel
             {
+            //    NumeroOficio = { _oficioActual. = },
                 NumeroOficio = "SSP/OM/DTI/0273/2026",
 
                 Asunto = $"Respuesta a ticket {_ticket.TicketId}",
@@ -111,6 +116,6 @@ namespace OficiosTI
                 FileName = ruta,
                 UseShellExecute = true
             });
-        }
+        }*/
     }
 }

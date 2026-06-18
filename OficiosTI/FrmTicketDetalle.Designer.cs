@@ -71,7 +71,7 @@
             PanelHeader.Dock = DockStyle.Top;
             PanelHeader.Location = new Point(0, 0);
             PanelHeader.Name = "PanelHeader";
-            PanelHeader.Size = new Size(750, 50);
+            PanelHeader.Size = new Size(754, 50);
             PanelHeader.TabIndex = 4;
             // 
             // lblTicketId
@@ -97,7 +97,7 @@
             PanelDatos.Dock = DockStyle.Top;
             PanelDatos.Location = new Point(0, 50);
             PanelDatos.Name = "PanelDatos";
-            PanelDatos.Size = new Size(750, 150);
+            PanelDatos.Size = new Size(754, 150);
             PanelDatos.TabIndex = 1;
             // 
             // labelPersona
@@ -157,7 +157,7 @@
             PanelHilo.Dock = DockStyle.Fill;
             PanelHilo.Location = new Point(0, 200);
             PanelHilo.Name = "PanelHilo";
-            PanelHilo.Size = new Size(750, 150);
+            PanelHilo.Size = new Size(754, 263);
             PanelHilo.TabIndex = 0;
             // 
             // labelHilo
@@ -177,7 +177,7 @@
             dataGridHilo.Name = "dataGridHilo";
             dataGridHilo.ReadOnly = true;
             dataGridHilo.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridHilo.Size = new Size(715, 200);
+            dataGridHilo.Size = new Size(715, 182);
             dataGridHilo.TabIndex = 1;
             // 
             // PanelRespuesta
@@ -186,9 +186,9 @@
             PanelRespuesta.Controls.Add(labelRespuesta);
             PanelRespuesta.Controls.Add(txtRespuesta);
             PanelRespuesta.Dock = DockStyle.Bottom;
-            PanelRespuesta.Location = new Point(0, 350);
+            PanelRespuesta.Location = new Point(0, 463);
             PanelRespuesta.Name = "PanelRespuesta";
-            PanelRespuesta.Size = new Size(750, 120);
+            PanelRespuesta.Size = new Size(754, 120);
             PanelRespuesta.TabIndex = 2;
             // 
             // labelRespuesta
@@ -213,9 +213,9 @@
             PanelAcciones.Controls.Add(BtnGuardarRespuesta);
             PanelAcciones.Controls.Add(BtnGenerarOficio);
             PanelAcciones.Dock = DockStyle.Bottom;
-            PanelAcciones.Location = new Point(0, 470);
+            PanelAcciones.Location = new Point(0, 583);
             PanelAcciones.Name = "PanelAcciones";
-            PanelAcciones.Size = new Size(750, 50);
+            PanelAcciones.Size = new Size(754, 50);
             PanelAcciones.TabIndex = 3;
             // 
             // BtnGuardarRespuesta
@@ -234,13 +234,13 @@
             BtnGenerarOficio.Size = new Size(150, 30);
             BtnGenerarOficio.TabIndex = 1;
             BtnGenerarOficio.Text = "Generar Oficio";
-            BtnGenerarOficio.Click += BtnGenerarOficio_Click;
+          //  BtnGenerarOficio.Click += BtnGenerarOficio_Click;
             // 
             // FrmTicketDetalle
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(750, 520);
+            ClientSize = new Size(754, 633);
             Controls.Add(PanelHilo);
             Controls.Add(PanelDatos);
             Controls.Add(PanelRespuesta);

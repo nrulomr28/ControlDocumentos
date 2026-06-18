@@ -49,6 +49,8 @@
             panelHeader = new Panel();
             lblTitulo = new Label();
             panelFormulario = new Panel();
+            label1 = new Label();
+            comboBox1 = new ComboBox();
             lblNumeroOficio = new Label();
             txtNumeroOficio = new TextBox();
             lblOficioReferencia = new Label();
@@ -66,6 +68,9 @@
             panelBotones = new Panel();
             btnGuardar = new Button();
             btnPreview = new Button();
+            lblFirmante = new Label();
+          //  comboFirmantes = new ComboBox();
+            chkFirmaPorAusencia = new CheckBox();
             panelHeader.SuspendLayout();
             panelFormulario.SuspendLayout();
             panelBotones.SuspendLayout();
@@ -78,7 +83,7 @@
             panelHeader.Dock = DockStyle.Top;
             panelHeader.Location = new Point(0, 0);
             panelHeader.Name = "panelHeader";
-            panelHeader.Size = new Size(600, 48);
+            panelHeader.Size = new Size(575, 48);
             panelHeader.TabIndex = 2;
             // 
             // lblTitulo
@@ -95,6 +100,8 @@
             // panelFormulario
             // 
             panelFormulario.BackColor = SystemColors.Control;
+            panelFormulario.Controls.Add(label1);
+            panelFormulario.Controls.Add(comboBox1);
             panelFormulario.Controls.Add(lblNumeroOficio);
             panelFormulario.Controls.Add(txtNumeroOficio);
             panelFormulario.Controls.Add(lblOficioReferencia);
@@ -113,8 +120,27 @@
             panelFormulario.Location = new Point(0, 48);
             panelFormulario.Name = "panelFormulario";
             panelFormulario.Padding = new Padding(20);
-            panelFormulario.Size = new Size(600, 492);
-            panelFormulario.TabIndex = 0;            
+            panelFormulario.Size = new Size(575, 655);
+            panelFormulario.TabIndex = 0;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(27, 507);
+            label1.Name = "label1";
+            label1.Size = new Size(64, 15);
+            label1.TabIndex = 16;
+            label1.Text = "Firma por: ";
+       //     label1.Click += label1_Click_1;
+            // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(136, 499);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(424, 23);
+            comboBox1.TabIndex = 14;
+    //        comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged_2;
             // 
             // lblNumeroOficio
             // 
@@ -147,6 +173,7 @@
             txtOficioReferencia.Name = "txtOficioReferencia";
             txtOficioReferencia.Size = new Size(260, 23);
             txtOficioReferencia.TabIndex = 3;
+           // txtOficioReferencia.TextChanged += txtOficioReferencia_TextChanged;
             // 
             // lblAsunto
             // 
@@ -163,6 +190,7 @@
             txtAsunto.Name = "txtAsunto";
             txtAsunto.Size = new Size(540, 23);
             txtAsunto.TabIndex = 5;
+       //     txtAsunto.TextChanged += txtAsunto_TextChanged_1;
             // 
             // lblDestinatario
             // 
@@ -199,31 +227,8 @@
             txtCargo.Name = "txtCargo";
             txtCargo.Size = new Size(260, 23);
             txtCargo.TabIndex = 9;
-            txtCargo.TextChanged += txtCargo_TextChanged;
+          //  txtCargo.TextChanged += txtCargo_TextChanged;
             txtCargo.Leave += txtCargo_Leave;
-
-            // lblFirmante
-            lblFirmante = new Label();
-            lblFirmante.AutoSize = true;
-            lblFirmante.Location = new Point(20, 190);
-            lblFirmante.Name = "lblFirmante";
-            lblFirmante.Size = new Size(60, 15);
-            lblFirmante.Text = "Firmante";
-
-            // cmbFirmante
-            cmbFirmante = new ComboBox();
-            cmbFirmante.Location = new Point(20, 210);
-            cmbFirmante.Name = "cmbFirmante";
-            cmbFirmante.Size = new Size(260, 23);
-            cmbFirmante.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            // chkFirmaPorAusencia
-            chkFirmaPorAusencia = new CheckBox();
-            chkFirmaPorAusencia.Location = new Point(20, 240);
-            chkFirmaPorAusencia.Name = "chkFirmaPorAusencia";
-            chkFirmaPorAusencia.Size = new Size(250, 20);
-            chkFirmaPorAusencia.Text = "Firmar por ausencia del titular";
-
             // 
             // lblRespuesta
             // 
@@ -242,6 +247,7 @@
             txtRespuesta.ScrollBars = ScrollBars.Vertical;
             txtRespuesta.Size = new Size(540, 180);
             txtRespuesta.TabIndex = 11;
+         //   txtRespuesta.TextChanged += txtRespuesta_TextChanged;
             // 
             // lblCopias
             // 
@@ -259,15 +265,16 @@
             txtCopias.Name = "txtCopias";
             txtCopias.Size = new Size(540, 70);
             txtCopias.TabIndex = 13;
+         //   txtCopias.TextChanged += txtCopias_TextChanged_1;
             // 
             // panelBotones
             // 
             panelBotones.Controls.Add(btnGuardar);
             panelBotones.Controls.Add(btnPreview);
             panelBotones.Dock = DockStyle.Bottom;
-            panelBotones.Location = new Point(0, 540);
+            panelBotones.Location = new Point(0, 703);
             panelBotones.Name = "panelBotones";
-            panelBotones.Size = new Size(600, 60);
+            panelBotones.Size = new Size(575, 60);
             panelBotones.TabIndex = 1;
             // 
             // btnGuardar
@@ -288,9 +295,34 @@
             btnPreview.Text = "Vista Previa";
             btnPreview.Click += BtnPreview_Click;
             // 
+            // lblFirmante
+            // 
+            lblFirmante.AutoSize = true;
+            lblFirmante.Location = new Point(20, 190);
+            lblFirmante.Name = "lblFirmante";
+            lblFirmante.Size = new Size(60, 15);
+            lblFirmante.TabIndex = 0;
+            lblFirmante.Text = "Firmante";
+            // 
+            // comboFirmantes
+            // 
+         //   comboFirmantes.DropDownStyle = ComboBoxStyle.DropDownList;
+          //  comboFirmantes.Location = new Point(20, 210);
+          //  comboFirmantes.Name = "comboFirmantes";
+         //   comboFirmantes.Size = new Size(260, 23);
+          //  comboFirmantes.TabIndex = 0;
+            // 
+            // chkFirmaPorAusencia
+            // 
+            chkFirmaPorAusencia.Location = new Point(20, 240);
+            chkFirmaPorAusencia.Name = "chkFirmaPorAusencia";
+            chkFirmaPorAusencia.Size = new Size(250, 20);
+            chkFirmaPorAusencia.TabIndex = 0;
+            chkFirmaPorAusencia.Text = "Firmar por ausencia del titular";
+            // 
             // FrmOficioRespuesta
             // 
-            ClientSize = new Size(600, 600);
+            ClientSize = new Size(575, 763);
             Controls.Add(panelFormulario);
             Controls.Add(panelBotones);
             Controls.Add(panelHeader);
@@ -305,5 +337,7 @@
             ResumeLayout(false);
         }
 
+        private ComboBox comboBox1;
+        private Label label1;
     }
 }
