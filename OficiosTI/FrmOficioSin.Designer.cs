@@ -30,7 +30,10 @@
         {
             PanelHeader = new Panel();
             LabelTitulo = new Label();
+            btnCrearOficio = new Button();
+            dataGridOficios = new DataGridView();
             PanelHeader.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridOficios).BeginInit();
             SuspendLayout();
             // 
             // PanelHeader
@@ -54,17 +57,39 @@
             LabelTitulo.TabIndex = 0;
             LabelTitulo.Text = "Oficios sin Tickets";
             // 
+            // btnCrearOficio
+            // 
+            btnCrearOficio.Location = new Point(15, 56);
+            btnCrearOficio.Name = "btnCrearOficio";
+            btnCrearOficio.RightToLeft = RightToLeft.Yes;
+            btnCrearOficio.Size = new Size(96, 29);
+            btnCrearOficio.TabIndex = 5;
+            btnCrearOficio.Text = "Crear Oficio";
+            btnCrearOficio.UseVisualStyleBackColor = true;
+            btnCrearOficio.Click += btnCrearOficio_Click;
+            // 
+            // dataGridOficios
+            // 
+            dataGridOficios.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridOficios.Location = new Point(15, 103);
+            dataGridOficios.Name = "dataGridOficios";
+            dataGridOficios.Size = new Size(761, 317);
+            dataGridOficios.TabIndex = 6;
+            // 
             // FrmOficioSin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(dataGridOficios);
+            Controls.Add(btnCrearOficio);
             Controls.Add(PanelHeader);
             Name = "FrmOficioSin";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmOficioSin";
             PanelHeader.ResumeLayout(false);
             PanelHeader.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridOficios).EndInit();
             ResumeLayout(false);
         }
 
@@ -72,5 +97,7 @@
 
         private Panel PanelHeader;
         private Label LabelTitulo;
+        private Button btnCrearOficio;
+        private DataGridView dataGridOficios;
     }
 }

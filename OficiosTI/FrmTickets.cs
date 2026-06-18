@@ -460,11 +460,12 @@ namespace OficiosTI
 
             FormAsignar.ShowDialog();
         }
-
-        private void button2_Click(object sender, EventArgs e)
+      
+        private void btnOficios_Click(object sender, EventArgs e)
         {
-            FrmOficioSin FormOficiosin = new FrmOficioSin();
+            FrmOficioSin FormOficiosin = new FrmOficioSin(_context);
             FormOficiosin.ShowDialog();
+
         }
     }
 }

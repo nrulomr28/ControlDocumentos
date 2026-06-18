@@ -20,8 +20,8 @@ namespace OficiosTI
         private OficiosContext _context;
         private readonly Ticket _ticket;
         private OficioRespuestaService _service;
-        private NumOficio _OficioRespuesta;
-
+        private NumOficio _OficioRespuesta;   /// tabla de NumOficio
+    
         /*  public FrmOficioTicket(Ticket ticket, OficiosContext context)
           {
               InitializeComponent();
@@ -64,6 +64,8 @@ namespace OficiosTI
             _context = context;
             _ticket = ticket;
 
+
+
             CargarOficinas();
             CargarTiposD();
             CargarDatosTicket();
@@ -72,22 +74,31 @@ namespace OficiosTI
 
             var tieneOficio = _context.NumOficio.Any(x => x.TicketId == _ticket.TicketId);
 
+       //     var oficioExistente = _context.NumOficio
+                      //              .FirstOrDefault(x => x.TicketId == _ticket.TicketId);
+//
 
-            var oficioExistente = _context.OficioRespuesta
-                                    .FirstOrDefault(x => x.TicketId == _ticket.TicketId);
+            var NuCons = _context.NumOficio
+            .Where(x => x.TicketId == _ticket.TicketId)
+            .FirstOrDefault();
+
+
+
+
 
             AsignarF.Enabled = !tieneOficio;
 
             if (tieneOficio)
             {
-                if (oficioExistente != null)
-                {
-                    txtNumOf.Text = oficioExistente.NumeroOficio;
-                }
+        
+                txtNumOf.Text = NuCons.NumeroConsecutivo;
+                cmbOficinas.SelectedValue = Convert.ToInt32(NuCons.Oficinas_Id);
+                cmbTipos.SelectedValue = Convert.ToInt32(NuCons.Tipo);
+               // cmbOficinas.SelectedIndex = NuCons.Oficinas_Id;
+
 
                 txtNumOf.ReadOnly = true;
-
-               // cmbOficinas.SelectedValue = OfSin.Oficinas_Id;
+              
             }
         }
 
@@ -122,7 +133,7 @@ namespace OficiosTI
         private void AsignarF_Click(object sender, EventArgs e)
         {
 
-            bool yaTieneOficio = _context.OficioRespuesta.Any(x => x.TicketId == _ticket.TicketId);
+            bool yaTieneOficio = _context.NumOficio.Any(x => x.TicketId == _ticket.TicketId);
 
             if (yaTieneOficio)
             {
@@ -130,9 +141,6 @@ namespace OficiosTI
                                 "Acción no permitida", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 return; // Detenemos la ejecución inmediatamente
             }
-
-
-
 
             var registroOficio1 = _context.Oficio1
             .FirstOrDefault(x => x.OficioId == _ticket.id_of);
@@ -158,15 +166,12 @@ namespace OficiosTI
             {
                 MessageBox.Show("El número de oficio '" + conse + "' ya ha sido registrado para este año.",
                                 "Oficio Duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return; // Detenemos la ejecución aquí
+                return; 
             }
 
             try
             {
-                registroOficio1 = _context.Oficio1.FirstOrDefault(x => x.OficioId == _ticket.id_of);
-             
-
-
+                registroOficio1 = _context.Oficio1.FirstOrDefault(x => x.OficioId == _ticket.id_of);            
                 string numCon = txtNumOf.Text;
                 string bis = "";
                 int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);
@@ -176,7 +181,6 @@ namespace OficiosTI
 
                 var nuevoNumeroCreado = _service.CrearNumero(numCon, bis, oficinasId, tipo, anio, ticketId);
 
-                // 2. Crear el segundo registro usando el ID obtenido
                 var registroRespuesta = new OficioRespuesta
                 {
                 
@@ -187,8 +191,7 @@ namespace OficiosTI
                     CuerpoRespuesta = "",
                     FechaOficio = DateTime.Now,
                     FechaCaptura = DateTime.Now,
-                    Anio = (short)DateTime.Now.Year,
-                  
+                    Anio = (short)DateTime.Now.Year,                  
                     OficioReferencia = registroOficio1?.OficioNoControl ?? string.Empty,
                     FirmanteId = 0,
                     OficioId = registroOficio1?.OficioId, 
@@ -200,7 +203,7 @@ namespace OficiosTI
                 _context.SaveChanges();
 
                 MessageBox.Show("Guardado con éxito.");
-                Close(); // El Close va aquí, dentro del try si todo salió bien
+                Close(); 
             }
             catch (Exception ex)
             {

@@ -70,7 +70,7 @@
             btnPreview = new Button();
             lblFirmante = new Label();
           //  comboFirmantes = new ComboBox();
-            chkFirmaPorAusencia = new CheckBox();
+         //   chkFirmaPorAusencia = new CheckBox();
             panelHeader.SuspendLayout();
             panelFormulario.SuspendLayout();
             panelBotones.SuspendLayout();
@@ -314,11 +314,11 @@
             // 
             // chkFirmaPorAusencia
             // 
-            chkFirmaPorAusencia.Location = new Point(20, 240);
-            chkFirmaPorAusencia.Name = "chkFirmaPorAusencia";
-            chkFirmaPorAusencia.Size = new Size(250, 20);
-            chkFirmaPorAusencia.TabIndex = 0;
-            chkFirmaPorAusencia.Text = "Firmar por ausencia del titular";
+        //    chkFirmaPorAusencia.Location = new Point(20, 240);
+       //     chkFirmaPorAusencia.Name = "chkFirmaPorAusencia";
+        //    chkFirmaPorAusencia.Size = new Size(250, 20);
+         //   chkFirmaPorAusencia.TabIndex = 0;
+         //   chkFirmaPorAusencia.Text = "Firmar por ausencia del titular";
             // 
             // FrmOficioRespuesta
             // 

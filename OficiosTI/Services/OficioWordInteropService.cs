@@ -160,8 +160,8 @@ namespace OficiosTI.Services
                 // sel.ParagraphFormat.SpaceBefore = 12;
                 sel.ParagraphFormat.LineSpacingRule = WordInterop.WdLineSpacing.wdLineSpaceSingle;
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
-
-                sel.TypeText("Atentamente");
+                sel.Font.Bold = 1;
+                sel.TypeText("Atentamente,");
                 sel.TypeParagraph();
                 sel.TypeParagraph();
 
@@ -204,8 +204,6 @@ namespace OficiosTI.Services
                         sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;              
                       
                         range.Text = "";
-                        //// CAMPO COPIAS EN EL FOOTER
-                        //    range.Text = model.Copias;            
                         range.Font.Name = "Gotham";
                         range.Font.Size = 9;
                         range.Font.Bold = 0;

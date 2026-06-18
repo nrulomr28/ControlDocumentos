@@ -20,8 +20,7 @@ namespace OficiosTI
         private List<DestinatarioItem> _destinatariosCache;
         private bool _autocompletando = false;
 
-       // private ComboBox comboFirmantes;
-        private CheckBox chkFirmaPorAusencia;
+      //  private CheckBox chkFirmaPorAusencia;
 
         public FrmOficioRespuesta(Ticket ticket, OficiosContext context)
         {
@@ -35,12 +34,10 @@ namespace OficiosTI
 
             if (oficio != null)
             {
-                // Ya existe oficio → se carga para edición
                 CargarOficio(oficio);
             }
             else
             {
-                // No existe → se crea borrador usando ticket + último hilo
                 var borrador = _service.ConvertirTicketEnBorrador(ticket);
                 CargarOficio(borrador);
             }
@@ -53,8 +50,8 @@ namespace OficiosTI
             _destinatariosCache = _destinatarioService.ObtenerCatalogo();
 
             //    ConfigurarAutoComplete();
-
             //     InicializarFirmantes();
+
            CargarFirmantes();
 
            if (oficio?.FirmanteId.HasValue == true)
@@ -65,8 +62,7 @@ namespace OficiosTI
             {
                 comboBox1.SelectedIndex = -1;
             }
-
-    
+               
         }
 
 
@@ -275,9 +271,11 @@ namespace OficiosTI
             ///// OFICIO DE REFERENCIA /////
 
             ///// OBTENER EL ID DEL OFICIO DE NUMCONSECUTIVO 
-            var NumCons = _context.NumOficio
+            ///
+      /*      var NumCons = _context.NumOficio
                 .Where(x => x.OficioId == _oficioActual.RespuestaId)
-                .FirstOrDefault();
+                .FirstOrDefault();*/
+
             ///
             ///
 
