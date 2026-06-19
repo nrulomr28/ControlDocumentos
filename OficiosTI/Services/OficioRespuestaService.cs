@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using Microsoft.EntityFrameworkCore;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 using System.Runtime.InteropServices;
@@ -20,6 +22,30 @@ namespace OficiosTI.Services
         {
             return _context.OficioRespuesta
                 .Any(x => x.NumeroOficio == numeroOficio);
+        }
+
+        public int NumeroTicketExiste(string numeroOficio)
+        {
+
+
+            /// OBTENER PRIMERO EL ID DEL OFICIO PARA BUSCARLO EN LA TABLA DE OficioRespuesta
+            var ofin = _context.NumOficio
+               .Where(x => x.NumeroConsecutivo == numeroOficio)
+               .OrderByDescending(x => x.OficioId)
+               .FirstOrDefault();
+
+       /*     var idTickets = _context.OficioRespuesta
+               .Where(x => x.RespuestaId === ofin)
+               .OrderByDescending(x => x.OficioId)
+               .FirstOrDefault(); 
+       */
+
+            /*     buscar el int en la tabla de numoficio
+                     obtener el id de la tabla el oficioID
+                     y buscarla en la tabla de OficioRespuesta
+            */
+            //  return idTickets;
+            return 0;
         }
 
         public string ObtenerUltimoHilo(int ticketId)
@@ -119,9 +145,7 @@ namespace OficiosTI.Services
                 FechaOficio = DateTime.Now,
                 FechaCaptura = DateTime.Now,
                 Anio = (short)DateTime.Now.Year,
-                OficioId = OficioId,
-           
-
+                OficioId = OficioId,         
                 FirmanteId = firmanteid
             };
 
@@ -155,7 +179,6 @@ namespace OficiosTI.Services
             _context.NumOficio.Add(nuevoNumOficio);
             _context.SaveChanges();        
             return nuevoNumOficio;
-
         }
 
         /// ASIGNAR NUMERO DE OFICIO EN LA TABLA DE NUMOFICIO

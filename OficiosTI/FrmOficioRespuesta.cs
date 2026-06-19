@@ -97,10 +97,7 @@ namespace OficiosTI
             {
                 this.Cursor = Cursors.WaitCursor;
 
-
                 string textoCombo = comboBox1.Text;
-
-                // Asignamos valores por defecto por si algo falla
                 string nombreExtraido = textoCombo;
                 string cargoExtraido = "Sin Cargo";
 
@@ -112,7 +109,6 @@ namespace OficiosTI
                     {
                         nombreExtraido = partes[0]; // NOMBRE DEL TITULAR
                         cargoExtraido = partes[1];  // CARGO DEL TITULAR
-
                     }
                 }
 
@@ -134,7 +130,6 @@ namespace OficiosTI
 
                 var servicio = new OficioWordInteropService();
                 string ruta = servicio.Generar(model);
-
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = ruta,
@@ -223,7 +218,6 @@ namespace OficiosTI
             GuardarOficio();
         }
 
-
         private void GuardarOficio()
         {
             if (string.IsNullOrWhiteSpace(txtNumeroOficio.Text))
@@ -261,7 +255,6 @@ namespace OficiosTI
             }
 
             int? firmanteSeleccionado = comboBox1.SelectedValue as int?;
-
             ///OBTENER EL ID DEL OFICIO DE REFERENCIA /////
             var Ofinum = _context.Oficio1
                  .Where(y => y.OficioId == _ticket.id_of)
@@ -271,13 +264,10 @@ namespace OficiosTI
             ///// OFICIO DE REFERENCIA /////
 
             ///// OBTENER EL ID DEL OFICIO DE NUMCONSECUTIVO 
-            ///
-      /*      var NumCons = _context.NumOficio
+     
+         var NumCons = _context.NumOficio
                 .Where(x => x.OficioId == _oficioActual.RespuestaId)
-                .FirstOrDefault();*/
-
-            ///
-            ///
+                .FirstOrDefault();
 
             if (esNuevo)
             {
@@ -562,8 +552,6 @@ namespace OficiosTI
 
             }
         }
-
-
 
         private void txtDestinatario_Leave(object sender, EventArgs e)
         {

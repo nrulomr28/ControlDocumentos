@@ -16,13 +16,13 @@ namespace OficiosTI.Data.Entities
 
         public string Bis { get; set; }
 
-        public int Oficinas_Id { get; set; }
+        public int? Oficinas_Id { get; set; }
 
-        public int Tipo { get; set; }
-        public int Anio { get; set; }
+        public int? Tipo { get; set; }
+        public int? Anio { get; set; }
 
         public DateTime FechaCaptura { get; set; }
-        public int TicketId { get; set; }
+        public int? TicketId { get; set; }
 
      //   public int ReferenciaOficioId { get; set; }    
     }

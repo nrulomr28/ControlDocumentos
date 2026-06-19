@@ -114,7 +114,7 @@
             PanelHeader.Dock = DockStyle.Top;
             PanelHeader.Location = new Point(0, 0);
             PanelHeader.Name = "PanelHeader";
-            PanelHeader.Size = new Size(509, 50);
+            PanelHeader.Size = new Size(492, 50);
             PanelHeader.TabIndex = 8;
             // 
             // TicketTitulo
@@ -124,15 +124,15 @@
             TicketTitulo.ForeColor = Color.White;
             TicketTitulo.Location = new Point(15, 14);
             TicketTitulo.Name = "TicketTitulo";
-            TicketTitulo.Size = new Size(175, 21);
+            TicketTitulo.Size = new Size(118, 21);
             TicketTitulo.TabIndex = 0;
-            TicketTitulo.Text = "Asignar Folio al ticket";
+            TicketTitulo.Text = "Asignar Oficio";
             // 
             // FrmOficioTicket
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(509, 258);
+            ClientSize = new Size(492, 222);
             Controls.Add(PanelHeader);
             Controls.Add(AsignarF);
             Controls.Add(cmbTipos);

@@ -25,8 +25,6 @@ namespace OficiosTI
         private NumOficio _oficioconse;
         private OficioRespuestaService _service;
 
-
-
      /*   public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp)
         {
             InitializeComponent();
@@ -42,18 +40,14 @@ namespace OficiosTI
             CargarResp(OficioResp);
         }*/
 
-        // Nota: Agregar '= null' permite que el parámetro sea opcional, 
-        // o bien, puedes dejarlo como estaba si siempre le vas a mandar el null explícitamente.
-
-
+  
         public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp = null)
         {
             InitializeComponent();
             _context = context;
             _oficioActual = OficioResp;
-
             CargarFirma();
-
+            //CargarOficios(3);
             if (string.IsNullOrEmpty(txtCcp.Text))
             {
                 txtCcp.Text = ObtenerCopiasDefault();
@@ -77,95 +71,124 @@ namespace OficiosTI
             cmbFirmas.SelectedIndex = -1;
         }
 
-        private void GuardarOficio()
+
+        /*   private void CargarOficios(int idOficinaDeseada)
+           {
+               if (_context == null) return;
+
+               var of_conse = _context.NumOficio
+                   .Where(x => x.Oficinas_Id == idOficinaDeseada)
+                   .OrderByDescending(x => x.OficioId)
+                   .ToList();
+
+               cmbOf.DataSource = of_conse;
+               cmbOf.DisplayMember = "NumeroConsecutivo";
+               cmbOf.ValueMember = "OficioId";
+           }
+        */
+      /*  private void CargarOficios(int idOficinaDeseada)
         {
-            try
-            {
-                bool esRegistroNuevo = (_oficioActual == null);
+            if (_context == null) return;
 
-                if (esRegistroNuevo)
-                {
-                    _oficioActual = new OficioRespuesta();
-                    _oficioActual.FechaOficio = DateTime.Now;
-                }
+            var of_conse = (from num in _context.NumOficio
+                            join resp in _context.OficioRespuesta
+                            on num.OficioId equals resp.RespuestaId
+                            where num.Oficinas_Id == idOficinaDeseada
+                            where resp.TicketId == 0 || resp.TicketId == null
+                            orderby num.OficioId descending
+                            select new
+                            {
+                                oficioRespuestaId = resp.OficioRespuestaId,
+                                NumeroOficio = resp.NumeroOficio
+                            }).ToList();
 
-                _oficioActual.NumeroOficio = txtNof.Text.Trim();
-                _oficioActual.Asunto = txtAsunto.Text.Trim();
-                _oficioActual.Destinatario = txtDest.Text.Trim();
-                _oficioActual.CargoDestinatario = txtCrgo.Text.Trim();
-                _oficioActual.CuerpoRespuesta = txtRespC.Text.Trim();
-                _oficioActual.Copias = txtCcp.Text.Trim();
+            cmbOf.DataSource = of_conse;
+            cmbOf.DisplayMember = "NumeroOficio";
+            cmbOf.ValueMember = "oficioRespuestaId";
 
-                if (cmbFirmas.SelectedValue != null)
-                {
-                    _oficioActual.FirmanteId = (int)cmbFirmas.SelectedValue;
-                }
-
-                if (esRegistroNuevo)
-                {
-                    _context.OficioRespuesta.Add(_oficioActual);
-                }
-                else
-                {
-                    _context.OficioRespuesta.Update(_oficioActual);
-                }
-
-                _context.SaveChanges();
-
-                MessageBox.Show("El oficio se ha guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                this.DialogResult = DialogResult.OK;
-                this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ocurrió un error al guardar en la base de datos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            cmbOf.SelectedIndex = -1;
         }
 
-    /*    private void GuardarOficio()
-          {
-              try
+        */
+        /*
+        private void CargarOficios(int idOficinaDeseada)
+        {
+            if (_context == null) return;
+
+            // Usamos LINQ Join para buscar en ambas tablas al mismo tiempo
+            var of_conse = (from num in _context.NumOficio
+                            join resp in _context.OficioRespuesta
+                            on num.OficioId equals resp.RespuestaId // Comparamos las llaves de relación
+                            where num.Oficinas_Id == idOficinaDeseada
+                            orderby num.OficioId descending
+                            select new
+                            {
+                                OficioId = num.OficioId,
+                                NumeroConsecutivo = num.NumeroConsecutivo
+                            }).ToList();
+
+            cmbOf.DataSource = of_conse;
+            cmbOf.DisplayMember = "NumeroOficio";
+            cmbOf.ValueMember = "oficioRespuestaId";
+            cmbOf.SelectedIndex = -1;
+        }
+
+        /*     private void CargarOficios()
+             {
+                 var of_conse = _context.NumOficio
+                     .Where(x => x.Oficinas_Id)
+                     .Tolist();
+
+                 cmbOf.DataSource = of_conse;
+                 cmbOf.DisplayMember = "NumeroConsecutivo";
+                 cmbOf.ValueMember = "OficioId";
+             }
+        */
+
+
+        /*    private void GuardarOficio()
               {
-                  bool esRegistroNuevo = (_oficioActual == null);
-
-                  if (esRegistroNuevo)
+                  try
                   {
-                      _oficioActual = new OficioRespuesta();
-                      _oficioActual.FechaOficio = DateTime.Now; 
+                      bool esRegistroNuevo = (_oficioActual == null);
+
+                      if (esRegistroNuevo)
+                      {
+                          _oficioActual = new OficioRespuesta();
+                          _oficioActual.FechaOficio = DateTime.Now; 
+                      }
+
+                      _oficioActual.NumeroOficio = txtNof.Text.Trim();
+                      _oficioActual.Asunto = txtAsunto.Text.Trim();
+                      _oficioActual.Destinatario = txtDest.Text.Trim();
+                      _oficioActual.CargoDestinatario = txtCrgo.Text.Trim();
+                      _oficioActual.CuerpoRespuesta = txtRespC.Text.Trim();
+                      _oficioActual.Copias = txtCcp.Text.Trim();
+
+                      if (cmbFirmas.SelectedValue != null)
+                      {
+                          _oficioActual.FirmanteId = (int)cmbFirmas.SelectedValue;
+                      }
+
+                      if (esRegistroNuevo)
+                      {
+                          _context.OficioRespuesta.Add(_oficioActual);
+                      }
+
+                      _context.SaveChanges();
+
+                      MessageBox.Show("El oficio se ha guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                      this.DialogResult = DialogResult.OK;
+                      this.Close();
                   }
-
-                  _oficioActual.NumeroOficio = txtNof.Text.Trim();
-                  _oficioActual.Asunto = txtAsunto.Text.Trim();
-                  _oficioActual.Destinatario = txtDest.Text.Trim();
-                  _oficioActual.CargoDestinatario = txtCrgo.Text.Trim();
-                  _oficioActual.CuerpoRespuesta = txtRespC.Text.Trim();
-                  _oficioActual.Copias = txtCcp.Text.Trim();
-
-                  if (cmbFirmas.SelectedValue != null)
+                  catch (Exception ex)
                   {
-                      _oficioActual.FirmanteId = (int)cmbFirmas.SelectedValue;
+                      MessageBox.Show($"Ocurrió un error al guardar en la base de datos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                   }
-
-                  if (esRegistroNuevo)
-                  {
-                      _context.OficioRespuesta.Add(_oficioActual);
-                  }
-                 
-                  _context.SaveChanges();
-
-                  MessageBox.Show("El oficio se ha guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                  this.DialogResult = DialogResult.OK;
-                  this.Close();
               }
-              catch (Exception ex)
-              {
-                  MessageBox.Show($"Ocurrió un error al guardar en la base de datos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-              }
-          }
-       
-     */
+
+         */
 
         private void btnGuardarNu_Click(object sender, EventArgs e)
         {
@@ -208,8 +231,54 @@ namespace OficiosTI
 
             GuardarOficio();
 
-
         }
+
+        private void GuardarOficio()
+        {
+            try
+            {
+                bool esRegistroNuevo = (_oficioActual == null);
+
+                if (esRegistroNuevo)
+                {
+                    _oficioActual = new OficioRespuesta();
+                    _oficioActual.FechaOficio = DateTime.Now;
+                }
+                _oficioActual.TicketId = 0;
+                _oficioActual.NumeroOficio = txtNof.Text.Trim();
+                _oficioActual.Asunto = txtAsunto.Text.Trim();
+                _oficioActual.Destinatario = txtDest.Text.Trim();
+                _oficioActual.CargoDestinatario = txtCrgo.Text.Trim();
+                _oficioActual.CuerpoRespuesta = txtRespC.Text.Trim();
+                _oficioActual.Copias = txtCcp.Text.Trim();
+
+                if (cmbFirmas.SelectedValue != null)
+                {
+                    _oficioActual.FirmanteId = (int)cmbFirmas.SelectedValue;
+                }
+
+                if (esRegistroNuevo)
+                {
+                    _context.OficioRespuesta.Add(_oficioActual);
+                }
+                else
+                {
+                    _context.OficioRespuesta.Update(_oficioActual);
+                }
+
+                _context.SaveChanges();
+
+                MessageBox.Show("El oficio se ha guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al guardar en la base de datos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void btnWord_Click(object sender, EventArgs e)
         {
             try

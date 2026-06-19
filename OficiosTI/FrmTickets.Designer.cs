@@ -55,6 +55,7 @@
             BtnLimpiar = new Button();
             DataGridTickets = new DataGridView();
             PanelAcciones = new Panel();
+            btnSinTicket = new Button();
             btnOficios = new Button();
             btnAsignar = new Button();
             BtnAbrirTicket = new Button();
@@ -215,6 +216,7 @@
             // PanelAcciones
             // 
             PanelAcciones.BackColor = Color.WhiteSmoke;
+            PanelAcciones.Controls.Add(btnSinTicket);
             PanelAcciones.Controls.Add(btnOficios);
             PanelAcciones.Controls.Add(btnAsignar);
             PanelAcciones.Controls.Add(BtnAbrirTicket);
@@ -226,9 +228,19 @@
             PanelAcciones.Size = new Size(1000, 50);
             PanelAcciones.TabIndex = 2;
             // 
+            // btnSinTicket
+            // 
+            btnSinTicket.Location = new Point(398, 13);
+            btnSinTicket.Name = "btnSinTicket";
+            btnSinTicket.Size = new Size(121, 28);
+            btnSinTicket.TabIndex = 5;
+            btnSinTicket.Text = "Numeros Oficio";
+            btnSinTicket.UseVisualStyleBackColor = true;
+            btnSinTicket.Click += btnSinTicket_Click_1;
+            // 
             // btnOficios
             // 
-            btnOficios.Location = new Point(544, 12);
+            btnOficios.Location = new Point(667, 13);
             btnOficios.Name = "btnOficios";
             btnOficios.Size = new Size(106, 28);
             btnOficios.TabIndex = 4;
@@ -266,7 +278,7 @@
             // 
             // BtnGenerarOficio
             // 
-            BtnGenerarOficio.Location = new Point(398, 11);
+            BtnGenerarOficio.Location = new Point(521, 12);
             BtnGenerarOficio.Name = "BtnGenerarOficio";
             BtnGenerarOficio.Size = new Size(140, 30);
             BtnGenerarOficio.TabIndex = 2;
@@ -340,5 +352,6 @@
 
         private Button btnAsignar;
         private Button btnOficios;
+        private Button btnSinTicket;
     }
 }

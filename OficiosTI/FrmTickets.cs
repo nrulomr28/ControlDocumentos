@@ -14,7 +14,6 @@ namespace OficiosTI
         {
             InitializeComponent();
             _context = context;
-
             InicializarGrid();
             CargarTickets();
             DataGridTickets.DataBindingComplete += DataGridTickets_DataBindingComplete;
@@ -25,11 +24,8 @@ namespace OficiosTI
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
             SigelicXPTheme.ApplyForm(this);
             SigelicXPTheme.ApplyStartButton(BtnAdjuntos);
-
-
         }
 
         private void InicializarGrid()
@@ -43,9 +39,7 @@ namespace OficiosTI
             string prioridad = ComboPrioridad.Text;
             string status = ComboStatus.Text;
 
-
             var query = _context.Ticket
-
            .Where(t => t.OficinasId == 3 && t.id_of != null);
 
             if (!string.IsNullOrWhiteSpace(textoBuscar))
@@ -75,7 +69,6 @@ namespace OficiosTI
                     TicketPrioridad = t.TicketPrioridad,
                     TicketFecha = t.TicketFecha,
                     Cat_TicketStatusId = t.Cat_TicketStatusId,
-
                     NumeroOficio = _context.OficioRespuesta
                         .Where(o => o.TicketId == t.TicketId)
                         .Select(o => o.NumeroOficio)
@@ -84,14 +77,10 @@ namespace OficiosTI
                 .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
                 .OrderByDescending(t => t.TicketFecha)
                 .ToList();
-
             DataGridTickets.DataSource = null;
-
             var bs = new BindingSource();
             bs.DataSource = tickets;
-
             DataGridTickets.DataSource = bs;
-
             ConfigurarGrid();
             ActualizarIndicadores(tickets);
         }
@@ -100,24 +89,17 @@ namespace OficiosTI
         {
             if (e.RowIndex < 0)
                 return;
-
             var gridItem = (TicketGridModel)DataGridTickets.Rows[e.RowIndex].DataBoundItem as TicketGridModel;
-
             if (gridItem == null)
                 return;
-
             var ticket = _context.Ticket.Find(gridItem.TicketId);
-
             if (ticket == null)
             {
                 MessageBox.Show("No se encontró el ticket.");
                 return;
             }
-
             var frm = new FrmTicketDetalle(ticket, _context);
-
             frm.ShowDialog();
-
             CargarTickets();
 
         }
@@ -125,12 +107,9 @@ namespace OficiosTI
         private void BtnAbrirTicket_Click(object sender, EventArgs e)
         {
             var ticket = ObtenerTicketSeleccionado();
-
             if (ticket == null)
                 return;
-
             new FrmTicketDetalle(ticket, _context).ShowDialog();
-
             CargarTickets();
         }
 
@@ -139,7 +118,6 @@ namespace OficiosTI
             string texto = TextBuscar.Text.Trim();
             string prioridad = ComboPrioridad.Text;
             string status = ComboStatus.Text;
-
             var query = _context.Ticket
                 .Where(t => t.OficinasId == 3);
 
@@ -451,21 +429,45 @@ namespace OficiosTI
                 return;
             }
 
-            // 2. Obtener el item del Grid PRIMERO
             var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
-
             Ticket ticketSeleccionado = _context.Ticket.Find(gridItem.TicketId);
-
             FrmOficioTicket FormAsignar = new FrmOficioTicket(ticketSeleccionado, _context);
 
             FormAsignar.ShowDialog();
         }
-      
+
         private void btnOficios_Click(object sender, EventArgs e)
         {
             FrmOficioSin FormOficiosin = new FrmOficioSin(_context);
             FormOficiosin.ShowDialog();
 
+        }
+        /*
+            private void btnSinTicket_Click_1(object sender, EventArgs e)
+            {
+             var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
+             Ticket ticketSeleccionado = _context.Ticket.Find(gridItem.TicketId);
+             FrmOficioTicket FormAsignar = new FrmOficioTicket(ticketSeleccionado, _context);
+             FormAsignar.ShowDialog();
+            }
+
+            private void btnSinTicket_Click_1(object sender, EventArgs e)
+            {
+                var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
+                Ticket ticketSeleccionado = _context.Ticket.Find(gridItem.TicketId);
+                FrmOficioTicket FormAsignar = new FrmOficioTicket(ticketSeleccionado, _context);
+                FormAsignar.ShowDialog();
+            }
+        */
+
+        private void btnSinTicket_Click_1(object sender, EventArgs e)
+        {
+            // 1. Pasamos explícitamente 'null' en lugar de buscar en el DataGrid
+            Ticket ticketNulo = null;
+
+            // 2. Abrimos el formulario receptor
+            FrmOficioTicket formAsignar = new FrmOficioTicket(ticketNulo, _context);
+            formAsignar.ShowDialog();
         }
     }
 }

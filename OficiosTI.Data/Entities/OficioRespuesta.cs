@@ -11,7 +11,7 @@ namespace OficiosTI.Data.Entities
     {
         public int OficioRespuestaId { get; set; }
 
-        public int TicketId { get; set; }
+        public int? TicketId { get; set; }
 
         public string NumeroOficio { get; set; }
 
@@ -35,7 +35,6 @@ namespace OficiosTI.Data.Entities
 
         public int? Anio { get; set; }
 
-        // navegación
         public Ticket Ticket { get; set; }
         [ForeignKey("FirmanteId")]
         public int? FirmanteId { get; set; }

@@ -142,15 +142,12 @@ namespace OficiosTI.Services
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphJustify;
                 sel.ParagraphFormat.LineSpacingRule = WordInterop.WdLineSpacing.wdLineSpace1pt5;
 
-                //sel.TypeText(model.FundamentoLegal);
-                //sel.ParagraphFormat.SpaceAfter = 12f;
-
+           
                 // =========================
                 // CUERPO
                 // =========================
                 sel.TypeText($"{model.FundamentoLegal}  {model.Cuerpo}");
-               //sel.TypeText(model.Cuerpo ?? "");
-                sel.TypeParagraph();
+                 sel.TypeParagraph();
                 sel.TypeParagraph();
 
                 // =========================

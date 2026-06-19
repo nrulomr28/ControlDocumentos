@@ -21,7 +21,7 @@ namespace OficiosTI
         private readonly Ticket _ticket;
         private OficioRespuestaService _service;
         private NumOficio _OficioRespuesta;   /// tabla de NumOficio
-    
+
         /*  public FrmOficioTicket(Ticket ticket, OficiosContext context)
           {
               InitializeComponent();
@@ -58,51 +58,86 @@ namespace OficiosTI
               }
           }*/
 
+        /*       public FrmOficioTicket(Ticket ticket, OficiosContext context)
+               {
+                   InitializeComponent();
+                   _context = context;
+                   _ticket = ticket;
+                   CargarOficinas();
+                   CargarTiposD();
+                   var tieneOficio = _context.NumOficio.Any(x => x.TicketId == _ticket.TicketId);
+
+                   if (tieneOficio != null)
+                   {
+                       CargarDatosTicket();
+                       var NuCons = _context.NumOficio
+                  .Where(x => x.TicketId == _ticket.TicketId)
+                  .FirstOrDefault();
+                       AsignarF.Enabled = !tieneOficio;
+
+                       if (tieneOficio)
+                       {
+                           txtNumOf.Text = NuCons.NumeroConsecutivo;
+                           cmbOficinas.SelectedValue = Convert.ToInt32(NuCons.Oficinas_Id);
+                           cmbTipos.SelectedValue = Convert.ToInt32(NuCons.Tipo);
+                           txtNumOf.ReadOnly = true;
+                       }
+
+                   }
+                   _service = new OficioRespuestaService(_context);
+
+
+
+               }*/
+
+
         public FrmOficioTicket(Ticket ticket, OficiosContext context)
         {
             InitializeComponent();
             _context = context;
             _ticket = ticket;
 
-
-
+            // 1. Cargamos catálogos e inicializamos servicios sin importar si hay ticket o no
             CargarOficinas();
             CargarTiposD();
-            CargarDatosTicket();
-
             _service = new OficioRespuestaService(_context);
 
-            var tieneOficio = _context.NumOficio.Any(x => x.TicketId == _ticket.TicketId);
-
-       //     var oficioExistente = _context.NumOficio
-                      //              .FirstOrDefault(x => x.TicketId == _ticket.TicketId);
-//
-
-            var NuCons = _context.NumOficio
-            .Where(x => x.TicketId == _ticket.TicketId)
-            .FirstOrDefault();
-
-
-
-
-
-            AsignarF.Enabled = !tieneOficio;
-
-            if (tieneOficio)
+            // 2. ESCUDO PROTECTOR: ¿Recibimos un ticket válido?
+            if (_ticket != null)
             {
-        
-                txtNumOf.Text = NuCons.NumeroConsecutivo;
-                cmbOficinas.SelectedValue = Convert.ToInt32(NuCons.Oficinas_Id);
-                cmbTipos.SelectedValue = Convert.ToInt32(NuCons.Tipo);
-               // cmbOficinas.SelectedIndex = NuCons.Oficinas_Id;
+                // MODO "CON TICKET"
+                CargarDatosTicket();
 
+                // Hacemos una sola consulta a la base de datos buscando el registro completo
+                var oficioExistente = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId);
 
-                txtNumOf.ReadOnly = true;
-              
+                if (oficioExistente != null)
+                {
+                    // El ticket YA TIENE un oficio asignado
+                    AsignarF.Enabled = false; // Bloqueamos el botón para evitar duplicados
+                    txtNumOf.Text = oficioExistente.NumeroConsecutivo;
+                    cmbOficinas.SelectedValue = Convert.ToInt32(oficioExistente.Oficinas_Id);
+                    cmbTipos.SelectedValue = Convert.ToInt32(oficioExistente.Tipo);
+                    txtNumOf.ReadOnly = true;
+                }
+                else
+                {
+                    // El ticket NO TIENE oficio aún
+                    AsignarF.Enabled = true;
+                    txtNumOf.ReadOnly = false;
+                }
+            }
+            else
+            {
+                // MODO "SIN TICKET" (El usuario presionó el botón de crear desde cero)
+                // Dejamos la interfaz lista y limpia para captura manual
+                AsignarF.Enabled = true;
+                txtNumOf.ReadOnly = false;
+                txtNumOf.Clear();
+
+                // Opcional: Si tienes cajas de texto de asunto/remitente, asegúrate de limpiarlas aquí
             }
         }
-
-
 
         private void CargarOficinas()
         {
@@ -121,7 +156,7 @@ namespace OficiosTI
             {
              new { Id = 1, Nombre = "OFICIOS" },
              new { Id = 2, Nombre = "TARJETA" }
-         }.ToList();
+            }.ToList();
 
             cmbTipos.DataSource = listaTipos;
 
@@ -130,6 +165,197 @@ namespace OficiosTI
 
             cmbTipos.SelectedIndex = 0;
         }
+
+        private void CargarDatosTicket()
+        {
+            TicketTitulo.Text = $"Ticket #{_ticket.TicketId}";
+
+        }
+
+
+
+        private void AsignarF_Click(object sender, EventArgs e)
+        {
+            if (cmbOficinas.SelectedIndex == -1)
+            {
+                MessageBox.Show("Por favor seleccione una oficina.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtNumOf.Text))
+            {
+                MessageBox.Show("Debe capturar el número de oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string conse = txtNumOf.Text.Trim();
+            int anioActual = DateTime.Now.Year;
+
+            if (_ticket != null)
+            {
+                bool yaTieneOficio = _context.NumOficio.Any(x => x.TicketId == _ticket.TicketId);
+                if (yaTieneOficio)
+                {
+                    MessageBox.Show("Este ticket ya cuenta con un oficio asignado y no puede generar otro.",
+                                    "Acción no permitida", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    return;
+                }
+            }
+
+            var oficioExistente = _context.NumOficio.FirstOrDefault(x => x.NumeroConsecutivo == conse && x.Anio == anioActual);
+
+            if (oficioExistente != null)
+            {
+                DialogResult respuesta = MessageBox.Show(
+                    $"El número de oficio '{conse}' ya está asignado actualmente al Ticket ID: {oficioExistente.TicketId}.\n\n¿Desea continuar y usar este número de todos modos?",
+                    "Número ya registrado",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (respuesta == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
+            try
+            {
+                int? idOficio = _ticket?.id_of;
+                var registroOficio1 = idOficio.HasValue
+                    ? _context.Oficio1.FirstOrDefault(x => x.OficioId == idOficio.Value)
+                    : null;
+
+                string bis = "";
+                int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);
+                int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
+
+                int ticketId = _ticket != null ? _ticket.TicketId : 0;
+
+                var nuevoNumeroCreado = _service.CrearNumero(conse, bis, oficinasId, tipo, anioActual, ticketId);
+
+                var registroRespuesta = new OficioRespuesta
+                {
+                    TicketId = _ticket != null ? ticketId : 0,
+                    NumeroOficio = $"SSP/OM/DTI/{nuevoNumeroCreado.NumeroConsecutivo}/{anioActual}",
+
+                    Asunto = _ticket != null ? _ticket.TicketMensaje : string.Empty,
+                    Destinatario = _ticket != null ? _ticket.TicketPersona : string.Empty,
+                    CuerpoRespuesta = "",
+                    Copias = "C.C.P. Lic. Andrés Augusto Rosaldo García. - Oficial Mayor de la SSP. - Para su superior conocimiento. – Presente.",
+                    FechaOficio = DateTime.Now,
+                    FechaCaptura = DateTime.Now,
+                    Anio = (short)anioActual,
+                    OficioReferencia = registroOficio1?.OficioNoControl ?? string.Empty,
+                    FirmanteId = 0,
+                    OficioId = registroOficio1?.OficioId,
+                    RespuestaId = nuevoNumeroCreado.OficioId,
+                };
+
+                _context.OficioRespuesta.Add(registroRespuesta);
+                _context.SaveChanges();
+
+                MessageBox.Show("Guardado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
+            }
+            catch (Exception ex)
+            {
+                Exception errorReal = ex;
+                while (errorReal.InnerException != null)
+                {
+                    errorReal = errorReal.InnerException;
+                }
+
+                MessageBox.Show("Error de Base de Datos:\n\n" + errorReal.Message,
+                                "Error Detallado", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+       /* private void AsignarF_Click(object sender, EventArgs e)
+        {
+            bool yaTieneOficio = _context.NumOficio.Any(x => x.TicketId == _ticket.TicketId);
+            if (yaTieneOficio)
+            {
+                MessageBox.Show("Este ticket ya cuenta con un oficio asignado y no puede generar otro.",
+                                "Acción no permitida", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                return;
+            }
+
+            if (cmbOficinas.SelectedIndex == -1)
+            {
+                MessageBox.Show("Por favor seleccione una oficina.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtNumOf.Text))
+            {
+                MessageBox.Show("Debe capturar el número de oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string conse = txtNumOf.Text.Trim(); 
+            int anioActual = DateTime.Now.Year;
+
+            var oficioExistente = _context.NumOficio.FirstOrDefault(x => x.NumeroConsecutivo == conse && x.Anio == anioActual);
+
+            if (oficioExistente != null)
+            {
+                DialogResult respuesta = MessageBox.Show(
+                    $"El número de oficio '{conse}' ya está asignado actualmente al Ticket ID: {oficioExistente.TicketId}.\n\n¿Desea continuar y usar este número de todos modos?",
+                    "Número ya registrado",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (respuesta == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
+            try
+            {
+                var registroOficio1 = _context.Oficio1.FirstOrDefault(x => x.OficioId == _ticket.id_of);
+                string bis = "";
+                int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);
+                int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
+                int ticketId = _ticket.TicketId;
+                var nuevoNumeroCreado = _service.CrearNumero(conse, bis, oficinasId, tipo, anioActual, ticketId);
+                var registroRespuesta = new OficioRespuesta
+                {
+                    TicketId = ticketId,
+                    NumeroOficio = $"SSP/OM/DTI/{nuevoNumeroCreado.NumeroConsecutivo}/{anioActual}",
+                   
+                    Asunto = _ticket.TicketMensaje,
+                    Destinatario = _ticket.TicketPersona,
+                    CuerpoRespuesta = "",
+                    FechaOficio = DateTime.Now,
+                    FechaCaptura = DateTime.Now,
+                    Anio = (short)anioActual,
+                    OficioReferencia = registroOficio1?.OficioNoControl ?? string.Empty,
+                    FirmanteId = 0,
+                    OficioId = registroOficio1?.OficioId,
+                    RespuestaId = nuevoNumeroCreado.OficioId,
+                };
+
+                _context.OficioRespuesta.Add(registroRespuesta);
+                _context.SaveChanges();
+                MessageBox.Show("Guardado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
+            }
+            catch (Exception ex)
+            {
+                Exception errorReal = ex;
+                while (errorReal.InnerException != null)
+                {
+                    errorReal = errorReal.InnerException;
+                }
+
+                MessageBox.Show("Error de Base de Datos:\n\n" + errorReal.Message,
+                                "Error Detallado", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+       */
+
+        /*
         private void AsignarF_Click(object sender, EventArgs e)
         {
 
@@ -139,7 +365,7 @@ namespace OficiosTI
             {
                 MessageBox.Show("Este ticket ya cuenta con un oficio asignado y no puede generar otro.",
                                 "Acción no permitida", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                return; // Detenemos la ejecución inmediatamente
+                return; 
             }
 
             var registroOficio1 = _context.Oficio1
@@ -151,6 +377,7 @@ namespace OficiosTI
                 MessageBox.Show("Por favor seleccione una oficina.");
                 return;
             }
+
             if (string.IsNullOrWhiteSpace(txtNumOf.Text))
             {
                 MessageBox.Show("Debe capturar el número de oficio.");
@@ -162,9 +389,10 @@ namespace OficiosTI
 
             bool yaExiste = _context.NumOficio.Any(x => x.NumeroConsecutivo == conse && x.Anio == anioActual);
 
+
             if (yaExiste)
             {
-                MessageBox.Show("El número de oficio '" + conse + "' ya ha sido registrado para este año.",
+                MessageBox.Show("El número de oficio '" + conse + "' ya ha sido registrado para este año al ticket.'"+ yaTieneOficio + "'",
                                 "Oficio Duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return; 
             }
@@ -185,7 +413,7 @@ namespace OficiosTI
                 {
                 
                     TicketId = ticketId,
-                    NumeroOficio = nuevoNumeroCreado.NumeroConsecutivo,
+                    NumeroOficio = "SSP/OM/DTI/" + nuevoNumeroCreado.NumeroConsecutivo + "/"+ anio,
                     Asunto = _ticket.TicketMensaje,
                     Destinatario = _ticket.TicketPersona,
                     CuerpoRespuesta = "",
@@ -197,7 +425,6 @@ namespace OficiosTI
                     OficioId = registroOficio1?.OficioId, 
                     RespuestaId = nuevoNumeroCreado.OficioId,
                 };       
-               
 
                 _context.OficioRespuesta.Add(registroRespuesta);
                 _context.SaveChanges();
@@ -217,72 +444,69 @@ namespace OficiosTI
                                 "Error Detallado", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        //private void AsignarF_Click(object sender, EventArgs e)
-        //{
-        //    if (cmbOficinas.SelectedIndex == -1)
-        //    {
-        //        MessageBox.Show("Por favor seleccione una oficina.");
-        //        return;
-        //    }
-        //    if (string.IsNullOrWhiteSpace(txtNumOf.Text))
-        //    {
-        //        MessageBox.Show("Debe capturar el número de oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        //        return;
-        //    }
 
-        //    try
-        //    {
-        //        string numCon = txtNumOf.Text;
-        //        string bis = "";
-        //        int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);              
-        //        int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
-        //        int anio = DateTime.Now.Year;
-        //        int TicketId = _ticket.TicketId;
-
-        //        var nuevoNumeroCreado = _service.CrearNumero(numCon, bis, oficinasId, tipo, anio, TicketId);
-
-        //        int idDelNumeroNuevo = nuevoNumeroCreado.OficioId; 
-
-        //        // Creamos el objeto para la OTRA tabla (ejemplo: RegistroAuditoria o Seguimiento)
-        //        var registroRespuesta = new OficioRespuesta
-        //        {
-        //            RespuestaId = idDelNumeroNuevo,                    
-        //            TicketId = TicketId
-        //        };
-
-        //        // Agregamos al contexto y guardamos
-        //        _context.OficioRespuesta.Add(registroRespuesta);
-        //        _context.SaveChanges();
-
-
-
-
-        //    );
-
-        //        MessageBox.Show("Guardado con éxito.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Exception errorReal = ex;
-        //        while (errorReal.InnerException != null)
-        //        {
-        //            errorReal = errorReal.InnerException;
-        //        }
-
-        //        MessageBox.Show("Error de Base de Datos:\n\n" + errorReal.Message,
-        //                        "Error Detallado",
-        //                        MessageBoxButtons.OK,
-        //                        MessageBoxIcon.Error);
-        //    }
-        //    Close();
-        //}
-
-        private void CargarDatosTicket()
-        {
-            TicketTitulo.Text = $"Ticket #{_ticket.TicketId}";
-
-        }
-
-    
+        */
+   
     }
 }
+
+
+//private void AsignarF_Click(object sender, EventArgs e)
+//{
+//    if (cmbOficinas.SelectedIndex == -1)
+//    {
+//        MessageBox.Show("Por favor seleccione una oficina.");
+//        return;
+//    }
+//    if (string.IsNullOrWhiteSpace(txtNumOf.Text))
+//    {
+//        MessageBox.Show("Debe capturar el número de oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+//        return;
+//    }
+
+//    try
+//    {
+//        string numCon = txtNumOf.Text;
+//        string bis = "";
+//        int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);              
+//        int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
+//        int anio = DateTime.Now.Year;
+//        int TicketId = _ticket.TicketId;
+
+//        var nuevoNumeroCreado = _service.CrearNumero(numCon, bis, oficinasId, tipo, anio, TicketId);
+
+//        int idDelNumeroNuevo = nuevoNumeroCreado.OficioId; 
+
+//        // Creamos el objeto para la OTRA tabla (ejemplo: RegistroAuditoria o Seguimiento)
+//        var registroRespuesta = new OficioRespuesta
+//        {
+//            RespuestaId = idDelNumeroNuevo,                    
+//            TicketId = TicketId
+//        };
+
+//        // Agregamos al contexto y guardamos
+//        _context.OficioRespuesta.Add(registroRespuesta);
+//        _context.SaveChanges();
+
+//    );
+
+//        MessageBox.Show("Guardado con éxito.");
+//    }
+//    catch (Exception ex)
+//    {
+//        Exception errorReal = ex;
+//        while (errorReal.InnerException != null)
+//        {
+//            errorReal = errorReal.InnerException;
+//        }
+
+//        MessageBox.Show("Error de Base de Datos:\n\n" + errorReal.Message,
+//                        "Error Detallado",
+//                        MessageBoxButtons.OK,
+//                        MessageBoxIcon.Error);
+//    }
+//    Close();
+//}
+
+
+

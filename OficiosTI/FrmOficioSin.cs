@@ -24,6 +24,7 @@ namespace OficiosTI
             _context = context;
             InicializarGrid();
             dataGridOficios.CellDoubleClick += dataGridOficios_CellDoubleClick;
+            btnCrearOficio.Enabled = false;
         }
 
         private void InicializarGrid()
@@ -45,10 +46,9 @@ namespace OficiosTI
                         Fecha = o.FechaOficio,
                         Numticket = o.TicketId
                     })
+                    .Where(o =>o.Numticket==0)
                     .ToList();
-
                 dataGridOficios.DataSource = historialOficios;
-
                  if (dataGridOficios.Columns.Contains("OficioRespuestaId"))
                 {
                     dataGridOficios.Columns["OficioRespuestaId"].Visible = false;
@@ -56,9 +56,6 @@ namespace OficiosTI
             }
         }
 
-
-
-     
 
         private void btnCrearOficio_Click(object sender, EventArgs e)
         {
@@ -72,15 +69,12 @@ namespace OficiosTI
 
         private void dataGridOficios_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-              if (e.RowIndex < 0) return;
-
+            if (e.RowIndex < 0) return;
             int oficioRespuestaId = Convert.ToInt32(dataGridOficios.Rows[e.RowIndex].Cells["OficioRespuestaId"].Value);
             var oficioSeleccionado = _context.OficioRespuesta.Find(oficioRespuestaId);
-
             if (oficioSeleccionado != null)
             {
                 FrmOficioNuevo frmDetalle = new FrmOficioNuevo(_context, oficioSeleccionado);
-
                 if (frmDetalle.ShowDialog() == DialogResult.OK)
                 {
                     InicializarGrid();

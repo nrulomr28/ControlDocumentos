@@ -28,7 +28,6 @@ namespace OficiosTI.Data.Entities
 
         public int TicketUUsuario { get; set; }    /// CAPTURADO POR 
 
-        //public string UsuarioNombre { get; set; }
         public int OficinasId { get; set; }
         [ForeignKey("id_of")]
         public int? id_of { get; set; }
