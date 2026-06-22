@@ -288,7 +288,6 @@ namespace OficiosTI
 
                 string textoCombo = cmbFirmas.Text;
 
-                // Asignamos valores por defecto por si algo falla
                 string nombreExtraido = textoCombo;
                 string cargoExtraido = "Sin Cargo";
 

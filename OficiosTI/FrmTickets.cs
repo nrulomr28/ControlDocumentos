@@ -462,10 +462,8 @@ namespace OficiosTI
 
         private void btnSinTicket_Click_1(object sender, EventArgs e)
         {
-            // 1. Pasamos explícitamente 'null' en lugar de buscar en el DataGrid
             Ticket ticketNulo = null;
 
-            // 2. Abrimos el formulario receptor
             FrmOficioTicket formAsignar = new FrmOficioTicket(ticketNulo, _context);
             formAsignar.ShowDialog();
         }

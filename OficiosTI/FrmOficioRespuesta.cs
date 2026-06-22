@@ -311,14 +311,18 @@ namespace OficiosTI
                         descripcion
                     );
                 }
-            }
 
-            if (esNuevo)
-            {
                 _ticket.Cat_TicketStatusId = 3;
                 _service.ActualizarOficio(_oficioActual);
 
             }
+
+            /*    if (esNuevo)
+            {
+                _ticket.Cat_TicketStatusId = 3;
+                _service.ActualizarOficio(_oficioActual);
+            }
+           */
 
             MessageBox.Show("Oficio generado y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Close();

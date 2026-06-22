@@ -243,8 +243,8 @@ namespace OficiosTI.Services
                 FechaOficio = DateTime.Now,
                 FechaCaptura = DateTime.Now,
                 Anio = (short)DateTime.Now.Year,
-
-                OficioReferencia = registroOficio1?.OficioNoControl ?? string.Empty,
+                OficioReferencia = $"{registroOficio1.OficioNoOficio}",
+               /// OficioReferencia = registroOficio1?.OficioNoControl ?? string.Empty,
                 FirmanteId = firmante?.FirmanteId,
                 OficioId = registroOficio1?.OficioId
             };

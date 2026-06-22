@@ -97,24 +97,19 @@ namespace OficiosTI
             _context = context;
             _ticket = ticket;
 
-            // 1. Cargamos catálogos e inicializamos servicios sin importar si hay ticket o no
             CargarOficinas();
             CargarTiposD();
             _service = new OficioRespuestaService(_context);
 
-            // 2. ESCUDO PROTECTOR: ¿Recibimos un ticket válido?
             if (_ticket != null)
             {
-                // MODO "CON TICKET"
                 CargarDatosTicket();
 
-                // Hacemos una sola consulta a la base de datos buscando el registro completo
                 var oficioExistente = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId);
 
                 if (oficioExistente != null)
                 {
-                    // El ticket YA TIENE un oficio asignado
-                    AsignarF.Enabled = false; // Bloqueamos el botón para evitar duplicados
+                    AsignarF.Enabled = false; 
                     txtNumOf.Text = oficioExistente.NumeroConsecutivo;
                     cmbOficinas.SelectedValue = Convert.ToInt32(oficioExistente.Oficinas_Id);
                     cmbTipos.SelectedValue = Convert.ToInt32(oficioExistente.Tipo);
@@ -122,32 +117,29 @@ namespace OficiosTI
                 }
                 else
                 {
-                    // El ticket NO TIENE oficio aún
                     AsignarF.Enabled = true;
                     txtNumOf.ReadOnly = false;
                 }
             }
             else
             {
-                // MODO "SIN TICKET" (El usuario presionó el botón de crear desde cero)
-                // Dejamos la interfaz lista y limpia para captura manual
                 AsignarF.Enabled = true;
                 txtNumOf.ReadOnly = false;
                 txtNumOf.Clear();
 
-                // Opcional: Si tienes cajas de texto de asunto/remitente, asegúrate de limpiarlas aquí
+                
             }
         }
 
         private void CargarOficinas()
         {
             var Oficinas = _context.Oficinas
-                .Where(x => x.OficinasId >= 1)
+                .Where(x => x.OficinasId == 3)
                 .ToList();
             cmbOficinas.DataSource = Oficinas;
             cmbOficinas.DisplayMember = "OficinasNombre";
             cmbOficinas.ValueMember = "OficinasId";
-            cmbOficinas.SelectedIndex = 2;
+          //  cmbOficinas.SelectedIndex = 2;
         }
 
         private void CargarTiposD()
@@ -245,7 +237,8 @@ namespace OficiosTI
                     FechaOficio = DateTime.Now,
                     FechaCaptura = DateTime.Now,
                     Anio = (short)anioActual,
-                    OficioReferencia = registroOficio1?.OficioNoControl ?? string.Empty,
+                    OficioReferencia = $"{registroOficio1?.OficioNoOficio}",
+                 //   OficioReferencia = registroOficio1.OficioNoControl ?? int.Empty,
                     FirmanteId = 0,
                     OficioId = registroOficio1?.OficioId,
                     RespuestaId = nuevoNumeroCreado.OficioId,
