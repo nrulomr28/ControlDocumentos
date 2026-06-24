@@ -10,9 +10,12 @@ namespace OficiosTI.Services
     {
         public string Generar(OficioModel model)
         {
+
             string ruta = Path.Combine(
                 Path.GetTempPath(),
-                $"oficio_{Guid.NewGuid()}.docx");
+           //   $"oficio_.docx");
+          //  $"oficio_{model.NumeroOficio}.docx");
+           $"oficio_{Guid.NewGuid()}.docx");
 
             WordInterop.Application wordApp = null; 
             WordInterop.Document doc = null;
@@ -33,14 +36,12 @@ namespace OficiosTI.Services
                 // HEADER (BANNER OFICIAL)
                 // =========================
 
-                string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
+               string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
+              //  string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
                 string absoluteHeaderPath = Path.GetFullPath(headerPath);
-
-                // Acceder directamente al rango del encabezado de la primera sección y asignarle el texto
-               
+                // Acceder directamente al rango del encabezado de la primera sección y asignarle el texto               
                 if (File.Exists(absoluteHeaderPath))
-                {
-                    
+                {                    
                     foreach (WordInterop.Section section in doc.Sections)
                     {
                         var header = section.Headers[WordInterop.WdHeaderFooterIndex.wdHeaderFooterPrimary];
@@ -52,11 +53,8 @@ namespace OficiosTI.Services
                             absoluteHeaderPath,
                             LinkToFile: false,
                             SaveWithDocument: true
-                        );
-                                             
-                          inline.LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoTrue;
-                          
-
+                        );                                             
+                          inline.LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoTrue;                        
                         //  inline.Width = wordApp.CentimetersToPoints(8);
                     }
                     doc.PageSetup.TopMargin = wordApp.CentimetersToPoints(2);
@@ -66,8 +64,6 @@ namespace OficiosTI.Services
                 {
                     Console.WriteLine($"\n¡! El logo no existe en la ruta: {absoluteHeaderPath}\n");
                 }
-
-
                 var rangoPrincipal = doc.Range();
                 rangoPrincipal.Collapse(WordInterop.WdCollapseDirection.wdCollapseEnd);
                 rangoPrincipal.Select();
@@ -88,8 +84,8 @@ namespace OficiosTI.Services
                 sel.Font.Bold = 2;
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphRight;
 
-                sel.TypeText($"DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN");
-                sel.TypeParagraph();
+               sel.TypeText($"DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN");
+               sel.TypeParagraph();
                 sel.ParagraphFormat.SpaceAfter = 0f;
                 sel.ParagraphFormat.SpaceBefore = 0f;
                
@@ -99,8 +95,14 @@ namespace OficiosTI.Services
                 sel.TypeText($"Asunto: {model.Asunto}");
                 sel.TypeParagraph();
 
-                sel.TypeText($"En respuesta al oficio: {model.OficioReferencia}");
+                if (!string.IsNullOrWhiteSpace(model.OficioReferencia))
+                {
+                    sel.TypeText($"En respuesta al oficio: {model.OficioReferencia}");
+                    sel.TypeParagraph();
+                }
+              //  sel.TypeText($"En respuesta al oficio: {model.OficioReferencia}");
                 sel.TypeParagraph();
+
 
                 sel.TypeText($"Xalapa-Enríquez, Ver., a {model.Fecha:dd 'de' MMMM 'de' yyyy}");
                 sel.TypeParagraph();
@@ -141,13 +143,12 @@ namespace OficiosTI.Services
 
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphJustify;
                 sel.ParagraphFormat.LineSpacingRule = WordInterop.WdLineSpacing.wdLineSpace1pt5;
-
            
                 // =========================
                 // CUERPO
                 // =========================
                 sel.TypeText($"{model.FundamentoLegal}  {model.Cuerpo}");
-                 sel.TypeParagraph();
+                sel.TypeParagraph();
                 sel.TypeParagraph();
 
                 // =========================
@@ -159,6 +160,8 @@ namespace OficiosTI.Services
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
                 sel.Font.Bold = 1;
                 sel.TypeText("Atentamente,");
+              //  sel.ParagraphFormat.SpaceBefore = 10f;
+                sel.TypeParagraph();
                 sel.TypeParagraph();
                 sel.TypeParagraph();
 
@@ -169,22 +172,22 @@ namespace OficiosTI.Services
                 sel.Font.Bold = 1;
                 sel.TypeText(model.DirectorCargo);
                 sel.TypeParagraph();
-
                 sel.TypeParagraph();
-                sel.TypeParagraph();              
+                sel.TypeParagraph();
+                sel.TypeParagraph();
+                sel.TypeParagraph();
+                sel.TypeParagraph();
 
-
-              //  sel.ParagraphFormat.SpaceBefore = 54f;
-                sel.ParagraphFormat.SpaceAfter = 0f;
+                //sel.ParagraphFormat.SpaceBefore = 58f;
+                //sel.ParagraphFormat.SpaceAfter = 0f;
                 sel.ParagraphFormat.LineSpacingRule = WordInterop.WdLineSpacing.wdLineSpaceSingle;
 
                 sel.Font.Name = "Gotham";
                 sel.Font.Size = 8;
                 sel.Font.Bold = 0;
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
-
                 sel.TypeText(model.Copias);
-                sel.TypeParagraph();
+             // sel.TypeParagraph();
 
                 string footerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_veracruz.png");
                 string absoluteFooterPath = Path.GetFullPath(footerPath);
@@ -195,31 +198,25 @@ namespace OficiosTI.Services
                     {
                         var footer = section.Footers[WordInterop.WdHeaderFooterIndex.wdHeaderFooterPrimary];
                         footer.LinkToPrevious = false;
-                        sel.Font.Size = 9;
-                       
+                        sel.Font.Size = 9;                       
                         var range = footer.Range;
-                        sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;              
-                      
+                        sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;            
                         range.Text = "";
                         range.Font.Name = "Gotham";
                         range.Font.Size = 9;
                         range.Font.Bold = 0;
-
                         range.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
-
                         var inline = range.InlineShapes.AddPicture(
                             absoluteFooterPath,
                             LinkToFile: false,
                             SaveWithDocument: true,
                             Range: range
-                        );
-                        
+                        );                        
                         inline.LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoTrue;
                         inline.Width = wordApp.CentimetersToPoints(16);
                         range.Collapse(WordInterop.WdCollapseDirection.wdCollapseEnd);
                         range.InsertParagraphAfter();
-                        range.Collapse(WordInterop.WdCollapseDirection.wdCollapseEnd);
-                        
+                        range.Collapse(WordInterop.WdCollapseDirection.wdCollapseEnd);                        
                     }
                 }                               
 
@@ -228,7 +225,6 @@ namespace OficiosTI.Services
                 // =========================
 
                 doc.SaveAs2(ruta);
-
                 return ruta;
             }
             catch (COMException ex)

@@ -1,6 +1,8 @@
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 using OficiosTI.UI;
+using System.DirectoryServices;
+using System.DirectoryServices.ActiveDirectory;
 
 
 namespace OficiosTI
@@ -28,7 +30,27 @@ namespace OficiosTI
             SigelicXPTheme.ApplyStartButton(BtnAdjuntos);
         }
 
-        private void InicializarGrid()
+   /*     public void ExtraerInfoBasicaAD()
+            {
+                using (PrincipalContext contexto = new PrincipalContext(ContextType.Domain))
+                {
+                    // Buscamos al usuario actual de Windows
+                    UserPrincipal usuarioAD = UserPrincipal.FindByIdentity(contexto, Environment.UserName);
+
+                    if (usuarioAD != null)
+                    {
+                        // Propiedades directas que te da C#
+                        string nombreMostrar = usuarioAD.DisplayName;      
+                        string correo = usuarioAD.EmailAddress;            
+                        string telefono = usuarioAD.VoiceTelephoneNumber;  
+                        string numEmpleado = usuarioAD.EmployeeId;          
+                        string nombrePila = usuarioAD.GivenName;         
+                        string apellidos = usuarioAD.Surname;              
+                    }
+                }
+            }
+   */
+    private void InicializarGrid()
         {
             DataGridTickets.AutoGenerateColumns = true;
         }
@@ -40,7 +62,7 @@ namespace OficiosTI
             string status = ComboStatus.Text;
 
             var query = _context.Ticket
-           .Where(t => t.OficinasId == 3 && t.id_of != null);
+           .Where(t => t.OficinasId == 1 && t.id_of != null);    /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
 
             if (!string.IsNullOrWhiteSpace(textoBuscar))
             {
@@ -119,8 +141,7 @@ namespace OficiosTI
             string prioridad = ComboPrioridad.Text;
             string status = ComboStatus.Text;
             var query = _context.Ticket
-                .Where(t => t.OficinasId == 3);
-
+                .Where(t => t.OficinasId == 1);    /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
             if (!string.IsNullOrWhiteSpace(texto))
             {
                 query = query.Where(t =>
@@ -128,18 +149,15 @@ namespace OficiosTI
                     t.TicketAsunto.Contains(texto) ||
                     t.TicketId.ToString().Contains(texto));
             }
-
             if (!string.IsNullOrWhiteSpace(prioridad) && prioridad != "Todos")
             {
                 query = query.Where(t => t.TicketPrioridad == prioridad);
             }
-
             if (!string.IsNullOrWhiteSpace(status) && status != "Todos")
             {
                 int statusId = int.Parse(status);
                 query = query.Where(t => t.Cat_TicketStatusId == statusId);
             }
-
             var tickets = query
                 .Select(t => new TicketGridModel
                 {
@@ -156,12 +174,9 @@ namespace OficiosTI
                 })
                 .OrderByDescending(t => t.TicketFecha)
                 .ToList();
-
             var bs = new BindingSource();
             bs.DataSource = tickets;
-
             DataGridTickets.DataSource = bs;
-
             ConfigurarGrid();
         }
 
@@ -226,11 +241,7 @@ namespace OficiosTI
                     if (r == DialogResult.No)
                         return;
                 }
-
                 var ticket = ObtenerTicketSeleccionado();
-
-
-
                 new FrmOficioRespuesta(ticket, _context).ShowDialog();
 
                 CargarTickets();
@@ -259,10 +270,7 @@ namespace OficiosTI
             DataGridTickets.Columns["NumeroOficio"].HeaderText = "Oficio";
 
             //ResaltarOficios();
-
             AgregarColumnaOficio();
-
-
             // Blindar columna 0
             var col0 = DataGridTickets.Columns[0];
             col0.ReadOnly = true;
@@ -372,17 +380,14 @@ namespace OficiosTI
             TextBuscar.Text = "";
             ComboPrioridad.SelectedIndex = -1;
             ComboStatus.SelectedIndex = -1;
-
             CargarTickets();
         }
 
         private void ActualizarIndicadores(List<TicketGridModel> tickets)
         {
             int total = tickets.Count;
-
             int respondidos = tickets.Count(t =>
                 !string.IsNullOrEmpty(t.NumeroOficio));
-
             int pendientes = total - respondidos;
 
             LabelTotalTickets.Text = $"Tickets derivados: {total}";

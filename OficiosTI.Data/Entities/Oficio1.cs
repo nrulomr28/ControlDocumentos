@@ -12,12 +12,13 @@ namespace OficiosTI.Data.Entities
     {
         [Key]
         public int? OficioId { get; set; }
-
-     //   public int? OficioNoControl { get; set; }    
+     // public int? OficioNoControl { get; set; }    
 
         public string? OficioNoOficio { get; set; }
 
         public short? OficioAnio { get; set; }     
+
+       // public int RemitenteId { get; set; }
     }
 }
 

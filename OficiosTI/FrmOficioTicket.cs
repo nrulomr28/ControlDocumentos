@@ -96,7 +96,6 @@ namespace OficiosTI
             InitializeComponent();
             _context = context;
             _ticket = ticket;
-
             CargarOficinas();
             CargarTiposD();
             _service = new OficioRespuestaService(_context);
@@ -134,12 +133,12 @@ namespace OficiosTI
         private void CargarOficinas()
         {
             var Oficinas = _context.Oficinas
-                .Where(x => x.OficinasId == 3)
+                .Where(x => x.OficinasId == 1)     //// 1 REDES, 2 CONTROL Y REGUARDO DE LA INFORMACION, 3 DESARROLLO
                 .ToList();
             cmbOficinas.DataSource = Oficinas;
             cmbOficinas.DisplayMember = "OficinasNombre";
             cmbOficinas.ValueMember = "OficinasId";
-          //  cmbOficinas.SelectedIndex = 2;
+          //cmbOficinas.SelectedIndex = 2;
         }
 
         private void CargarTiposD()
@@ -151,10 +150,8 @@ namespace OficiosTI
             }.ToList();
 
             cmbTipos.DataSource = listaTipos;
-
             cmbTipos.DisplayMember = "Nombre";
             cmbTipos.ValueMember = "Id";
-
             cmbTipos.SelectedIndex = 0;
         }
 
@@ -163,8 +160,13 @@ namespace OficiosTI
             TicketTitulo.Text = $"Ticket #{_ticket.TicketId}";
 
         }
-
-
+        private void txtNumOf_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
 
         private void AsignarF_Click(object sender, EventArgs e)
         {
@@ -173,16 +175,19 @@ namespace OficiosTI
                 MessageBox.Show("Por favor seleccione una oficina.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
+            if (!txtNumOf.Text.Trim().All(char.IsDigit))
+            {
+                MessageBox.Show("El campo solo acepta caracteres numéricos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNumOf.Focus();
+                return;
+            }
             if (string.IsNullOrWhiteSpace(txtNumOf.Text))
             {
                 MessageBox.Show("Debe capturar el número de oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             string conse = txtNumOf.Text.Trim();
             int anioActual = DateTime.Now.Year;
-
             if (_ticket != null)
             {
                 bool yaTieneOficio = _context.NumOficio.Any(x => x.TicketId == _ticket.TicketId);
@@ -193,9 +198,7 @@ namespace OficiosTI
                     return;
                 }
             }
-
             var oficioExistente = _context.NumOficio.FirstOrDefault(x => x.NumeroConsecutivo == conse && x.Anio == anioActual);
-
             if (oficioExistente != null)
             {
                 DialogResult respuesta = MessageBox.Show(
@@ -216,20 +219,15 @@ namespace OficiosTI
                 var registroOficio1 = idOficio.HasValue
                     ? _context.Oficio1.FirstOrDefault(x => x.OficioId == idOficio.Value)
                     : null;
-
                 string bis = "";
                 int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);
                 int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
-
                 int ticketId = _ticket != null ? _ticket.TicketId : 0;
-
                 var nuevoNumeroCreado = _service.CrearNumero(conse, bis, oficinasId, tipo, anioActual, ticketId);
-
                 var registroRespuesta = new OficioRespuesta
                 {
                     TicketId = _ticket != null ? ticketId : 0,
                     NumeroOficio = $"SSP/OM/DTI/{nuevoNumeroCreado.NumeroConsecutivo}/{anioActual}",
-
                     Asunto = _ticket != null ? _ticket.TicketMensaje : string.Empty,
                     Destinatario = _ticket != null ? _ticket.TicketPersona : string.Empty,
                     CuerpoRespuesta = "",
@@ -238,7 +236,7 @@ namespace OficiosTI
                     FechaCaptura = DateTime.Now,
                     Anio = (short)anioActual,
                     OficioReferencia = $"{registroOficio1?.OficioNoOficio}",
-                 //   OficioReferencia = registroOficio1.OficioNoControl ?? int.Empty,
+                 // OficioReferencia = registroOficio1.OficioNoControl ?? int.Empty,
                     FirmanteId = 0,
                     OficioId = registroOficio1?.OficioId,
                     RespuestaId = nuevoNumeroCreado.OficioId,

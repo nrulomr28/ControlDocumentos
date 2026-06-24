@@ -22,11 +22,52 @@ namespace OficiosTI
         {
             InitializeComponent();
             _context = context;
-            InicializarGrid();
+            InicializarGrid(1);
             dataGridOficios.CellDoubleClick += dataGridOficios_CellDoubleClick;
             btnCrearOficio.Enabled = false;
         }
 
+        // Agregamos el parámetro para saber qué oficina queremos cargar
+        private void InicializarGrid(int idOficinaDeseada)
+        {
+            dataGridOficios.AutoGenerateColumns = true;
+
+            if (_context != null)
+            {
+                // Usamos la misma sintaxis de JOIN que ya dominas
+                var historialOficios = (from resp in _context.OficioRespuesta
+                                        join num in _context.NumOficio
+                                        on resp.RespuestaId equals num.OficioId
+
+                                        // 1. Filtramos por la oficina en la tabla NumOficio
+                                        where num.Oficinas_Id == idOficinaDeseada
+
+                                        // 2. Mantenemos tu filtro para oficios independientes (sin ticket)
+                                        where resp.TicketId == 0 || resp.TicketId == null
+
+                                        orderby resp.OficioRespuestaId descending
+                                        select new
+                                        {
+                                            OficioRespuestaId = resp.OficioRespuestaId,
+                                            No_Oficio = resp.NumeroOficio,
+                                            Asunto = resp.Asunto,
+                                            Destinatario = resp.Destinatario,
+                                            Cargo = resp.CargoDestinatario,
+                                            Respuesta = resp.CuerpoRespuesta,
+                                            Fecha = resp.FechaOficio,
+                                            Numticket = resp.TicketId
+                                        }).ToList();
+
+                dataGridOficios.DataSource = historialOficios;
+
+                // Ocultamos la columna del ID interno para que la tabla se vea limpia
+                if (dataGridOficios.Columns.Contains("OficioRespuestaId"))
+                {
+                    dataGridOficios.Columns["OficioRespuestaId"].Visible = false;
+                }
+            }
+        }
+        /*
         private void InicializarGrid()
         {
             dataGridOficios.AutoGenerateColumns = true;
@@ -47,6 +88,7 @@ namespace OficiosTI
                         Numticket = o.TicketId
                     })
                     .Where(o =>o.Numticket==0)
+                  
                     .ToList();
                 dataGridOficios.DataSource = historialOficios;
                  if (dataGridOficios.Columns.Contains("OficioRespuestaId"))
@@ -55,7 +97,7 @@ namespace OficiosTI
                 }
             }
         }
-
+        */
 
         private void btnCrearOficio_Click(object sender, EventArgs e)
         {
@@ -63,7 +105,7 @@ namespace OficiosTI
 
             if (frmNuevo.ShowDialog() == DialogResult.OK)
             {
-                InicializarGrid();
+                InicializarGrid(1);
             }
         }
 
@@ -77,7 +119,7 @@ namespace OficiosTI
                 FrmOficioNuevo frmDetalle = new FrmOficioNuevo(_context, oficioSeleccionado);
                 if (frmDetalle.ShowDialog() == DialogResult.OK)
                 {
-                    InicializarGrid();
+                    InicializarGrid(1);
                 }
             }
         }

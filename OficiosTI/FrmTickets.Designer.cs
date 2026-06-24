@@ -89,9 +89,9 @@
             LabelTitulo.ForeColor = Color.White;
             LabelTitulo.Location = new Point(15, 14);
             LabelTitulo.Name = "LabelTitulo";
-            LabelTitulo.Size = new Size(174, 21);
+            LabelTitulo.Size = new Size(140, 21);
             LabelTitulo.TabIndex = 0;
-            LabelTitulo.Text = "Tickets - Desarrollo TI";
+            LabelTitulo.Text = "Tickets - Redes TI";
             // 
             // PanelFiltros
             // 
@@ -230,7 +230,7 @@
             // 
             // btnSinTicket
             // 
-            btnSinTicket.Location = new Point(398, 13);
+            btnSinTicket.Location = new Point(540, 13);
             btnSinTicket.Name = "btnSinTicket";
             btnSinTicket.Size = new Size(121, 28);
             btnSinTicket.TabIndex = 5;
@@ -278,7 +278,7 @@
             // 
             // BtnGenerarOficio
             // 
-            BtnGenerarOficio.Location = new Point(521, 12);
+            BtnGenerarOficio.Location = new Point(398, 11);
             BtnGenerarOficio.Name = "BtnGenerarOficio";
             BtnGenerarOficio.Size = new Size(140, 30);
             BtnGenerarOficio.TabIndex = 2;

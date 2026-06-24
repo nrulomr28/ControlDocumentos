@@ -100,14 +100,10 @@ namespace OficiosTI
                     if (r == DialogResult.No)
                         return;
                 }
-
                 var ticket = ObtenerTicketSeleccionado();
-
                 if (ticket == null)
                     return;
-
-                new FrmOficioRespuesta(ticket, _context).ShowDialog();
-                
+                new FrmOficioRespuesta(ticket, _context).ShowDialog();                
             }
             catch (Exception ex)
             {
@@ -203,7 +199,7 @@ namespace OficiosTI
         private IQueryable<Ticket> BaseQuery()
         {
             return _context.Ticket
-                .Where(t => t.OficinasId == 3);
+                .Where(t => t.OficinasId == 1);    //// 1 REDES, 2 CONTROL Y RESGUARDO, DESARRROLLO
         }
 
         private void CargarTodos()

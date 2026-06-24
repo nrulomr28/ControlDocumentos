@@ -111,7 +111,6 @@ namespace OficiosTI
                         cargoExtraido = partes[1];  // CARGO DEL TITULAR
                     }
                 }
-
                 var model = new OficioModel
                 {
                     NumeroOficio = txtNumeroOficio.Text,
@@ -124,10 +123,8 @@ namespace OficiosTI
                     Copias = txtCopias.Text,
                     Fecha = DateTime.Now,
                     DirectorNombre = nombreExtraido,
-                    DirectorCargo = cargoExtraido,
-                   
+                    DirectorCargo = cargoExtraido,                   
                 };
-
                 var servicio = new OficioWordInteropService();
                 string ruta = servicio.Generar(model);
                 Process.Start(new ProcessStartInfo
@@ -250,8 +247,6 @@ namespace OficiosTI
                     Copias = _oficioActual.Copias,                
                     Firmante = _oficioActual.Firmante
                 };
-
- 
             }
 
             int? firmanteSeleccionado = comboBox1.SelectedValue as int?;
@@ -262,13 +257,11 @@ namespace OficiosTI
 
             int idOficioAnterior = Ofinum?.OficioId ?? 0;
             ///// OFICIO DE REFERENCIA /////
-
             ///// OBTENER EL ID DEL OFICIO DE NUMCONSECUTIVO 
      
-         var NumCons = _context.NumOficio
+            var NumCons = _context.NumOficio
                 .Where(x => x.OficioId == _oficioActual.RespuestaId)
                 .FirstOrDefault();
-
             if (esNuevo)
             {
                     _oficioActual = _service.CrearOficio(
@@ -294,7 +287,6 @@ namespace OficiosTI
                 _oficioActual.CuerpoRespuesta = txtRespuesta.Text;
                 _oficioActual.Copias = txtCopias.Text;
                 _oficioActual.FirmanteId = firmanteSeleccionado;
-
                 _service.ActualizarOficio(_oficioActual);
             }
 
@@ -311,10 +303,8 @@ namespace OficiosTI
                         descripcion
                     );
                 }
-
                 _ticket.Cat_TicketStatusId = 3;
                 _service.ActualizarOficio(_oficioActual);
-
             }
 
             /*    if (esNuevo)
@@ -323,10 +313,8 @@ namespace OficiosTI
                 _service.ActualizarOficio(_oficioActual);
             }
            */
-
             MessageBox.Show("Oficio generado y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Close();
-
         }
 
         /*
@@ -415,7 +403,6 @@ namespace OficiosTI
         private bool HayCambios(OficioRespuesta anterior, OficioRespuesta actual)
         {
             if (anterior == null) return true;
-
             return
                 Normalizar(anterior.NumeroOficio) != Normalizar(actual.NumeroOficio) ||
                 Normalizar(anterior.OficioReferencia) != Normalizar(actual.OficioReferencia) ||
@@ -467,8 +454,6 @@ namespace OficiosTI
         private void CargarOficio(OficioRespuesta oficio)
         {
             _oficioActual = oficio ?? new OficioRespuesta();
-
-            // 2. Asignación directa usando string.Empty
             txtNumeroOficio.Text = _oficioActual.NumeroOficio ?? string.Empty;
             txtOficioReferencia.Text = _oficioActual.OficioReferencia ?? string.Empty;
             txtAsunto.Text = _oficioActual.Asunto ?? string.Empty;
@@ -561,12 +546,10 @@ namespace OficiosTI
         {
             if (string.IsNullOrWhiteSpace(txtDestinatario.Text))
                 return;
-
             var match = _context.OficioRespuesta
                 .Where(x => x.Destinatario == txtDestinatario.Text)
-                .OrderByDescending(x => x.OficioRespuestaId) // el más reciente
+                .OrderByDescending(x => x.OficioRespuestaId) 
                 .FirstOrDefault();
-
             if (match != null)
             {
                 txtCargo.Text = match.CargoDestinatario;
@@ -577,7 +560,6 @@ namespace OficiosTI
         {
             if (string.IsNullOrWhiteSpace(txtCargo.Text))
                 return;
-
             var match = _context.OficioRespuesta
                 .Where(x => x.CargoDestinatario == txtCargo.Text)
                 .OrderByDescending(x => x.OficioRespuestaId)
@@ -592,20 +574,15 @@ namespace OficiosTI
         private void txtDestinatario_TextChanged(object sender, EventArgs e)
         {
             if (_autocompletando) return;
-
             if (_destinatariosCache == null) return;
-
             var texto = txtDestinatario.Text.Trim().ToLower();
-
             if (string.IsNullOrWhiteSpace(texto))
             {
                 txtCargo.Text = "";
                 return;
             }
-
             var match = _destinatariosCache
                 .FirstOrDefault(x => x.Nombre.ToLower().Contains(texto));
-
             if (match != null)
             {
                 _autocompletando = true;
@@ -619,11 +596,9 @@ namespace OficiosTI
             var firmantes = _context.Firmante
                 .Where(x => x.Activo)
                 .ToList();
-
             comboBox1.DataSource = firmantes;
             comboBox1.DisplayMember = "NombreCompleto";
             comboBox1.ValueMember = "FirmanteId";
-
             comboBox1.SelectedIndex = -1;
 
         }
@@ -681,11 +656,6 @@ namespace OficiosTI
                     _autocompletando = false;
                 }
             }*/
-
-
-
-
-
 
 
     }

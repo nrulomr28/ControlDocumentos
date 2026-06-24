@@ -328,10 +328,28 @@ namespace OficiosTI
                     UseShellExecute = true
                 });
             }
+            /*   catch (Exception ex)
+               {
+                   MessageBox.Show($"Ocurrió un error al previsualizar el oficio:\n\n{ex.Message}",
+                                   "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+               }*/
+
             catch (Exception ex)
             {
-                MessageBox.Show($"Ocurrió un error al previsualizar el oficio:\n\n{ex.Message}",
-                                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // 1. Excavamos hasta encontrar la excepción original (el error real)
+                Exception errorReal = ex;
+                while (errorReal.InnerException != null)
+                {
+                    errorReal = errorReal.InnerException;
+                }
+
+                // 2. Armamos un mensaje detallado con el error y DÓNDE ocurrió
+                string mensajeError = $"Ocurrió un error al previsualizar el oficio.\n\n" +
+                                      $"❌ MOTIVO EXACTO:\n{errorReal.Message}\n\n" +
+                                      $"📍 UBICACIÓN DEL ERROR (StackTrace):\n{errorReal.StackTrace}";
+
+                // 3. Mostramos el mensaje (usamos MessageBox con texto expandido)
+                MessageBox.Show(mensajeError, "Error Detallado de Word Interop", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {

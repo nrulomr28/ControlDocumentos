@@ -21,7 +21,6 @@ namespace OficiosTI
     {
         private readonly Ticket _ticket;
         private readonly OficiosContext _context;
-      //  private OficioRespuesta _oficioActual;
 
 
         public FrmTicketDetalle(Ticket ticket, OficiosContext context)
@@ -74,7 +73,6 @@ namespace OficiosTI
 
             CargarHilo();
         }
-
 
         /// BOTON DE GENERAR OFICIO PERO DEENTRO DEL ROW 
        /* private void BtnGenerarOficio_Click(object sender, EventArgs e)
