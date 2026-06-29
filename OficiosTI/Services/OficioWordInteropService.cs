@@ -14,8 +14,8 @@ namespace OficiosTI.Services
             string ruta = Path.Combine(
                 Path.GetTempPath(),
            //   $"oficio_.docx");
-          //  $"oficio_{model.NumeroOficio}.docx");
-           $"oficio_{Guid.NewGuid()}.docx");
+         //  $"oficio_{model.NumeroOficio}.docx");
+          $"oficio_{Guid.NewGuid()}.docx");
 
             WordInterop.Application wordApp = null; 
             WordInterop.Document doc = null;
@@ -160,7 +160,7 @@ namespace OficiosTI.Services
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
                 sel.Font.Bold = 1;
                 sel.TypeText("Atentamente,");
-              //  sel.ParagraphFormat.SpaceBefore = 10f;
+              //sel.ParagraphFormat.SpaceBefore = 10f;
                 sel.TypeParagraph();
                 sel.TypeParagraph();
                 sel.TypeParagraph();

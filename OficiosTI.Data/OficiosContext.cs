@@ -17,5 +17,6 @@ public class OficiosContext : DbContext
     public DbSet<TicketArchivo> TicketArchivo { get; set; }
     public DbSet<Firmante> Firmante { get; set; }
     public DbSet<Oficio1> Oficio1 { get; set; }
-    public DbSet<NumOficio> NumOficio {  get; set; }
+    public DbSet<NumOficio> NumOficio { get; set; }
+    public DbSet<Cat_TicketStatus> Cat_TicketStatus { get; set; }
 }

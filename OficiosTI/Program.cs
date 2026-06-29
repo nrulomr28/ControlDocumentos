@@ -16,13 +16,14 @@ namespace OficiosTI
             //ApplicationConfiguration.Initialize();
             //Application.Run(new FrmTickets());         
             var options = new DbContextOptionsBuilder<OficiosContext>()
-        .UseSqlServer("Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True")
-      //   .UseSqlServer("Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True")
+    // .UseSqlServer("Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True")
+       .UseSqlServer("Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True")
                         .Options;
 
             var context = new OficiosContext(options);
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-            Application.Run(new FrmTickets(context));
+              Application.Run(new FrmTickets(context));
+          //  Application.Run(new FrmPanelTickets(context));
         }
     }
 }

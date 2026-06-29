@@ -208,7 +208,7 @@
             txtDestinatario.Name = "txtDestinatario";
             txtDestinatario.Size = new Size(260, 23);
             txtDestinatario.TabIndex = 7;
-            txtDestinatario.TextChanged += txtDestinatario_TextChanged;
+          //  txtDestinatario.TextChanged += txtDestinatario_TextChanged;
             txtDestinatario.Leave += txtDestinatario_Leave;
             // 
             // lblCargo

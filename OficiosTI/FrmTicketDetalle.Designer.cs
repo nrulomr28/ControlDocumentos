@@ -48,6 +48,8 @@
             labelMensaje = new Label();
             txtMensaje = new TextBox();
             PanelHilo = new Panel();
+            dataGridRelacion = new DataGridView();
+            label1 = new Label();
             labelHilo = new Label();
             dataGridHilo = new DataGridView();
             PanelRespuesta = new Panel();
@@ -59,6 +61,7 @@
             PanelHeader.SuspendLayout();
             PanelDatos.SuspendLayout();
             PanelHilo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridRelacion).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridHilo).BeginInit();
             PanelRespuesta.SuspendLayout();
             PanelAcciones.SuspendLayout();
@@ -71,7 +74,7 @@
             PanelHeader.Dock = DockStyle.Top;
             PanelHeader.Location = new Point(0, 0);
             PanelHeader.Name = "PanelHeader";
-            PanelHeader.Size = new Size(754, 50);
+            PanelHeader.Size = new Size(755, 50);
             PanelHeader.TabIndex = 4;
             // 
             // lblTicketId
@@ -97,7 +100,7 @@
             PanelDatos.Dock = DockStyle.Top;
             PanelDatos.Location = new Point(0, 50);
             PanelDatos.Name = "PanelDatos";
-            PanelDatos.Size = new Size(754, 150);
+            PanelDatos.Size = new Size(755, 150);
             PanelDatos.TabIndex = 1;
             // 
             // labelPersona
@@ -152,13 +155,32 @@
             // PanelHilo
             // 
             PanelHilo.BackColor = Color.White;
+            PanelHilo.Controls.Add(dataGridRelacion);
+            PanelHilo.Controls.Add(label1);
             PanelHilo.Controls.Add(labelHilo);
             PanelHilo.Controls.Add(dataGridHilo);
             PanelHilo.Dock = DockStyle.Fill;
             PanelHilo.Location = new Point(0, 200);
             PanelHilo.Name = "PanelHilo";
-            PanelHilo.Size = new Size(754, 263);
+            PanelHilo.Size = new Size(755, 427);
             PanelHilo.TabIndex = 0;
+            // 
+            // dataGridRelacion
+            // 
+            dataGridRelacion.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridRelacion.Location = new Point(15, 256);
+            dataGridRelacion.Name = "dataGridRelacion";
+            dataGridRelacion.Size = new Size(715, 150);
+            dataGridRelacion.TabIndex = 3;
+            // 
+            // label1
+            // 
+            label1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            label1.Location = new Point(15, 230);
+            label1.Name = "label1";
+            label1.Size = new Size(180, 23);
+            label1.TabIndex = 2;
+            label1.Text = "Tickets Relacionados";
             // 
             // labelHilo
             // 
@@ -186,9 +208,9 @@
             PanelRespuesta.Controls.Add(labelRespuesta);
             PanelRespuesta.Controls.Add(txtRespuesta);
             PanelRespuesta.Dock = DockStyle.Bottom;
-            PanelRespuesta.Location = new Point(0, 463);
+            PanelRespuesta.Location = new Point(0, 627);
             PanelRespuesta.Name = "PanelRespuesta";
-            PanelRespuesta.Size = new Size(754, 120);
+            PanelRespuesta.Size = new Size(755, 120);
             PanelRespuesta.TabIndex = 2;
             // 
             // labelRespuesta
@@ -213,9 +235,9 @@
             PanelAcciones.Controls.Add(BtnGuardarRespuesta);
             PanelAcciones.Controls.Add(BtnGenerarOficio);
             PanelAcciones.Dock = DockStyle.Bottom;
-            PanelAcciones.Location = new Point(0, 583);
+            PanelAcciones.Location = new Point(0, 747);
             PanelAcciones.Name = "PanelAcciones";
-            PanelAcciones.Size = new Size(754, 50);
+            PanelAcciones.Size = new Size(755, 50);
             PanelAcciones.TabIndex = 3;
             // 
             // BtnGuardarRespuesta
@@ -234,13 +256,12 @@
             BtnGenerarOficio.Size = new Size(150, 30);
             BtnGenerarOficio.TabIndex = 1;
             BtnGenerarOficio.Text = "Generar Oficio";
-          //  BtnGenerarOficio.Click += BtnGenerarOficio_Click;
             // 
             // FrmTicketDetalle
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(754, 633);
+            ClientSize = new Size(755, 797);
             Controls.Add(PanelHilo);
             Controls.Add(PanelDatos);
             Controls.Add(PanelRespuesta);
@@ -254,11 +275,15 @@
             PanelDatos.ResumeLayout(false);
             PanelDatos.PerformLayout();
             PanelHilo.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridRelacion).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridHilo).EndInit();
             PanelRespuesta.ResumeLayout(false);
             PanelRespuesta.PerformLayout();
             PanelAcciones.ResumeLayout(false);
             ResumeLayout(false);
         }
+
+        private Label label1;
+        private DataGridView dataGridRelacion;
     }
 }

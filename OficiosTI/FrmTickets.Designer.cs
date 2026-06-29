@@ -43,6 +43,9 @@
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             PanelHeader = new Panel();
+            lbSegmento = new Label();
+            lbDominio = new Label();
+            lbUser = new Label();
             LabelTitulo = new Label();
             PanelFiltros = new Panel();
             LabelBuscar = new Label();
@@ -75,6 +78,9 @@
             // PanelHeader
             // 
             PanelHeader.BackColor = Color.FromArgb(31, 58, 95);
+            PanelHeader.Controls.Add(lbSegmento);
+            PanelHeader.Controls.Add(lbDominio);
+            PanelHeader.Controls.Add(lbUser);
             PanelHeader.Controls.Add(LabelTitulo);
             PanelHeader.Dock = DockStyle.Top;
             PanelHeader.Location = new Point(0, 40);
@@ -82,16 +88,46 @@
             PanelHeader.Size = new Size(1000, 50);
             PanelHeader.TabIndex = 3;
             // 
+            // lbSegmento
+            // 
+            lbSegmento.AutoSize = true;
+            lbSegmento.ForeColor = Color.White;
+            lbSegmento.Location = new Point(831, 32);
+            lbSegmento.Name = "lbSegmento";
+            lbSegmento.Size = new Size(38, 15);
+            lbSegmento.TabIndex = 3;
+            lbSegmento.Text = "label1";
+            // 
+            // lbDominio
+            // 
+            lbDominio.AutoSize = true;
+            lbDominio.ForeColor = Color.White;
+            lbDominio.Location = new Point(500, 32);
+            lbDominio.Name = "lbDominio";
+            lbDominio.Size = new Size(38, 15);
+            lbDominio.TabIndex = 2;
+            lbDominio.Text = "label1";
+            // 
+            // lbUser
+            // 
+            lbUser.AutoSize = true;
+            lbUser.ForeColor = Color.White;
+            lbUser.Location = new Point(3, 0);
+            lbUser.Name = "lbUser";
+            lbUser.Size = new Size(38, 15);
+            lbUser.TabIndex = 1;
+            lbUser.Text = "label1";
+            // 
             // LabelTitulo
             // 
             LabelTitulo.AutoSize = true;
             LabelTitulo.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             LabelTitulo.ForeColor = Color.White;
-            LabelTitulo.Location = new Point(15, 14);
+            LabelTitulo.Location = new Point(3, 26);
             LabelTitulo.Name = "LabelTitulo";
-            LabelTitulo.Size = new Size(140, 21);
+            LabelTitulo.Size = new Size(73, 21);
             LabelTitulo.TabIndex = 0;
-            LabelTitulo.Text = "Tickets - Redes TI";
+            LabelTitulo.Text = "Tickets -";
             // 
             // PanelFiltros
             // 
@@ -353,5 +389,8 @@
         private Button btnAsignar;
         private Button btnOficios;
         private Button btnSinTicket;
+        private Label lbUser;
+        private Label lbDominio;
+        private Label lbSegmento;
     }
 }

@@ -15,12 +15,11 @@ namespace OficiosTI
         private OficiosContext _context;
         private OficioRespuestaService _service;
         private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA 
-        private Oficio1 _oficioAntes;           ////// OFICIO DE DONDE VIENE EL TICKET
-        private DestinatarioService _destinatarioService;
-        private List<DestinatarioItem> _destinatariosCache;
+     // private Oficio1 _oficioAntes;           ////// OFICIO DE DONDE VIENE EL TICKET
+     // private DestinatarioService _destinatarioService;
+     // private List<DestinatarioItem> _destinatariosCache;
         private bool _autocompletando = false;
 
-      //  private CheckBox chkFirmaPorAusencia;
 
         public FrmOficioRespuesta(Ticket ticket, OficiosContext context)
         {
@@ -45,9 +44,8 @@ namespace OficiosTI
             {
                 txtCopias.Text = ObtenerCopiasDefault();
             }
-
-            _destinatarioService = new DestinatarioService(_context);
-            _destinatariosCache = _destinatarioService.ObtenerCatalogo();
+         //   _destinatarioService = new DestinatarioService(_context);
+        //    _destinatariosCache = _destinatarioService.ObtenerCatalogo();
 
             //    ConfigurarAutoComplete();
             //     InicializarFirmantes();
@@ -64,7 +62,6 @@ namespace OficiosTI
             }
                
         }
-
 
         /*
         private void ConfigurarAutoComplete()
@@ -222,9 +219,7 @@ namespace OficiosTI
                 MessageBox.Show("Debe capturar el número de oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             bool esNuevo = _oficioActual.OficioRespuestaId == 0;
-
             if ((esNuevo || _oficioActual.NumeroOficio != txtNumeroOficio.Text)
                 && _service.NumeroOficioExiste(txtNumeroOficio.Text))
             {
@@ -286,13 +281,14 @@ namespace OficiosTI
                 _oficioActual.CargoDestinatario = txtCargo.Text;
                 _oficioActual.CuerpoRespuesta = txtRespuesta.Text;
                 _oficioActual.Copias = txtCopias.Text;
+                _oficioActual.UsuarioId = _service.ObtenerDominioYUsuario();
                 _oficioActual.FirmanteId = firmanteSeleccionado;
                 _service.ActualizarOficio(_oficioActual);
             }
 
             bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
 
-            if (huboCambios)
+          /*  if (huboCambios)
             {
                 string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
 
@@ -306,16 +302,71 @@ namespace OficiosTI
                 _ticket.Cat_TicketStatusId = 3;
                 _service.ActualizarOficio(_oficioActual);
             }
+          */
 
-            /*    if (esNuevo)
+            if (huboCambios)
             {
-                _ticket.Cat_TicketStatusId = 3;
+                string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
+
+                var ticketsAsociados = _context.Ticket
+                    .Where(t => t.id_of == idOficioAnterior)
+                    .ToList();
+
+               
+              /*  foreach (var ticketRelacionado in ticketsAsociados)
+                {
+         
+                    if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
+                    {
+                        _service.RegistrarHiloOficio(ticketRelacionado.TicketId, descripcion);
+                    }
+
+                    
+                    // ticketRelacionado.Cat_TicketStatusId = 3;
+                }
+              */
+
+                foreach (var ticketRelacionado in ticketsAsociados)
+                {
+                    if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
+                    {
+                        string accionAsignada = (ticketRelacionado.TicketId == _ticket.TicketId) ? "CERRADO" : "---";
+
+                        _service.RegistrarHiloOficio(ticketRelacionado.TicketId, descripcion, accionAsignada);
+                    }
+
+                   // ticketRelacionado.Cat_TicketStatusId = 3;
+                }
+
+
+
+                //  _service.ActualizarOficio(_oficioActual);
+                _ticket.Cat_TicketStatusId = 3;   /// ESTADO CERRADO = 3
                 _service.ActualizarOficio(_oficioActual);
+
+                //  _context.SaveChanges();
+
+                MessageBox.Show($"Oficio generado y {ticketsAsociados.Count} ticket(s) cerrado(s) correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
             }
-           */
-            MessageBox.Show("Oficio generado y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            Close();
+
+            
         }
+
+
+
+
+
+
+        /*    if (esNuevo)
+        {
+            _ticket.Cat_TicketStatusId = 3;
+            _service.ActualizarOficio(_oficioActual);
+        }
+       */
+     //   MessageBox.Show("Oficio generado y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+   //         Close();
+      //  }
 
         /*
         private void GuardarOficio()
@@ -336,7 +387,7 @@ namespace OficiosTI
 
             bool esNuevo = _oficioActual == null;
 
-            // 🔥 Snapshot FUERTE (sin dynamic)
+         
             OficioRespuesta snapshotAnterior = null;
 
             if (!esNuevo)
@@ -379,14 +430,14 @@ namespace OficiosTI
                 _service.ActualizarOficio(_oficioActual);
             }
 
-            // 🔥 Detectar cambios reales
+      
             bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
 
             if (huboCambios)
             {
                 string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
 
-                // 🔥 Evitar duplicados en historial
+          
                 if (!_service.HiloYaExiste(_ticket.TicketId, descripcion))
                 {
                     _service.RegistrarHiloOficio(
@@ -571,17 +622,17 @@ namespace OficiosTI
             }
         }
 
-        private void txtDestinatario_TextChanged(object sender, EventArgs e)
+    /*    private void txtDestinatario_TextChanged(object sender, EventArgs e)
         {
             if (_autocompletando) return;
-            if (_destinatariosCache == null) return;
+          if (_destinatariosCache == null) return;
             var texto = txtDestinatario.Text.Trim().ToLower();
             if (string.IsNullOrWhiteSpace(texto))
             {
                 txtCargo.Text = "";
                 return;
-            }
-            var match = _destinatariosCache
+          }
+           var match = _destinatariosCache
                 .FirstOrDefault(x => x.Nombre.ToLower().Contains(texto));
             if (match != null)
             {
@@ -589,7 +640,7 @@ namespace OficiosTI
                 txtCargo.Text = match.Cargo;
                 _autocompletando = false;
             }
-        }
+        }*/
 
         private void CargarFirmantes()
         {

@@ -23,6 +23,7 @@ namespace OficiosTI.Data.Entities
 
         public DateTime FechaCaptura { get; set; }
         public int? TicketId { get; set; }
+        public string? UsuarioId { get; set; }
 
      //   public int ReferenciaOficioId { get; set; }    
     }

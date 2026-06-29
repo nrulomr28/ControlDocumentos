@@ -1,5 +1,7 @@
+using Microsoft.VisualBasic.ApplicationServices;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
+using OficiosTI.Services;
 using OficiosTI.UI;
 using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
@@ -11,17 +13,47 @@ namespace OficiosTI
     {
         private readonly OficiosContext _context;
 
-
+        private OficioRespuestaService _service;
         public FrmTickets(OficiosContext context)
         {
-            InitializeComponent();
             _context = context;
+            _service = new OficioRespuestaService(_context);
+            InitializeComponent();
+          
             InicializarGrid();
             CargarTickets();
             DataGridTickets.DataBindingComplete += DataGridTickets_DataBindingComplete;
             DataGridTickets.CellClick += DataGridTickets_CellClick;
             DataGridTickets.CellFormatting += DataGridTickets_CellFormatting;
+            CargarUser();
+            CargarDominio();
+           
+            ObtenerOrganizacion();
+            string org =    _service.ObtenerUnidadOrganizativa();
+            int idOficina = _service.ObtenerUnidadOrgId(org);
+            ObtenerSegmentoDeRed();
+            // Aplicamos los permisos a los botones
+            AplicarPermisosInterfaz(idOficina, org);
+
         }
+
+        private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
+        {
+            string ou = nombreOU?.Trim().ToUpper() ?? "";
+          if (ou == "DESARROLLO DIGITAL" || ou == "JEFATURA")
+         //   if (ou ==  "JEFATURA")
+            {
+                btnAsignar.Visible = true;
+                btnSinTicket.Enabled = true;            
+            }
+            else
+            {       
+                btnAsignar.Visible = false;
+                btnSinTicket.Visible = false;
+       
+            }
+        }
+       
 
         protected override void OnLoad(EventArgs e)
         {
@@ -29,40 +61,101 @@ namespace OficiosTI
             SigelicXPTheme.ApplyForm(this);
             SigelicXPTheme.ApplyStartButton(BtnAdjuntos);
         }
+        private void CargarUser()
+        {
+            lbUser.Text = $"Usuario: {_service.ObtenerNombreUsuarioRed()}";
+        }
 
-   /*     public void ExtraerInfoBasicaAD()
-            {
-                using (PrincipalContext contexto = new PrincipalContext(ContextType.Domain))
-                {
-                    // Buscamos al usuario actual de Windows
-                    UserPrincipal usuarioAD = UserPrincipal.FindByIdentity(contexto, Environment.UserName);
+        private void CargarDominio()
+        {
+            lbDominio.Text = $"USUARIO Y DOMINIO: {_service.ObtenerDominioYUsuario()}";
+        }
 
-                    if (usuarioAD != null)
-                    {
-                        // Propiedades directas que te da C#
-                        string nombreMostrar = usuarioAD.DisplayName;      
-                        string correo = usuarioAD.EmailAddress;            
-                        string telefono = usuarioAD.VoiceTelephoneNumber;  
-                        string numEmpleado = usuarioAD.EmployeeId;          
-                        string nombrePila = usuarioAD.GivenName;         
-                        string apellidos = usuarioAD.Surname;              
-                    }
-                }
-            }
-   */
-    private void InicializarGrid()
+        private void ObtenerSegmentoDeRed()
+        {
+            lbSegmento.Text = $"Segmento: {_service.ObtenerSegmentoDeRed()}";
+          //  lbSegmento.Text = $"Segmento: {_service.ObtenerUnidadOrgId()}";
+            
+        }
+
+        private void ObtenerOrganizacion()
+        {
+           // lbOrganizacion.Text = $"Departamento: {_service.ObtenerUnidadOrganizativa()}";
+            LabelTitulo.Text =  $"Tickets - {_service.ObtenerUnidadOrganizativa()} TI";
+        }
+        /*     public void ExtraerInfoBasicaAD()
+                 {
+                     using (PrincipalContext contexto = new PrincipalContext(ContextType.Domain))
+                     {
+                         // Buscamos al usuario actual de Windows
+                         UserPrincipal usuarioAD = UserPrincipal.FindByIdentity(contexto, Environment.UserName);
+
+                         if (usuarioAD != null)
+                         {
+                             // Propiedades directas que te da C#
+                             string nombreMostrar = usuarioAD.DisplayName;      
+                             string correo = usuarioAD.EmailAddress;            
+                             string telefono = usuarioAD.VoiceTelephoneNumber;  
+                             string numEmpleado = usuarioAD.EmployeeId;          
+                             string nombrePila = usuarioAD.GivenName;         
+                             string apellidos = usuarioAD.Surname;              
+                         }
+                     }
+                 }
+        */
+        private void InicializarGrid()
         {
             DataGridTickets.AutoGenerateColumns = true;
         }
+
+     /* private void CargarTickets()
+        {
+
+            int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
+            var query = _context.Ticket.AsQueryable();
+            if (_service.EsUsuarioGlobal())
+            {
+
+                query = query.Where(t => t.id_of != null);
+            }
+            else
+            {
+
+                query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null);
+            }
+
+            DataGridTickets.DataSource = query.ToList();
+        }
+     */
+
+        /// MODIFICAR PARA CARGA DE TICKETS
+        /// FALTA PONER EL ESTADO Y LA OFICINA
 
         private void CargarTickets()
         {
             string textoBuscar = TextBuscar.Text.Trim();
             string prioridad = ComboPrioridad.Text;
             string status = ComboStatus.Text;
+            int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
+            string org = _service.ObtenerUnidadOrganizativa();
+            int idorg = _service.ObtenerUnidadOrgId(org);
+            //// OBTENER EL ID DEL DEPARTAMENTO 
+            ///
+            /*  var oficinaEncontrada = _context.Oficinas
+               .FirstOrDefault(q => q.OficinasNombre == org);*/
+            var query = _context.Ticket.AsQueryable();
+        //  var query = _context.Ticket
 
-            var query = _context.Ticket
-           .Where(t => t.OficinasId == 1 && t.id_of != null);    /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
+            if (_service.EsUsuarioGlobal())
+            {
+                query = query.Where(t => t.id_of != null);
+            }
+            else
+            {
+                query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null);
+            }
+           //  .Where(t => t.OficinasId == idorg && t.id_of != null);   /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
+
 
             if (!string.IsNullOrWhiteSpace(textoBuscar))
             {
@@ -83,7 +176,7 @@ namespace OficiosTI
             }
 
             var tickets = query
-                .Select(t => new TicketGridModel
+               .Select(t => new TicketGridModel
                 {
                     TicketId = t.TicketId,
                     TicketPersona = t.TicketPersona,
@@ -91,10 +184,15 @@ namespace OficiosTI
                     TicketPrioridad = t.TicketPrioridad,
                     TicketFecha = t.TicketFecha,
                     Cat_TicketStatusId = t.Cat_TicketStatusId,
+                    OficinasNombre = _context.Oficinas
+                    .Where(o => o.OficinasId == t.OficinasId)
+                    .Select(o =>o.OficinasNombre)
+                    .FirstOrDefault(),                                   
                     NumeroOficio = _context.OficioRespuesta
                         .Where(o => o.TicketId == t.TicketId)
                         .Select(o => o.NumeroOficio)
                         .FirstOrDefault()
+
                 })
                 .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
                 .OrderByDescending(t => t.TicketFecha)
@@ -140,8 +238,13 @@ namespace OficiosTI
             string texto = TextBuscar.Text.Trim();
             string prioridad = ComboPrioridad.Text;
             string status = ComboStatus.Text;
+            string org = _service.ObtenerUnidadOrganizativa();
+            int idorg = _service.ObtenerUnidadOrgId(org);
+            //var oficinaEncontrada = _context.Oficinas
+            //  .FirstOrDefault(q => q.OficinasNombre == org);
+
             var query = _context.Ticket
-                .Where(t => t.OficinasId == 1);    /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
+                .Where(t => t.OficinasId == idorg);    /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
             if (!string.IsNullOrWhiteSpace(texto))
             {
                 query = query.Where(t =>
@@ -268,6 +371,7 @@ namespace OficiosTI
             DataGridTickets.Columns["TicketPrioridad"].HeaderText = "Prioridad";
             DataGridTickets.Columns["TicketFecha"].HeaderText = "Fecha";
             DataGridTickets.Columns["NumeroOficio"].HeaderText = "Oficio";
+             DataGridTickets.Columns["OficinasNombre"].HeaderText = "Oficina";
 
             //ResaltarOficios();
             AgregarColumnaOficio();
@@ -412,7 +516,8 @@ namespace OficiosTI
 
         private void BtnAbrirTicket_Click_1(object sender, EventArgs e)
         {
-
+          //  FrmPanelTickets formAsignar = new FrmPanelTickets();
+            //formAsignar.ShowDialog();
         }
 
 

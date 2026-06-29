@@ -21,7 +21,7 @@ namespace OficiosTI
     {
         private readonly Ticket _ticket;
         private readonly OficiosContext _context;
-
+        private readonly Oficinas _oficinas; 
 
         public FrmTicketDetalle(Ticket ticket, OficiosContext context)
         {
@@ -29,9 +29,11 @@ namespace OficiosTI
 
             _ticket = ticket;
             _context = context;
+            
 
             CargarDatosTicket();
             CargarHilo();
+            CargarTicketsR();
         }
 
         private void CargarDatosTicket()
@@ -48,8 +50,36 @@ namespace OficiosTI
                 .Where(h => h.TicketId == _ticket.TicketId)
                 .OrderBy(h => h.HiloTicketFecha)
                 .ToList();
-
             dataGridHilo.DataSource = hilo;
+        }
+
+
+        private void CargarTicketsR()
+        {
+            if (_ticket == null || _ticket.id_of == 0 || _ticket.id_of == null)
+            {
+                dataGridRelacion.DataSource = null;
+                return;
+            }
+            var ticketsRelacionados = (from t in _context.Ticket
+                                       join o in _context.Oficinas
+                                       on t.OficinasId equals o.OficinasId
+                                       join s in _context.Cat_TicketStatus
+                                       on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
+                                       where t.id_of == _ticket.id_of
+                                       where t.TicketId != _ticket.TicketId
+                                       orderby t.TicketId
+                                       select new
+                                       {
+                                           Ticket = t.TicketId,
+                                           Remitente = t.TicketPersona,
+                                           Asunto = t.TicketMensaje,
+                                           Oficina = o.OficinasNombre,
+                                           Estado = s.Cat_TicketStatusStatus
+                                       }).ToList();
+
+            dataGridRelacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridRelacion.DataSource = ticketsRelacionados;
         }
 
         private void BtnGuardarRespuesta_Click(object sender, EventArgs e)
@@ -63,14 +93,12 @@ namespace OficiosTI
                 HiloTicketFecha = DateTime.Now,
                 HiloTicketAccion = "RESPUESTA",
                 HiloTicketMensaje = txtRespuesta.Text,
-                UsuarioId = 1
+                UsuarioId = 0
             };
 
             _context.HiloTicket.Add(hilo);
             _context.SaveChanges();
-
             txtRespuesta.Clear();
-
             CargarHilo();
         }
 

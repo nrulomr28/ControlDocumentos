@@ -3,7 +3,14 @@ using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.EntityFrameworkCore;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
+using System.DirectoryServices.AccountManagement;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
+
+using System.DirectoryServices;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace OficiosTI.Services
 {
@@ -11,41 +18,17 @@ namespace OficiosTI.Services
     {
         private readonly OficiosContext _context;
         private NumOficio _oficioAnterior; 
-     //   private Oficio1 _oficioAnterior;     ///// OFICIOREFRENCIA
+     // private Oficio1 _oficioAnterior;     ///// OFICIOREFRENCIA
 
         public OficioRespuestaService(OficiosContext context)
         {
-            _context = context;
+          _context = context;
         }
 
         public bool NumeroOficioExiste(string numeroOficio)
         {
             return _context.OficioRespuesta
                 .Any(x => x.NumeroOficio == numeroOficio);
-        }
-
-        public int NumeroTicketExiste(string numeroOficio)
-        {
-
-
-            /// OBTENER PRIMERO EL ID DEL OFICIO PARA BUSCARLO EN LA TABLA DE OficioRespuesta
-            var ofin = _context.NumOficio
-               .Where(x => x.NumeroConsecutivo == numeroOficio)
-               .OrderByDescending(x => x.OficioId)
-               .FirstOrDefault();
-
-       /*     var idTickets = _context.OficioRespuesta
-               .Where(x => x.RespuestaId === ofin)
-               .OrderByDescending(x => x.OficioId)
-               .FirstOrDefault(); 
-       */
-
-            /*     buscar el int en la tabla de numoficio
-                     obtener el id de la tabla el oficioID
-                     y buscarla en la tabla de OficioRespuesta
-            */
-            //  return idTickets;
-            return 0;
         }
 
         public string ObtenerUltimoHilo(int ticketId)
@@ -60,15 +43,177 @@ namespace OficiosTI.Services
 
             return hilo.HiloTicketMensaje;
         }
-
-      /*  public string ObtenerOficioAntes (int IdOf)
+        public string ObtenerNombreUsuarioRed()
         {
-            var OficioAntes = _context.
-                .Where(x => x.TicketId == ticketId)
-                .OrderByDescending(x => x.HiloTicketFecha)
-                .FirstOrDefault();
-      *
-        }*/
+            string nombreUsuarioCorto = Environment.UserName;
+            string nombreMostrar = "Usuario Desconocido";
+
+            try
+            {
+
+                using (PrincipalContext contexto = new PrincipalContext(ContextType.Domain))
+                {
+                    UserPrincipal usuarioAD = UserPrincipal.FindByIdentity(contexto, nombreUsuarioCorto);
+
+                    if (usuarioAD != null)
+                    {
+                        nombreMostrar = usuarioAD.DisplayName;
+                    }
+                }
+            }
+            catch
+            {
+                nombreMostrar = nombreUsuarioCorto;
+            }
+
+            return nombreMostrar;
+        }
+
+        public string ObtenerDominioYUsuario()
+        {
+         //string dominioCompleto = IPGlobalProperties.GetIPGlobalProperties().DomainName;
+           string dominio = Environment.UserDomainName;
+           string usuario = Environment.UserName;
+
+           return $"{dominio}\\{usuario}";
+         //   return $"{dominioCompleto}\\{usuario}";
+        }
+
+        public string ObtenerSegmentoDeRed()
+        {
+            foreach (NetworkInterface adaptador in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                 if (adaptador.OperationalStatus == OperationalStatus.Up &&
+                    adaptador.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                {
+                    IPInterfaceProperties propiedades = adaptador.GetIPProperties();
+
+                    foreach (UnicastIPAddressInformation ipInfo in propiedades.UnicastAddresses)
+                    {
+                        if (ipInfo.Address.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            string ip = ipInfo.Address.ToString();
+                            string mascara = ipInfo.IPv4Mask.ToString();
+
+                            string segmentoBase = CalcularDireccionDeRed(ipInfo.Address, ipInfo.IPv4Mask);
+
+                            return $": {segmentoBase} (IP: {ip} / Máscara: {mascara})";
+                        }
+                    }
+                }
+            }
+            return "Red no detectada";
+        }
+
+        private string CalcularDireccionDeRed(IPAddress ipAddress, IPAddress subnetMask)
+        {
+            byte[] ipBytes = ipAddress.GetAddressBytes();
+            byte[] maskBytes = subnetMask.GetAddressBytes();
+            byte[] networkBytes = new byte[ipBytes.Length];
+
+            for (int i = 0; i < networkBytes.Length; i++)
+            {
+                networkBytes[i] = (byte)(ipBytes[i] & maskBytes[i]);
+            }
+            return new IPAddress(networkBytes).ToString();
+        }
+
+
+
+        public string ObtenerUnidadOrganizativa()
+        {
+            string nombreOU = "Sin UO";
+
+            try
+            {
+                using (PrincipalContext contexto = new PrincipalContext(ContextType.Domain))
+                {
+                    UserPrincipal usuario = UserPrincipal.FindByIdentity(contexto, Environment.UserName);
+                    if (usuario != null && !string.IsNullOrEmpty(usuario.DistinguishedName))
+                    {
+                        string[] partesDistinguishedName = usuario.DistinguishedName.Split(',');
+                        foreach (string parte in partesDistinguishedName)
+                        {
+                            if (parte.Trim().StartsWith("OU="))
+                            {
+                                nombreOU = parte.Replace("OU=", "").Trim();
+
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                nombreOU = "Fuera de dominio";
+            }
+
+            return nombreOU;
+        }
+      
+        public int ObtenerUnidadOrgId(string nombreOU)
+        {   //// OBTENER EL ID DEL DEPARTAMENTO          
+          string org  =  ObtenerUnidadOrganizativa();
+
+            var oficina =  _context.Oficinas
+                                  .FirstOrDefault(q => q.OficinasNombre == nombreOU);
+            return oficina?.OficinasId ?? 0;
+        }
+
+
+        public bool EsUsuarioGlobal()
+        {
+            string org = ObtenerUnidadOrganizativa();
+            var globales = new List<string> { "DESARROLLO DIGITAL", "JEFATURA", "REDES", "CONTROL Y RESGUARDO DE LA INFORMACION" };
+            return globales.Contains(org?.Trim().ToUpper() ?? "");
+        }
+
+
+        /*  public int NumeroTicketExiste(string numeroOficio)
+            {
+                /// OBTENER PRIMERO EL ID DEL OFICIO PARA BUSCARLO EN LA TABLA DE OficioRespuesta
+                var ofin = _context.NumOficio
+                   .Where(x => x.NumeroConsecutivo == numeroOficio)
+                   .OrderByDescending(x => x.OficioId)
+                   .FirstOrDefault();
+
+
+                return 0;
+            }
+        */
+
+        /*    private int ObtenerUnidadOrgId()
+                  {
+                      string org = ObtenerUnidadOrganizativa();
+
+                      var oficina = _context.Oficinas
+                                            .FirstOrDefault(q => q.OficinasNombre == org);
+
+                      // Devolvemos el ID si se encontró, o 0 si no existe
+                      return oficina != null ? oficina.OficinasId : 0;
+                  }
+        */
+
+        /*    private void ObtenerUnidaOrgId()
+                  {   //// OBTENER EL ID DEL DEPARTAMENTO            
+                         string org = ObtenerUnidadOrganizativa();
+                         var oficinaEncontrada = _context.Oficinas
+                          .FirstOrDefault(q => q.OficinasNombre == org);
+                         return  oficinaEncontrada; 
+                  }
+
+       */
+
+        /*  public string ObtenerOficioAntes (int IdOf)
+          {
+              var OficioAntes = _context.
+                  .Where(x => x.TicketId == ticketId)
+                  .OrderByDescending(x => x.HiloTicketFecha)
+                  .FirstOrDefault();
+       
+          }
+       */
 
         /*
         public OficioRespuesta CrearOficio(
@@ -82,7 +227,7 @@ namespace OficiosTI.Services
             string copias,
             int firmanteid)
         {
-         
+
             var oficio = new OficioRespuesta
             {
                 TicketId = ticketId,
@@ -129,9 +274,7 @@ namespace OficiosTI.Services
             string copias,
             int? firmanteid,
             int?OficioId) 
-        {
-            
-
+        {           
             var oficio = new OficioRespuesta
             {
                 TicketId = ticketId,
@@ -142,11 +285,13 @@ namespace OficiosTI.Services
                 CargoDestinatario = cargo,
                 CuerpoRespuesta = respuesta,
                 Copias = copias,
+                UsuarioId = ObtenerNombreUsuarioRed(),
                 FechaOficio = DateTime.Now,
                 FechaCaptura = DateTime.Now,
                 Anio = (short)DateTime.Now.Year,
                 OficioId = OficioId,         
                 FirmanteId = firmanteid
+
             };
 
             
@@ -163,7 +308,8 @@ namespace OficiosTI.Services
             int Oficinas_Id,
             int Tipo,
             int Anio,
-            int TicketId)
+            int TicketId,
+            string UsuarioId)
         {
             var nuevoNumOficio = new NumOficio
             {
@@ -173,7 +319,8 @@ namespace OficiosTI.Services
                 Tipo = Tipo,
                 Anio = Anio,
                 FechaCaptura=DateTime.Now,
-                TicketId= TicketId
+                TicketId= TicketId,
+                UsuarioId = UsuarioId
 
             };
             _context.NumOficio.Add(nuevoNumOficio);
@@ -288,6 +435,7 @@ namespace OficiosTI.Services
             _context.SaveChanges();
         }
 
+        /*
         public void RegistrarHiloOficio(int ticketId, string numeroOficio)
         {
             var hilo = new HiloTicket
@@ -295,7 +443,7 @@ namespace OficiosTI.Services
                 TicketId = ticketId,
                 HiloTicketFecha = DateTime.Now,
                 HiloTicketAccion = "CERRADO",
-                HiloTicketMensaje = $"Oficio {numeroOficio} emitido como respuesta.",
+                HiloTicketMensaje = numeroOficio,
                 UsuarioId = 0 
             };
 
@@ -303,7 +451,24 @@ namespace OficiosTI.Services
 
             _context.SaveChanges();
         }
+        */
+   
+        public void RegistrarHiloOficio(int ticketId, string numeroOficio, string accion = "CERRADO")
+        {
+            var hilo = new HiloTicket
+            {
+                TicketId = ticketId,
+                HiloTicketFecha = DateTime.Now,
 
+                HiloTicketAccion = accion,
+
+                HiloTicketMensaje = numeroOficio,
+                UsuarioId = 0
+            };
+
+            _context.HiloTicket.Add(hilo);
+            _context.SaveChanges();
+        }
         public bool HiloYaExiste(int ticketId, string descripcion)
         {
             return _context.HiloTicket

@@ -47,7 +47,7 @@ namespace OficiosTI
                     break;
 
                 case 2:
-                    //CargarPorAnalista();
+                  //  CargarPorAnalista();
                     break;
 
                 case 3:
@@ -167,25 +167,25 @@ namespace OficiosTI
             ActualizarIndicadores(tickets);
         }
 
-        //private void CargarPorAnalista()
-        //{
-        //    var data = BaseQuery()
-        //.Where(t => !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId))
-        //.GroupBy(t => new { t.TicketUUsuario, t.UsuarioNombre })
-        //.Select(g => new TicketPorAnalistaDto
-        //{
-        //    UsuarioId = g.Key.TicketUUsuario,
-        //    Analista = g.Key.UsuarioNombre,
-        //    Total = g.Count(),
-        //    Urgentes = g.Count(t => t.TicketPrioridad == "Alta")            
-        //})
-        //.OrderByDescending(x => x.Urgentes)
-        //.ThenByDescending(x => x.Total)
-        //.ToList();
+  /*    private void CargarPorAnalista()
+        {
+            var data = BaseQuery()
+        .Where(t => !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId))
+        .GroupBy(t => new { t.TicketUUsuario, t.UsuarioNombre })
+        .Select(g => new TicketPorAnalistaDto
+        {
+            UsuarioId = g.Key.TicketUUsuario,
+            Analista = g.Key.UsuarioNombre,
+            Total = g.Count(),
+            Urgentes = g.Count(t => t.TicketPrioridad == "Alta")            
+        })
+        .OrderByDescending(x => x.Urgentes)
+        .ThenByDescending(x => x.Total)
+        .ToList();
 
-        //    gridAnalista.DataSource = data;
-        //}
-
+            gridAnalista.DataSource = data;
+        }
+  */
         private void CargarCerradosSinOficio()
         {
             var query = BaseQuery()
@@ -199,7 +199,7 @@ namespace OficiosTI
         private IQueryable<Ticket> BaseQuery()
         {
             return _context.Ticket
-                .Where(t => t.OficinasId == 1);    //// 1 REDES, 2 CONTROL Y RESGUARDO, DESARRROLLO
+                .Where(t => t.OficinasId == 3);    //// 1 REDES, 2 CONTROL Y RESGUARDO, DESARRROLLO
         }
 
         private void CargarTodos()

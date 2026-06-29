@@ -17,7 +17,6 @@ namespace OficiosTI.Services
             _context = context;
         }
 
-
         /// <summary>
         /// SE OBTIENE DE LA TABLA DE OFICIOREMITENTE //////
         /// </summary>

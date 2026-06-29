@@ -27,7 +27,7 @@ namespace OficiosTI.Data.Entities
 
         public string? Copias { get; set; }
 
-        public int? UsuarioId { get; set; }
+        public string? UsuarioId { get; set; }
 
         public DateTime FechaOficio { get; set; }
 

@@ -22,16 +22,13 @@ namespace OficiosTI
         public FrmAdjuntos(int ticketId, OficiosContext context)
         {
             InitializeComponent();
-
             _ticketId = ticketId;
-            _context = context;
-            
+            _context = context;            
             dataGridArchivos.CellMouseEnter += (s, e) =>
             {
                 if (e.RowIndex >= 0)
                     dataGridArchivos.Cursor = Cursors.Hand;
             };
-
             CargarArchivos();
             dataGridArchivos.DataBindingComplete += DataGridArchivos_DataBindingComplete;
         }
@@ -40,16 +37,12 @@ namespace OficiosTI
         {
             if (dataGridArchivos.Columns.Count == 0)
                 return;
-
             if (dataGridArchivos.Columns["TicketArchivoId"] != null)
                 dataGridArchivos.Columns["TicketArchivoId"].Visible = false;
-
             if (dataGridArchivos.Columns["TipoMime"] != null)
                 dataGridArchivos.Columns["TipoMime"].Visible = false;
-
             if (dataGridArchivos.Columns["NombreArchivo"] != null)
                 dataGridArchivos.Columns["NombreArchivo"].HeaderText = "Archivo";
-
             if (dataGridArchivos.Columns["Extension"] != null)
             {
                 dataGridArchivos.Columns["Extension"].HeaderText = "Tipo";
@@ -100,7 +93,6 @@ namespace OficiosTI
                 Archivo = bytes, 
                 FechaCarga = DateTime.Now
             };
-
             _context.TicketArchivo.Add(archivo);
             _context.SaveChanges();
 

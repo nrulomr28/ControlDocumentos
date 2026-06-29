@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.DirectoryServices.AccountManagement;
 
 namespace OficiosTI
 {
@@ -22,7 +23,7 @@ namespace OficiosTI
         private OficiosContext _context;
         private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA 
 
-        private NumOficio _oficioconse;
+      //private NumOficio _oficioconse;
         private OficioRespuestaService _service;
 
      /*   public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp)
@@ -45,9 +46,11 @@ namespace OficiosTI
         {
             InitializeComponent();
             _context = context;
+            _service = new OficioRespuestaService(_context);
             _oficioActual = OficioResp;
             CargarFirma();
-            //CargarOficios(3);
+          //CargarOficios(3);
+          //TuFormulario_Load();
             if (string.IsNullOrEmpty(txtCcp.Text))
             {
                 txtCcp.Text = ObtenerCopiasDefault();
@@ -72,6 +75,7 @@ namespace OficiosTI
         }
 
 
+
         /*   private void CargarOficios(int idOficinaDeseada)
            {
                if (_context == null) return;
@@ -86,30 +90,30 @@ namespace OficiosTI
                cmbOf.ValueMember = "OficioId";
            }
         */
-      /*  private void CargarOficios(int idOficinaDeseada)
-        {
-            if (_context == null) return;
+        /*  private void CargarOficios(int idOficinaDeseada)
+          {
+              if (_context == null) return;
 
-            var of_conse = (from num in _context.NumOficio
-                            join resp in _context.OficioRespuesta
-                            on num.OficioId equals resp.RespuestaId
-                            where num.Oficinas_Id == idOficinaDeseada
-                            where resp.TicketId == 0 || resp.TicketId == null
-                            orderby num.OficioId descending
-                            select new
-                            {
-                                oficioRespuestaId = resp.OficioRespuestaId,
-                                NumeroOficio = resp.NumeroOficio
-                            }).ToList();
+              var of_conse = (from num in _context.NumOficio
+                              join resp in _context.OficioRespuesta
+                              on num.OficioId equals resp.RespuestaId
+                              where num.Oficinas_Id == idOficinaDeseada
+                              where resp.TicketId == 0 || resp.TicketId == null
+                              orderby num.OficioId descending
+                              select new
+                              {
+                                  oficioRespuestaId = resp.OficioRespuestaId,
+                                  NumeroOficio = resp.NumeroOficio
+                              }).ToList();
 
-            cmbOf.DataSource = of_conse;
-            cmbOf.DisplayMember = "NumeroOficio";
-            cmbOf.ValueMember = "oficioRespuestaId";
+              cmbOf.DataSource = of_conse;
+              cmbOf.DisplayMember = "NumeroOficio";
+              cmbOf.ValueMember = "oficioRespuestaId";
 
-            cmbOf.SelectedIndex = -1;
-        }
+              cmbOf.SelectedIndex = -1;
+          }
 
-        */
+          */
         /*
         private void CargarOficios(int idOficinaDeseada)
         {
@@ -233,6 +237,8 @@ namespace OficiosTI
 
         }
 
+
+   
         private void GuardarOficio()
         {
             try
@@ -251,6 +257,7 @@ namespace OficiosTI
                 _oficioActual.CargoDestinatario = txtCrgo.Text.Trim();
                 _oficioActual.CuerpoRespuesta = txtRespC.Text.Trim();
                 _oficioActual.Copias = txtCcp.Text.Trim();
+                _oficioActual.UsuarioId = _service.ObtenerDominioYUsuario();
 
                 if (cmbFirmas.SelectedValue != null)
                 {
@@ -284,10 +291,7 @@ namespace OficiosTI
             try
             {
                 this.Cursor = Cursors.WaitCursor;
-
-
                 string textoCombo = cmbFirmas.Text;
-
                 string nombreExtraido = textoCombo;
                 string cargoExtraido = "Sin Cargo";
 
@@ -317,6 +321,7 @@ namespace OficiosTI
                     DirectorNombre = nombreExtraido,
                     DirectorCargo = cargoExtraido,
 
+
                 };
 
                 var servicio = new OficioWordInteropService();
@@ -336,19 +341,16 @@ namespace OficiosTI
 
             catch (Exception ex)
             {
-                // 1. Excavamos hasta encontrar la excepción original (el error real)
                 Exception errorReal = ex;
                 while (errorReal.InnerException != null)
                 {
                     errorReal = errorReal.InnerException;
                 }
 
-                // 2. Armamos un mensaje detallado con el error y DÓNDE ocurrió
                 string mensajeError = $"Ocurrió un error al previsualizar el oficio.\n\n" +
-                                      $"❌ MOTIVO EXACTO:\n{errorReal.Message}\n\n" +
-                                      $"📍 UBICACIÓN DEL ERROR (StackTrace):\n{errorReal.StackTrace}";
+                                      $"MOTIVO:\n{errorReal.Message}\n\n" +
+                                      $"UBICACIÓN DEL ERROR (StackTrace):\n{errorReal.StackTrace}";
 
-                // 3. Mostramos el mensaje (usamos MessageBox con texto expandido)
                 MessageBox.Show(mensajeError, "Error Detallado de Word Interop", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
