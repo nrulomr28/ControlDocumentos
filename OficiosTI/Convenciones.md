@@ -1,7 +1,9 @@
-﻿Acta de Fundación – OficiosTI
+﻿## Fecha: 30 de junio de 2026
+ 
+ OficiosTI
 
-Fecha: 30 de junio de 2026
 
+## Versión: v0.1.0-foundation
 En esta fecha se establece oficialmente la identidad y la arquitectura base del proyecto OficiosTI, concebido como el Sistema de Gestión de Oficios y Documentación de Tecnologías de la Información.
 
 A partir de esta versión se adopta una arquitectura modular, orientada a facilitar el mantenimiento, la escalabilidad y el crecimiento ordenado del sistema.
