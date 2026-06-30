@@ -10,13 +10,15 @@ namespace OficiosTI
     public partial class FrmPanelTickets : Form
     {
         private readonly OficiosContext _context;
-        private readonly TicketDashboardQueryService _dashboardQueryService;
+        private readonly TicketDashboardService _dashboardService;
+        private readonly TicketDashboardRepository _dashboardQueryService;        
         public FrmPanelTickets(OficiosContext context)
         {
             InitializeComponent();
             _context = context;
-            tabControlMain.SelectedIndexChanged += tabControlMain_SelectedIndexChanged;
-            _dashboardQueryService = new TicketDashboardQueryService(_context);
+            _dashboardQueryService = new TicketDashboardRepository(_context);
+            _dashboardService = new TicketDashboardService(_dashboardQueryService);
+            tabControlMain.SelectedIndexChanged += tabControlMain_SelectedIndexChanged;            
         }
 
         protected override void OnLoad(EventArgs e)
@@ -127,13 +129,10 @@ namespace OficiosTI
         
         private void CargarPendientes()
         {
-            var tickets = _dashboardQueryService
-                        .QueryTicketsBase()
-                        .Where(t => t.NumeroOficio == null)
-                        .OrderByDescending(t => t.TicketFecha)
-                        .ToList();
+            var tickets = _dashboardService.ObtenerPendientes();
 
             gridPendientes.DataSource = tickets;
+
             ActualizarIndicadores(tickets);
         }
 

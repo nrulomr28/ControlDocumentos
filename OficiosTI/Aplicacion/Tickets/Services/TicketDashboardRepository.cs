@@ -6,11 +6,11 @@ using OficiosTI.Data.Entities;
 
 namespace OficiosTI.Aplicacion.Tickets.Services;
 
-public class TicketDashboardQueryService
+public class TicketDashboardRepository
 {
     private readonly OficiosContext _context;
 
-    public TicketDashboardQueryService(OficiosContext context)
+    public TicketDashboardRepository(OficiosContext context)
     {
         _context = context;
     }
