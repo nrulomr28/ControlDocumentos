@@ -1,4 +1,5 @@
 ﻿using OficiosTI.Aplicacion.DTOs;
+using OficiosTI.Aplicacion.Tickets.Services;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 using OficiosTI.UI;
@@ -17,11 +18,13 @@ namespace OficiosTI
     public partial class FrmPanelTickets : Form
     {
         private readonly OficiosContext _context;
+        private readonly TicketDashboardQueryService _dashboardQueryService;
         public FrmPanelTickets(OficiosContext context)
         {
             InitializeComponent();
             _context = context;
             tabControlMain.SelectedIndexChanged += tabControlMain_SelectedIndexChanged;
+            _dashboardQueryService = new TicketDashboardQueryService(_context);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -136,56 +139,20 @@ namespace OficiosTI
         }
 
 
-        private List<TicketGridModel> Mapear(IQueryable<Ticket> query)
-        {
-            return query
-                .Select(t => new TicketGridModel
-                {
-                    TicketId = t.TicketId,
-                    TicketPersona = t.TicketPersona,
-                    TicketAsunto = t.TicketAsunto,
-                    TicketPrioridad = t.TicketPrioridad,
-                    TicketFecha = t.TicketFecha,
-
-                    NumeroOficio = _context.OficioRespuesta
-                        .Where(o => o.TicketId == t.TicketId)
-                        .Select(o => o.NumeroOficio)
-                        .FirstOrDefault()
-                })
-                .OrderByDescending(t => t.TicketFecha)
-                .ToList();
-        }
+        
 
         private void CargarPendientes()
         {
-            var tickets = QueryTicketsBase()
-                .Where(t => t.NumeroOficio == null)
-                .OrderByDescending(t => t.TicketFecha)
-                .ToList();
+            var tickets = _dashboardQueryService
+                        .QueryTicketsBase()
+                        .Where(t => t.NumeroOficio == null)
+                        .OrderByDescending(t => t.TicketFecha)
+                        .ToList();
 
             gridPendientes.DataSource = tickets;
             ActualizarIndicadores(tickets);
         }
 
-  /*    private void CargarPorAnalista()
-        {
-            var data = BaseQuery()
-        .Where(t => !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId))
-        .GroupBy(t => new { t.TicketUUsuario, t.UsuarioNombre })
-        .Select(g => new TicketPorAnalistaDto
-        {
-            UsuarioId = g.Key.TicketUUsuario,
-            Analista = g.Key.UsuarioNombre,
-            Total = g.Count(),
-            Urgentes = g.Count(t => t.TicketPrioridad == "Alta")            
-        })
-        .OrderByDescending(x => x.Urgentes)
-        .ThenByDescending(x => x.Total)
-        .ToList();
-
-            gridAnalista.DataSource = data;
-        }
-  */
         private void CargarCerradosSinOficio()
         {
             var query = BaseQuery()
@@ -193,9 +160,11 @@ namespace OficiosTI
                     t.Cat_TicketStatusId == 3 && // ajusta si cambia
                     !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId));
 
-            gridCerrados.DataSource = Mapear(query);
+            gridCerrados.DataSource =
+                _dashboardQueryService.Mapear(query);
         }
 
+        
         private IQueryable<Ticket> BaseQuery()
         {
             return _context.Ticket
@@ -206,29 +175,14 @@ namespace OficiosTI
         {
             var query = BaseQuery();
 
-            gridTodos.DataSource = Mapear(query);
+            gridTodos.DataSource = 
+                _dashboardQueryService.Mapear(query);
         }
 
+        [Obsolete("Movido a TicketDashboardQueryService")]
         private IQueryable<TicketGridModel> QueryTicketsBase()
         {
-            var fechaLimite = DateTime.Now.AddMonths(-8);
-
-            return
-                from t in BaseQuery()
-                join o in _context.OficioRespuesta
-                    on t.TicketId equals o.TicketId into oficios
-                from o in oficios.DefaultIfEmpty()
-                where t.TicketFecha >= fechaLimite
-                select new TicketGridModel
-                {
-                    TicketId = t.TicketId,
-                    TicketPersona = t.TicketPersona,
-                    TicketAsunto = t.TicketAsunto,
-                    TicketPrioridad = t.TicketPrioridad,
-                    TicketFecha = t.TicketFecha,
-                    Cat_TicketStatusId = t.Cat_TicketStatusId,
-                    NumeroOficio = o.NumeroOficio
-                };
+            return _dashboardQueryService.QueryTicketsBase();
         }
     }
 }
