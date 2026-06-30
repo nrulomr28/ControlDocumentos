@@ -56,7 +56,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Aplicacion\Tickets\DTOs\" />
     <Folder Include="Aplicacion\Tickets\Interfaces\" />
   </ItemGroup>
 

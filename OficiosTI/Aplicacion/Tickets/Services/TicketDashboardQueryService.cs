@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OficiosTI.Aplicacion.DTOs;
+using OficiosTI.Aplicacion.Tickets.DTOs;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 
@@ -62,5 +63,21 @@ public class TicketDashboardQueryService
             .ToList();
     }
 
+    public DashboardIndicadoresDto ObtenerIndicadores(IEnumerable<TicketGridModel> tickets)
+    {
+        var lista = tickets.ToList();
+
+        int total = lista.Count;
+
+        int respondidos = lista.Count(t =>
+            !string.IsNullOrWhiteSpace(t.NumeroOficio));
+
+        return new DashboardIndicadoresDto
+        {
+            Total = total,
+            Respondidos = respondidos,
+            Pendientes = total - respondidos
+        };
+    }
 
 }
