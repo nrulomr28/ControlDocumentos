@@ -2,7 +2,7 @@
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 using OficiosTI.Documents;
-using OficiosTI.Services;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.DirectoryServices.AccountManagement;
+using OficiosTI.Aplicacion.Services;
 
 namespace OficiosTI
 {

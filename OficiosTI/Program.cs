@@ -6,24 +6,44 @@ namespace OficiosTI
     internal static class Program
     {
         /// <summary>
-        ///  The main entry point for the application.
+        /// Punto de entrada principal de la aplicación.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            //ApplicationConfiguration.Initialize();
-            //Application.Run(new FrmTickets());         
-            var options = new DbContextOptionsBuilder<OficiosContext>()
-    // .UseSqlServer("Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True")
-       .UseSqlServer("Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True")
-                        .Options;
+            // Configuración estándar de WinForms (.NET 6+)
+            ApplicationConfiguration.Initialize();
 
-            var context = new OficiosContext(options);
-            QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-              Application.Run(new FrmTickets(context));
-          //  Application.Run(new FrmPanelTickets(context));
+            // ==========================================
+            // CADENA DE CONEXIÓN
+            // ==========================================
+
+            const string ConnectionString =
+                "Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True";
+
+            // Desarrollo local
+            // const string ConnectionString =
+            //     "Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True";
+
+            var options = new DbContextOptionsBuilder<OficiosContext>()
+                .UseSqlServer(ConnectionString)
+                .Options;
+
+            // Se libera automáticamente al cerrar la aplicación
+            using var context = new OficiosContext(options);
+
+            // Configuración de QuestPDF 
+            // Migrado a ReportingServices
+            //QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
+            // ==========================================
+            // FORMULARIO INICIAL
+            // ==========================================
+
+            Application.Run(new FrmTickets(context));
+
+            // Alternativas para pruebas
+            // Application.Run(new FrmPanelTickets(context));
         }
     }
 }

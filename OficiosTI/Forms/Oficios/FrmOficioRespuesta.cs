@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OficiosTI.Aplicacion.Services;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 using OficiosTI.Documents;
 using OficiosTI.Models;
-using OficiosTI.Services;
+
 using System.Data;
 using System.Diagnostics;
 

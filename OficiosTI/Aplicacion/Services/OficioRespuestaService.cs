@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
 
-namespace OficiosTI.Services
+namespace OficiosTI.Aplicacion.Services
 {
     public class OficioRespuestaService
     {

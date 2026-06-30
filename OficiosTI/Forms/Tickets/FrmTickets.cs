@@ -1,7 +1,7 @@
 using Microsoft.VisualBasic.ApplicationServices;
+using OficiosTI.Aplicacion.Services;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
-using OficiosTI.Services;
 using OficiosTI.UI;
 using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
@@ -58,8 +58,8 @@ namespace OficiosTI
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            SigelicXPTheme.ApplyForm(this);
-            SigelicXPTheme.ApplyStartButton(BtnAdjuntos);
+            XPTheme.ApplyForm(this);
+            XPTheme.ApplyStartButton(BtnAdjuntos);
         }
         private void CargarUser()
         {

@@ -28,8 +28,8 @@ namespace OficiosTI
         {
             base.OnLoad(e);
 
-            SigelicXPTheme.ApplyForm(this);
-            SigelicXPTheme.ApplyStartButton(btnAdjuntos);
+            XPTheme.ApplyForm(this);
+            XPTheme.ApplyStartButton(btnAdjuntos);
             CargarPendientes(); 
 
         }

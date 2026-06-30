@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OficiosTI.UI
 {
-    public static class SigelicXPTheme
+    public static class XPTheme
     {
         public static Color Primary = Color.FromArgb(10, 36, 106); // azul XP
         public static Color Light = Color.FromArgb(236, 233, 216); // fondo XP

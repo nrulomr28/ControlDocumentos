@@ -4,7 +4,7 @@ using OficiosTI.Documents;
 using System.Runtime.InteropServices;
 using WordInterop = Microsoft.Office.Interop.Word;
 
-namespace OficiosTI.Services
+namespace OficiosTI.Aplicacion.Services
 {
     public class OficioWordInteropService
     {
