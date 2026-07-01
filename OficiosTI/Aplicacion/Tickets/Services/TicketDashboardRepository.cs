@@ -80,4 +80,23 @@ public class TicketDashboardRepository
         };
     }
 
+    public List<TicketGridModel> ObtenerCerradosSinOficio()
+    {
+        var query = BaseQuery()
+            .Where(t =>
+                t.Cat_TicketStatusId == 3 &&
+                !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId));
+
+        return Mapear(query);
+    }
+
+    public Ticket? ObtenerTicket(int ticketId)
+    {
+        return _context.Ticket.Find(ticketId);
+    }
+
+    public List<TicketGridModel> ObtenerTodos()
+    {
+        return Mapear(BaseQuery());
+    }
 }

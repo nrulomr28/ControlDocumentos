@@ -57,6 +57,7 @@
 
   <ItemGroup>
     <Folder Include="Aplicacion\Tickets\Interfaces\" />
+    <Folder Include="Infraestructura\" />
   </ItemGroup>
 
 </Project>

@@ -3,21 +3,19 @@ using OficiosTI.Aplicacion.Tickets.Services;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 using OficiosTI.UI;
-using System.Data;
 
 namespace OficiosTI
 {
     public partial class FrmPanelTickets : Form
     {
         private readonly OficiosContext _context;
-        private readonly TicketDashboardService _dashboardService;
-        private readonly TicketDashboardRepository _dashboardQueryService;        
+        private readonly TicketDashboardService _dashboardService;       
         public FrmPanelTickets(OficiosContext context)
         {
             InitializeComponent();
             _context = context;
-            _dashboardQueryService = new TicketDashboardRepository(_context);
-            _dashboardService = new TicketDashboardService(_dashboardQueryService);
+            
+            _dashboardService = new TicketDashboardService(_context);
             tabControlMain.SelectedIndexChanged += tabControlMain_SelectedIndexChanged;            
         }
 
@@ -113,14 +111,15 @@ namespace OficiosTI
             if (DataGridTickets.CurrentRow == null)
                 return null;
 
-            var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
+            if (DataGridTickets.CurrentRow.DataBoundItem is not TicketGridModel gridItem)
+                return null;
 
-            return _context.Ticket.Find(gridItem.TicketId);
+            return _dashboardService.ObtenerTicket(gridItem.TicketId);
         }
 
         private void ActualizarIndicadores(List<TicketGridModel> tickets)
         {
-            var indicadores = _dashboardQueryService.ObtenerIndicadores(tickets);
+            var indicadores = _dashboardService.ObtenerIndicadores(tickets);
 
             LabelTotalTickets.Text = $"Tickets derivados: {indicadores.Total}";
             LabelRespondidos.Text = $"Respondidos: {indicadores.Respondidos}";
@@ -138,30 +137,14 @@ namespace OficiosTI
 
         private void CargarCerradosSinOficio()
         {
-            var query = 
-                _dashboardQueryService.BaseQuery()
-                .Where(t =>
-                    t.Cat_TicketStatusId == 3 && // ajusta si cambia
-                    !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId));
-
             gridCerrados.DataSource =
-                _dashboardQueryService.Mapear(query);
+                       _dashboardService.ObtenerCerradosSinOficio();
         }
-
-        [Obsolete("Movido a TicketDashboardQueryService")]
-        private IQueryable<Ticket> BaseQuery()
-        {
-            return 
-                _dashboardQueryService.BaseQuery();
-        }
-
+        
         private void CargarTodos()
         {
-            var query = 
-                _dashboardQueryService.BaseQuery();
-
-            gridTodos.DataSource = 
-                _dashboardQueryService.Mapear(query);
+            gridTodos.DataSource =
+                    _dashboardService.ObtenerTodos();
         }
         
     }
