@@ -47,6 +47,7 @@
         private void InitializeComponent()
         {
             panelHeader = new Panel();
+            lbTicket = new Label();
             lblTitulo = new Label();
             panelFormulario = new Panel();
             label1 = new Label();
@@ -69,8 +70,6 @@
             btnGuardar = new Button();
             btnPreview = new Button();
             lblFirmante = new Label();
-          //  comboFirmantes = new ComboBox();
-         //   chkFirmaPorAusencia = new CheckBox();
             panelHeader.SuspendLayout();
             panelFormulario.SuspendLayout();
             panelBotones.SuspendLayout();
@@ -79,12 +78,24 @@
             // panelHeader
             // 
             panelHeader.BackColor = Color.FromArgb(0, 51, 102);
+            panelHeader.Controls.Add(lbTicket);
             panelHeader.Controls.Add(lblTitulo);
             panelHeader.Dock = DockStyle.Top;
             panelHeader.Location = new Point(0, 0);
             panelHeader.Name = "panelHeader";
             panelHeader.Size = new Size(575, 48);
             panelHeader.TabIndex = 2;
+            // 
+            // lbTicket
+            // 
+            lbTicket.AutoSize = true;
+            lbTicket.Font = new Font("Tahoma", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lbTicket.ForeColor = Color.White;
+            lbTicket.Location = new Point(290, 16);
+            lbTicket.Name = "lbTicket";
+            lbTicket.Size = new Size(43, 14);
+            lbTicket.TabIndex = 1;
+            lbTicket.Text = "label2";
             // 
             // lblTitulo
             // 
@@ -131,7 +142,6 @@
             label1.Size = new Size(64, 15);
             label1.TabIndex = 16;
             label1.Text = "Firma por: ";
-       //     label1.Click += label1_Click_1;
             // 
             // comboBox1
             // 
@@ -140,7 +150,6 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(424, 23);
             comboBox1.TabIndex = 14;
-    //        comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged_2;
             // 
             // lblNumeroOficio
             // 
@@ -173,7 +182,6 @@
             txtOficioReferencia.Name = "txtOficioReferencia";
             txtOficioReferencia.Size = new Size(260, 23);
             txtOficioReferencia.TabIndex = 3;
-           // txtOficioReferencia.TextChanged += txtOficioReferencia_TextChanged;
             // 
             // lblAsunto
             // 
@@ -190,7 +198,6 @@
             txtAsunto.Name = "txtAsunto";
             txtAsunto.Size = new Size(540, 23);
             txtAsunto.TabIndex = 5;
-       //     txtAsunto.TextChanged += txtAsunto_TextChanged_1;
             // 
             // lblDestinatario
             // 
@@ -208,7 +215,6 @@
             txtDestinatario.Name = "txtDestinatario";
             txtDestinatario.Size = new Size(260, 23);
             txtDestinatario.TabIndex = 7;
-          //  txtDestinatario.TextChanged += txtDestinatario_TextChanged;
             txtDestinatario.Leave += txtDestinatario_Leave;
             // 
             // lblCargo
@@ -227,7 +233,6 @@
             txtCargo.Name = "txtCargo";
             txtCargo.Size = new Size(260, 23);
             txtCargo.TabIndex = 9;
-          //  txtCargo.TextChanged += txtCargo_TextChanged;
             txtCargo.Leave += txtCargo_Leave;
             // 
             // lblRespuesta
@@ -247,7 +252,6 @@
             txtRespuesta.ScrollBars = ScrollBars.Vertical;
             txtRespuesta.Size = new Size(540, 180);
             txtRespuesta.TabIndex = 11;
-         //   txtRespuesta.TextChanged += txtRespuesta_TextChanged;
             // 
             // lblCopias
             // 
@@ -265,7 +269,6 @@
             txtCopias.Name = "txtCopias";
             txtCopias.Size = new Size(540, 70);
             txtCopias.TabIndex = 13;
-         //   txtCopias.TextChanged += txtCopias_TextChanged_1;
             // 
             // panelBotones
             // 
@@ -304,22 +307,6 @@
             lblFirmante.TabIndex = 0;
             lblFirmante.Text = "Firmante";
             // 
-            // comboFirmantes
-            // 
-         //   comboFirmantes.DropDownStyle = ComboBoxStyle.DropDownList;
-          //  comboFirmantes.Location = new Point(20, 210);
-          //  comboFirmantes.Name = "comboFirmantes";
-         //   comboFirmantes.Size = new Size(260, 23);
-          //  comboFirmantes.TabIndex = 0;
-            // 
-            // chkFirmaPorAusencia
-            // 
-        //    chkFirmaPorAusencia.Location = new Point(20, 240);
-       //     chkFirmaPorAusencia.Name = "chkFirmaPorAusencia";
-        //    chkFirmaPorAusencia.Size = new Size(250, 20);
-         //   chkFirmaPorAusencia.TabIndex = 0;
-         //   chkFirmaPorAusencia.Text = "Firmar por ausencia del titular";
-            // 
             // FrmOficioRespuesta
             // 
             ClientSize = new Size(575, 763);
@@ -339,5 +326,6 @@
 
         private ComboBox comboBox1;
         private Label label1;
+        private Label lbTicket;
     }
 }

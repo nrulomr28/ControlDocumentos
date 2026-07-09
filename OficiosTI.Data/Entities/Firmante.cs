@@ -14,6 +14,7 @@ namespace OficiosTI.Data.Entities
         public bool EsTitular { get; set; } 
         public bool Activo { get; set; }
         public string? TipoFirma { get; set; }
-        public string NombreCompleto => $"{Nombre} - {Cargo}";     
+        public string NombreCompleto => $"{Nombre} - {Cargo}";   
+        public string? FundamentoLegal {  get; set; }
     }
 }

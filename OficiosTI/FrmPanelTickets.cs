@@ -47,7 +47,7 @@ namespace OficiosTI
                     break;
 
                 case 2:
-                  //  CargarPorAnalista();
+                 //   CargarPorAnalista();
                     break;
 
                 case 3:
@@ -146,7 +146,6 @@ namespace OficiosTI
                     TicketAsunto = t.TicketAsunto,
                     TicketPrioridad = t.TicketPrioridad,
                     TicketFecha = t.TicketFecha,
-
                     NumeroOficio = _context.OficioRespuesta
                         .Where(o => o.TicketId == t.TicketId)
                         .Select(o => o.NumeroOficio)
@@ -167,7 +166,7 @@ namespace OficiosTI
             ActualizarIndicadores(tickets);
         }
 
-  /*    private void CargarPorAnalista()
+   /*  private void CargarPorAnalista()
         {
             var data = BaseQuery()
         .Where(t => !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId))
@@ -184,8 +183,8 @@ namespace OficiosTI
         .ToList();
 
             gridAnalista.DataSource = data;
-        }
-  */
+        }*/
+
         private void CargarCerradosSinOficio()
         {
             var query = BaseQuery()

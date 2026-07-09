@@ -119,11 +119,9 @@ namespace OficiosTI.Services
         }
 
 
-
         public string ObtenerUnidadOrganizativa()
         {
             string nombreOU = "Sin UO";
-
             try
             {
                 using (PrincipalContext contexto = new PrincipalContext(ContextType.Domain))
@@ -155,9 +153,8 @@ namespace OficiosTI.Services
         public int ObtenerUnidadOrgId(string nombreOU)
         {   //// OBTENER EL ID DEL DEPARTAMENTO          
           string org  =  ObtenerUnidadOrganizativa();
-
             var oficina =  _context.Oficinas
-                                  .FirstOrDefault(q => q.OficinasNombre == nombreOU);
+                                  .FirstOrDefault(q => q.UnidadOrganizativa == nombreOU);
             return oficina?.OficinasId ?? 0;
         }
 
@@ -165,7 +162,8 @@ namespace OficiosTI.Services
         public bool EsUsuarioGlobal()
         {
             string org = ObtenerUnidadOrganizativa();
-            var globales = new List<string> { "DESARROLLO DIGITAL", "JEFATURA", "REDES", "CONTROL Y RESGUARDO DE LA INFORMACION" };
+            var globales = new List<string> { "JEFATURA" };
+           // var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
             return globales.Contains(org?.Trim().ToUpper() ?? "");
         }
 
@@ -293,7 +291,6 @@ namespace OficiosTI.Services
                 FirmanteId = firmanteid
 
             };
-
             
             _context.OficioRespuesta.Add(oficio);
             _context.SaveChanges();
@@ -380,7 +377,6 @@ namespace OficiosTI.Services
             var registroOficio1 = _context.Oficio1
                 .Where(y => y.OficioId == ticket.id_of)
                 .FirstOrDefault();
-
             return new OficioRespuesta
             {
                 TicketId = ticket.TicketId,
@@ -429,7 +425,7 @@ namespace OficiosTI.Services
         */
 
 
-    public void ActualizarOficio(OficioRespuesta oficio)
+        public void ActualizarOficio(OficioRespuesta oficio)
         {
             _context.OficioRespuesta.Update(oficio);
             _context.SaveChanges();
@@ -469,6 +465,7 @@ namespace OficiosTI.Services
             _context.HiloTicket.Add(hilo);
             _context.SaveChanges();
         }
+
         public bool HiloYaExiste(int ticketId, string descripcion)
         {
             return _context.HiloTicket

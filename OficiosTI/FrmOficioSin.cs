@@ -18,16 +18,18 @@ namespace OficiosTI
     public partial class FrmOficioSin : Form
     {
         private OficiosContext _context;
-        int oficina = 3;
+       // int oficina = 2;
       
-        /*public FrmOficioSin(OficiosContext context)
+        /*
+        public FrmOficioSin(OficiosContext context)
         {         
             InitializeComponent();
             _context = context;
             InicializarGrid(oficina);
             dataGridOficios.CellDoubleClick += dataGridOficios_CellDoubleClick;
             btnCrearOficio.Enabled = false;
-        }*/
+        }
+        */
         public FrmOficioSin(OficiosContext context)
         {
             InitializeComponent();
@@ -43,6 +45,7 @@ namespace OficiosTI
             dataGridOficios.CellDoubleClick += dataGridOficios_CellDoubleClick;
             btnCrearOficio.Enabled = false;
         }
+
         private void InicializarGrid(int idOficinaDeseada)
         {
             dataGridOficios.AutoGenerateColumns = true;
@@ -76,7 +79,7 @@ namespace OficiosTI
             }
         }
      
-        private void btnCrearOficio_Click(object sender, EventArgs e)
+    /*   private void btnCrearOficio_Click(object sender, EventArgs e)
         {
             FrmOficioNuevo frmNuevo = new FrmOficioNuevo(_context, null);
 
@@ -84,22 +87,27 @@ namespace OficiosTI
             {
                 InicializarGrid(oficina);
             }
-        }
+        }*/
 
         private void dataGridOficios_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            var service = new OficioRespuestaService(_context);
+            int miOficinaId = service.ObtenerUnidadOrgId(service.ObtenerUnidadOrganizativa());
             if (e.RowIndex < 0) return;
             int oficioRespuestaId = Convert.ToInt32(dataGridOficios.Rows[e.RowIndex].Cells["OficioRespuestaId"].Value);
             var oficioSeleccionado = _context.OficioRespuesta.Find(oficioRespuestaId);
             if (oficioSeleccionado != null)
             {
                 FrmOficioNuevo frmDetalle = new FrmOficioNuevo(_context, oficioSeleccionado);
-                if (frmDetalle.ShowDialog() == DialogResult.OK)
+               if (frmDetalle.ShowDialog() == DialogResult.OK)
                 {
-                    InicializarGrid(oficina);
+                    InicializarGrid(miOficinaId);
                 }
             }
         }
+
+
+
     }
 
  }

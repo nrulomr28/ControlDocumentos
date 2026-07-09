@@ -37,8 +37,8 @@ namespace OficiosTI.Services
                 // =========================
 
                string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
-              //  string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
-                string absoluteHeaderPath = Path.GetFullPath(headerPath);
+             //string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
+               string absoluteHeaderPath = Path.GetFullPath(headerPath);
                 // Acceder directamente al rango del encabezado de la primera sección y asignarle el texto               
                 if (File.Exists(absoluteHeaderPath))
                 {                    
@@ -84,8 +84,8 @@ namespace OficiosTI.Services
                 sel.Font.Bold = 2;
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphRight;
 
-               sel.TypeText($"DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN");
-               sel.TypeParagraph();
+                sel.TypeText($"DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN");
+                sel.TypeParagraph();
                 sel.ParagraphFormat.SpaceAfter = 0f;
                 sel.ParagraphFormat.SpaceBefore = 0f;
                
@@ -177,9 +177,8 @@ namespace OficiosTI.Services
                 sel.TypeParagraph();
                 sel.TypeParagraph();
                 sel.TypeParagraph();
-
-                //sel.ParagraphFormat.SpaceBefore = 58f;
-                //sel.ParagraphFormat.SpaceAfter = 0f;
+              //sel.ParagraphFormat.SpaceBefore = 58f;
+              //sel.ParagraphFormat.SpaceAfter  = 0f;
                 sel.ParagraphFormat.LineSpacingRule = WordInterop.WdLineSpacing.wdLineSpaceSingle;
 
                 sel.Font.Name = "Gotham";

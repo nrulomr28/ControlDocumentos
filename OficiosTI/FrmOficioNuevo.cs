@@ -26,7 +26,7 @@ namespace OficiosTI
       //private NumOficio _oficioconse;
         private OficioRespuestaService _service;
 
-     /*   public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp)
+     /* public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp)
         {
             InitializeComponent();
             _context = context;
@@ -39,7 +39,8 @@ namespace OficiosTI
             }
 
             CargarResp(OficioResp);
-        }*/
+        }
+     */
 
   
         public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp = null)
@@ -232,9 +233,7 @@ namespace OficiosTI
                 MessageBox.Show("Debe seleccionar quien firma.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             GuardarOficio();
-
         }
 
 
@@ -288,6 +287,31 @@ namespace OficiosTI
 
         private void btnWord_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtAsunto.Text))
+            {
+                MessageBox.Show("Debe capturar el Asunto del Oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtDest.Text))
+            {
+                MessageBox.Show("Debe capturar el Destinatario.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtCrgo.Text))
+            {
+                MessageBox.Show("Debe capturar el cargo.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtRespC.Text))
+            {
+                MessageBox.Show("Debe capturar la Respuesta del Oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(cmbFirmas.Text))
+            {
+                MessageBox.Show("Debe seleccionar quien firma.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             try
             {
                 this.Cursor = Cursors.WaitCursor;
@@ -360,7 +384,7 @@ namespace OficiosTI
 
         }
 
-        private string ObtenerFundamentoLegal(string cargoFirmante)
+/*     private string ObtenerFundamentoLegal(string cargoFirmante)
         {
             string cargoNormalizado = cargoFirmante.Trim();
 
@@ -379,7 +403,34 @@ namespace OficiosTI
                     return @"De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo del Estado de Veracruz de Ignacio de la Llave; 3 segundo párrafo del Código de Procedimientos Administrativos; 186 fracción III del Código Financiero del Estado; así como los artículos 2, 3, 6 fracción XIII, 11 fracciones VI y VIII y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz;";
 
             }
+        } 
+   */
+       private string ObtenerFundamentoLegal(string cargoFirmante)
+        {
+            string cargoNormalizado = cargoFirmante.Trim();
+
+            var firma = _context.Firmante
+                           .FirstOrDefault(q => q.Cargo == cargoNormalizado);
+            return firma.FundamentoLegal.Trim();
         }
+
+        /*
+            switch (cargoNormalizado)
+            {
+                case "Director de Tecnologías de la Información":
+                    return @"De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo del Estado de Veracruz de Ignacio de la Llave; 3 segundo párrafo del Código de Procedimientos Administrativos; 186 fracción III del Código Financiero del Estado; así como los artículos 2, 3, 6 fracción XIII, 11 fracciones VI y VIII y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz;";
+
+                case "Jefe del Departamento de Seguridad de Redes en la Dirección de Tecnologías de la Información":
+                    return "De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo; 3, segundo párrafo, del Código de Procedimientos Administrativos, todos del Estado de Veracruz de Ignacio de la Llave; así como 2, 3, 6 fracción XIII, 11 fracciones VI y VIII, 40 fracciones VII y XXVIII, y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz, demás disposiciones legales aplicables, y por instrucciones del Ing. Luis Felipe Ramírez Flores, Director de Tecnologías de la Información,";
+
+                case "Jefe del Departamento de Desarrollo Digital en la Dirección de Tecnologías de la Información":
+                    return "De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo; 3, segundo párrafo, del Código de Procedimientos Administrativos, todos del Estado de Veracruz de Ignacio de la Llave; así como 2, 3, 6 fracción XIII, 11 fracciones VI y VIII, 40 fracciones VII y XXVIII, y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz, demás disposiciones legales aplicables, y por instrucciones del Ing. Luis Felipe Ramírez Flores, Director de Tecnologías de la Información,";
+
+                default:
+                    return @"De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo del Estado de Veracruz de Ignacio de la Llave; 3 segundo párrafo del Código de Procedimientos Administrativos; 186 fracción III del Código Financiero del Estado; así como los artículos 2, 3, 6 fracción XIII, 11 fracciones VI y VIII y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz;";
+
+            }*/
+
 
         private string ObtenerCopiasDefault()
         {
@@ -431,7 +482,6 @@ namespace OficiosTI
         private void CargarResp(OficioRespuesta oficio)
         {
             _oficioActual = oficio ?? new OficioRespuesta();
-
             txtNof.Text = _oficioActual.NumeroOficio ?? string.Empty;       
             txtAsunto.Text = _oficioActual.Asunto ?? string.Empty;
             txtDest.Text = _oficioActual.Destinatario ?? string.Empty;

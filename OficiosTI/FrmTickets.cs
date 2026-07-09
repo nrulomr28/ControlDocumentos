@@ -18,30 +18,28 @@ namespace OficiosTI
         {
             _context = context;
             _service = new OficioRespuestaService(_context);
-            InitializeComponent();
-          
+            InitializeComponent();          
             InicializarGrid();
             CargarTickets();
             DataGridTickets.DataBindingComplete += DataGridTickets_DataBindingComplete;
             DataGridTickets.CellClick += DataGridTickets_CellClick;
             DataGridTickets.CellFormatting += DataGridTickets_CellFormatting;
             CargarUser();
-            CargarDominio();
-           
+            CargarDominio();           
             ObtenerOrganizacion();
             string org =    _service.ObtenerUnidadOrganizativa();
             int idOficina = _service.ObtenerUnidadOrgId(org);
             ObtenerSegmentoDeRed();
             // Aplicamos los permisos a los botones
             AplicarPermisosInterfaz(idOficina, org);
-
         }
 
         private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
         {
-            string ou = nombreOU?.Trim().ToUpper() ?? "";
-          if (ou == "DESARROLLO DIGITAL" || ou == "JEFATURA")
-         //   if (ou ==  "JEFATURA")
+          ////BOTONES PARA VALIDAR QUIEN ASIGNA LOS OFICIOS ////
+          string ou = nombreOU?.Trim().ToUpper() ?? "";
+          if (ou == "DESARROLLO DIGITAL" || ou == "JEFATURA" || ou=="SOPORTE TÉCNICO" || ou=="JEFATURA")
+          //   if (ou ==  "JEFATURA")
             {
                 btnAsignar.Visible = true;
                 btnSinTicket.Enabled = true;            
@@ -53,14 +51,14 @@ namespace OficiosTI
        
             }
         }
-       
-
+      
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             SigelicXPTheme.ApplyForm(this);
             SigelicXPTheme.ApplyStartButton(BtnAdjuntos);
         }
+
         private void CargarUser()
         {
             lbUser.Text = $"Usuario: {_service.ObtenerNombreUsuarioRed()}";
@@ -77,7 +75,6 @@ namespace OficiosTI
           //  lbSegmento.Text = $"Segmento: {_service.ObtenerUnidadOrgId()}";
             
         }
-
         private void ObtenerOrganizacion()
         {
            // lbOrganizacion.Text = $"Departamento: {_service.ObtenerUnidadOrganizativa()}";
@@ -140,22 +137,19 @@ namespace OficiosTI
             string org = _service.ObtenerUnidadOrganizativa();
             int idorg = _service.ObtenerUnidadOrgId(org);
             //// OBTENER EL ID DEL DEPARTAMENTO 
-            ///
-            /*  var oficinaEncontrada = _context.Oficinas
+       /*   var oficinaEncontrada = _context.Oficinas
                .FirstOrDefault(q => q.OficinasNombre == org);*/
             var query = _context.Ticket.AsQueryable();
         //  var query = _context.Ticket
-
             if (_service.EsUsuarioGlobal())
             {
-                query = query.Where(t => t.id_of != null);
+                query = query.Where(t => t.id_of != null && t.Cat_TicketStatusId>1);
             }
             else
             {
-                query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null);
+                query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId > 1);
             }
            //  .Where(t => t.OficinasId == idorg && t.id_of != null);   /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
-
 
             if (!string.IsNullOrWhiteSpace(textoBuscar))
             {
@@ -183,7 +177,11 @@ namespace OficiosTI
                     TicketAsunto = t.TicketAsunto,
                     TicketPrioridad = t.TicketPrioridad,
                     TicketFecha = t.TicketFecha,
-                    Cat_TicketStatusId = t.Cat_TicketStatusId,
+                     Cat_TicketStatusId = t.Cat_TicketStatusId,
+                     EstadoTicket = _context.Cat_TicketStatus
+                    .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
+                    .Select(o=> o.Cat_TicketStatusStatus)
+                    .FirstOrDefault(),
                     OficinasNombre = _context.Oficinas
                     .Where(o => o.OficinasId == t.OficinasId)
                     .Select(o =>o.OficinasNombre)
@@ -192,7 +190,6 @@ namespace OficiosTI
                         .Where(o => o.TicketId == t.TicketId)
                         .Select(o => o.NumeroOficio)
                         .FirstOrDefault()
-
                 })
                 .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
                 .OrderByDescending(t => t.TicketFecha)
@@ -221,7 +218,6 @@ namespace OficiosTI
             var frm = new FrmTicketDetalle(ticket, _context);
             frm.ShowDialog();
             CargarTickets();
-
         }
 
         private void BtnAbrirTicket_Click(object sender, EventArgs e)
@@ -242,10 +238,9 @@ namespace OficiosTI
             int idorg = _service.ObtenerUnidadOrgId(org);
             //var oficinaEncontrada = _context.Oficinas
             //  .FirstOrDefault(q => q.OficinasNombre == org);
-
             var query = _context.Ticket
                 .Where(t => t.OficinasId == idorg);    /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
-            if (!string.IsNullOrWhiteSpace(texto))
+            if (!string.IsNullOrWhiteSpace(texto))     ////  SE CAMBIO POR LA UNIDAD ORGANIZATIVA 
             {
                 query = query.Where(t =>
                     t.TicketPersona.Contains(texto) ||
@@ -346,7 +341,6 @@ namespace OficiosTI
                 }
                 var ticket = ObtenerTicketSeleccionado();
                 new FrmOficioRespuesta(ticket, _context).ShowDialog();
-
                 CargarTickets();
             }
             catch (Exception ex)
@@ -371,9 +365,8 @@ namespace OficiosTI
             DataGridTickets.Columns["TicketPrioridad"].HeaderText = "Prioridad";
             DataGridTickets.Columns["TicketFecha"].HeaderText = "Fecha";
             DataGridTickets.Columns["NumeroOficio"].HeaderText = "Oficio";
-             DataGridTickets.Columns["OficinasNombre"].HeaderText = "Oficina";
-
-            //ResaltarOficios();
+            DataGridTickets.Columns["OficinasNombre"].HeaderText = "Oficina";
+            ResaltarOficios();
             AgregarColumnaOficio();
             // Blindar columna 0
             var col0 = DataGridTickets.Columns[0];
@@ -382,19 +375,55 @@ namespace OficiosTI
             col0.DefaultCellStyle.SelectionBackColor = DataGridTickets.DefaultCellStyle.BackColor;
         }
 
-        private void ResaltarOficios()
+   /*     private void ResaltarOficios()
         {
             foreach (DataGridViewRow row in DataGridTickets.Rows)
             {
                 var oficio = row.Cells["NumeroOficio"].Value;
-
+                var estado = row.Cells["Cat_TicketStatusId"].Value;
                 if (oficio != null && oficio.ToString() != "")
                 {
                     row.Cells["NumeroOficio"].Style.ForeColor = Color.DarkGreen;
                     row.Cells["NumeroOficio"].Style.Font =
                         new Font(DataGridTickets.Font, FontStyle.Bold);
-
                     row.DefaultCellStyle.BackColor = Color.Honeydew;
+                }
+             }
+        }*/
+        private void ResaltarOficios()
+        {
+            foreach (DataGridViewRow row in DataGridTickets.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                var oficio = row.Cells["NumeroOficio"].Value;
+                var estado = row.Cells["Cat_TicketStatusId"].Value;
+
+                if (oficio != null && !string.IsNullOrWhiteSpace(oficio.ToString()))
+                {
+                    row.Cells["NumeroOficio"].Style.ForeColor = Color.DarkGreen;
+                    row.Cells["NumeroOficio"].Style.Font = new Font(DataGridTickets.Font, FontStyle.Bold);
+                  
+                }
+           
+                if (estado != null && int.TryParse(estado.ToString(), out int estadoId))
+                {
+                    if (estadoId == 2)
+                    {///// EN PROCESO            
+                        row.Cells["NumeroOficio"].Style.ForeColor = Color.CornflowerBlue;
+                        row.DefaultCellStyle.BackColor = Color.WhiteSmoke;
+                    }
+                    if (estadoId == 3)
+                    {  /////// CERRADO 
+                        row.DefaultCellStyle.BackColor = Color.Honeydew;
+                        row.Cells["NumeroOficio"].Style.ForeColor = Color.CornflowerBlue;
+                        row.Cells["EstadoTicket"].Style.ForeColor = Color.CornflowerBlue;
+                        row.Cells["EstadoTicket"].Style.Font = new Font(DataGridTickets.Font, FontStyle.Bold);
+                        row.Cells["TicketId"].Style.ForeColor = Color.CornflowerBlue;
+                        row.Cells["TicketId"].Style.Font = new Font(DataGridTickets.Font, FontStyle.Bold);                    
+
+
+                    }
                 }
             }
         }
@@ -403,9 +432,7 @@ namespace OficiosTI
         {
             if (DataGridTickets.CurrentRow == null)
                 return null;
-
             var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
-
             return _context.Ticket.Find(gridItem.TicketId);
         }
 
@@ -414,20 +441,16 @@ namespace OficiosTI
             ResaltarOficios();
         }
 
-
         private void AgregarColumnaOficio()
         {
             if (DataGridTickets.Columns["AbrirOficio"] != null)
                 return;
-
             var col = new DataGridViewButtonColumn();
-
             col.Name = "AbrirOficio";
             col.HeaderText = "Documento";
             col.Text = "📄";
             col.UseColumnTextForButtonValue = true;
             col.Width = 60;
-
             DataGridTickets.Columns.Add(col);
         }
 
@@ -520,7 +543,6 @@ namespace OficiosTI
             //formAsignar.ShowDialog();
         }
 
-
         /*
                 private void button1_Click(object sender, EventArgs e)
                 {
@@ -542,7 +564,6 @@ namespace OficiosTI
             var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
             Ticket ticketSeleccionado = _context.Ticket.Find(gridItem.TicketId);
             FrmOficioTicket FormAsignar = new FrmOficioTicket(ticketSeleccionado, _context);
-
             FormAsignar.ShowDialog();
         }
 

@@ -74,7 +74,7 @@
             PanelHeader.Dock = DockStyle.Top;
             PanelHeader.Location = new Point(0, 0);
             PanelHeader.Name = "PanelHeader";
-            PanelHeader.Size = new Size(755, 50);
+            PanelHeader.Size = new Size(794, 50);
             PanelHeader.TabIndex = 4;
             // 
             // lblTicketId
@@ -100,7 +100,7 @@
             PanelDatos.Dock = DockStyle.Top;
             PanelDatos.Location = new Point(0, 50);
             PanelDatos.Name = "PanelDatos";
-            PanelDatos.Size = new Size(755, 150);
+            PanelDatos.Size = new Size(794, 150);
             PanelDatos.TabIndex = 1;
             // 
             // labelPersona
@@ -132,7 +132,7 @@
             txtAsunto.Location = new Point(330, 35);
             txtAsunto.Name = "txtAsunto";
             txtAsunto.ReadOnly = true;
-            txtAsunto.Size = new Size(400, 23);
+            txtAsunto.Size = new Size(452, 23);
             txtAsunto.TabIndex = 3;
             // 
             // labelMensaje
@@ -149,7 +149,7 @@
             txtMensaje.Multiline = true;
             txtMensaje.Name = "txtMensaje";
             txtMensaje.ReadOnly = true;
-            txtMensaje.Size = new Size(715, 45);
+            txtMensaje.Size = new Size(767, 45);
             txtMensaje.TabIndex = 5;
             // 
             // PanelHilo
@@ -162,7 +162,7 @@
             PanelHilo.Dock = DockStyle.Fill;
             PanelHilo.Location = new Point(0, 200);
             PanelHilo.Name = "PanelHilo";
-            PanelHilo.Size = new Size(755, 427);
+            PanelHilo.Size = new Size(794, 438);
             PanelHilo.TabIndex = 0;
             // 
             // dataGridRelacion
@@ -170,7 +170,7 @@
             dataGridRelacion.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridRelacion.Location = new Point(15, 256);
             dataGridRelacion.Name = "dataGridRelacion";
-            dataGridRelacion.Size = new Size(715, 150);
+            dataGridRelacion.Size = new Size(767, 150);
             dataGridRelacion.TabIndex = 3;
             // 
             // label1
@@ -199,7 +199,7 @@
             dataGridHilo.Name = "dataGridHilo";
             dataGridHilo.ReadOnly = true;
             dataGridHilo.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridHilo.Size = new Size(715, 182);
+            dataGridHilo.Size = new Size(767, 182);
             dataGridHilo.TabIndex = 1;
             // 
             // PanelRespuesta
@@ -208,9 +208,9 @@
             PanelRespuesta.Controls.Add(labelRespuesta);
             PanelRespuesta.Controls.Add(txtRespuesta);
             PanelRespuesta.Dock = DockStyle.Bottom;
-            PanelRespuesta.Location = new Point(0, 627);
+            PanelRespuesta.Location = new Point(0, 638);
             PanelRespuesta.Name = "PanelRespuesta";
-            PanelRespuesta.Size = new Size(755, 120);
+            PanelRespuesta.Size = new Size(794, 120);
             PanelRespuesta.TabIndex = 2;
             // 
             // labelRespuesta
@@ -226,7 +226,7 @@
             txtRespuesta.Location = new Point(15, 30);
             txtRespuesta.Multiline = true;
             txtRespuesta.Name = "txtRespuesta";
-            txtRespuesta.Size = new Size(715, 60);
+            txtRespuesta.Size = new Size(767, 60);
             txtRespuesta.TabIndex = 1;
             // 
             // PanelAcciones
@@ -235,9 +235,9 @@
             PanelAcciones.Controls.Add(BtnGuardarRespuesta);
             PanelAcciones.Controls.Add(BtnGenerarOficio);
             PanelAcciones.Dock = DockStyle.Bottom;
-            PanelAcciones.Location = new Point(0, 747);
+            PanelAcciones.Location = new Point(0, 758);
             PanelAcciones.Name = "PanelAcciones";
-            PanelAcciones.Size = new Size(755, 50);
+            PanelAcciones.Size = new Size(794, 50);
             PanelAcciones.TabIndex = 3;
             // 
             // BtnGuardarRespuesta
@@ -261,7 +261,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(755, 797);
+            ClientSize = new Size(794, 808);
             Controls.Add(PanelHilo);
             Controls.Add(PanelDatos);
             Controls.Add(PanelRespuesta);

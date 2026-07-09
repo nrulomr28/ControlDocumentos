@@ -66,7 +66,7 @@
             btnCrearOficio.TabIndex = 5;
             btnCrearOficio.Text = "Crear Oficio";
             btnCrearOficio.UseVisualStyleBackColor = true;
-            btnCrearOficio.Click += btnCrearOficio_Click;
+          //  btnCrearOficio.Click += btnCrearOficio_Click;
             // 
             // dataGridOficios
             // 

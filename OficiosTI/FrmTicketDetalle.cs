@@ -28,9 +28,7 @@ namespace OficiosTI
             InitializeComponent();
 
             _ticket = ticket;
-            _context = context;
-            
-
+            _context = context;          
             CargarDatosTicket();
             CargarHilo();
             CargarTicketsR();
@@ -66,6 +64,8 @@ namespace OficiosTI
                                        on t.OficinasId equals o.OficinasId
                                        join s in _context.Cat_TicketStatus
                                        on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
+                                       join x in _context.OficioRespuesta
+                                       on t.TicketId equals x.TicketId
                                        where t.id_of == _ticket.id_of
                                        where t.TicketId != _ticket.TicketId
                                        orderby t.TicketId
@@ -75,7 +75,9 @@ namespace OficiosTI
                                            Remitente = t.TicketPersona,
                                            Asunto = t.TicketMensaje,
                                            Oficina = o.OficinasNombre,
-                                           Estado = s.Cat_TicketStatusStatus
+                                           Oficio = x.NumeroOficio,
+                                           Estado = s.Cat_TicketStatusStatus,
+                                           
                                        }).ToList();
 
             dataGridRelacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;

@@ -12,17 +12,17 @@ namespace OficiosTI.Services
     {
         private readonly OficiosContext _context;
 
-        public DestinatarioService(OficiosContext context)
+      /*  public DestinatarioService(OficiosContext context)
         {
             _context = context;
-        }
+        }*/
 
         /// <summary>
         /// SE OBTIENE DE LA TABLA DE OFICIOREMITENTE //////
         /// </summary>
         /// <returns></returns>
        
-       public List<DestinatarioItem> ObtenerCatalogo()
+    /*   public List<DestinatarioItem> ObtenerCatalogo()
         {
             return _context.OficioRespuesta
                 .Select(x => new DestinatarioItem
@@ -34,7 +34,7 @@ namespace OficiosTI.Services
                 .ToList();
         }
 
-
+        */
         /*
         public List<DestinatarioItem> ObtenerCatalogo()
         {

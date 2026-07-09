@@ -60,6 +60,7 @@
             // 
             txtNumOf.Location = new Point(7, 92);
             txtNumOf.Name = "txtNumOf";
+            txtNumOf.ScrollBars = ScrollBars.Vertical;
             txtNumOf.Size = new Size(125, 23);
             txtNumOf.TabIndex = 2;
             // 

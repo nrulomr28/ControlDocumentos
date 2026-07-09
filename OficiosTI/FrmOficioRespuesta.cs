@@ -20,7 +20,6 @@ namespace OficiosTI
      // private List<DestinatarioItem> _destinatariosCache;
         private bool _autocompletando = false;
 
-
         public FrmOficioRespuesta(Ticket ticket, OficiosContext context)
         {
             InitializeComponent();
@@ -34,6 +33,7 @@ namespace OficiosTI
             if (oficio != null)
             {
                 CargarOficio(oficio);
+                CargarDatosTicket();
             }
             else
             {
@@ -44,8 +44,8 @@ namespace OficiosTI
             {
                 txtCopias.Text = ObtenerCopiasDefault();
             }
-         //   _destinatarioService = new DestinatarioService(_context);
-        //    _destinatariosCache = _destinatarioService.ObtenerCatalogo();
+       //   _destinatarioService = new DestinatarioService(_context);
+       //   _destinatariosCache = _destinatarioService.ObtenerCatalogo();
 
             //    ConfigurarAutoComplete();
             //     InicializarFirmantes();
@@ -61,6 +61,11 @@ namespace OficiosTI
                 comboBox1.SelectedIndex = -1;
             }
                
+        }
+        private void CargarDatosTicket()
+        {
+            lbTicket.Text = $"Ticket #{_ticket.TicketId}";
+
         }
 
         /*
@@ -214,6 +219,105 @@ namespace OficiosTI
 
         private void GuardarOficio()
         {
+            if (_ticket == null)
+            {
+                MessageBox.Show("No hay un ticket válido seleccionado para esta operación.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtNumeroOficio.Text))
+            {
+                MessageBox.Show("Debe capturar el número de oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            bool esNuevo = _oficioActual.OficioRespuestaId == 0;
+
+            if ((esNuevo || _oficioActual.NumeroOficio != txtNumeroOficio.Text)
+                && _service.NumeroOficioExiste(txtNumeroOficio.Text))
+            {
+                MessageBox.Show("Ese número de oficio ya existe. Por favor, asigne otro folio.", "Folio Duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            OficioRespuesta snapshotAnterior = null;
+            if (!esNuevo)
+            {
+                snapshotAnterior = new OficioRespuesta
+                {
+                    NumeroOficio = _oficioActual.NumeroOficio,
+                    OficioReferencia = _oficioActual.OficioReferencia,
+                    Asunto = _oficioActual.Asunto,
+                    Destinatario = _oficioActual.Destinatario,
+                    CargoDestinatario = _oficioActual.CargoDestinatario,
+                    CuerpoRespuesta = _oficioActual.CuerpoRespuesta,
+                    Copias = _oficioActual.Copias,
+                    Firmante = _oficioActual.Firmante
+                };
+            }
+
+            int? firmanteSeleccionado = comboBox1.SelectedValue as int?;
+            /// OBTENER EL ID DEL OFICIO DE REFERENCIA
+            var Ofinum = _context.Oficio1.FirstOrDefault(y => y.OficioId == _ticket.id_of);
+            int idOficioAnterior = Ofinum?.OficioId ?? 0;
+            if (esNuevo)
+            {
+                _oficioActual = _service.CrearOficio(
+                    _ticket.TicketId,
+                    txtNumeroOficio.Text,
+                    txtOficioReferencia.Text,
+                    txtAsunto.Text,
+                    txtDestinatario.Text,
+                    txtCargo.Text,
+                    txtRespuesta.Text,
+                    txtCopias.Text,
+                    firmanteSeleccionado,
+                    idOficioAnterior
+                );
+            }
+            else
+            {
+                _oficioActual.NumeroOficio = txtNumeroOficio.Text;
+                _oficioActual.OficioReferencia = txtOficioReferencia.Text;
+                _oficioActual.Asunto = txtAsunto.Text;
+                _oficioActual.Destinatario = txtDestinatario.Text;
+                _oficioActual.CargoDestinatario = txtCargo.Text;
+                _oficioActual.CuerpoRespuesta = txtRespuesta.Text;
+                _oficioActual.Copias = txtCopias.Text;
+                _oficioActual.UsuarioId = _service.ObtenerDominioYUsuario();
+                _oficioActual.FirmanteId = firmanteSeleccionado;
+
+                _service.ActualizarOficio(_oficioActual);
+            }
+
+            bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
+
+            if (huboCambios)
+            {
+                string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
+                if (!_service.HiloYaExiste(_ticket.TicketId, descripcion))
+                {
+                    _service.RegistrarHiloOficio(_ticket.TicketId, descripcion);
+                }
+                _ticket.Cat_TicketStatusId = 3;               
+                _context.Ticket.Update(_ticket); 
+                _context.SaveChanges();
+                MessageBox.Show("Oficio generado y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
+                return; 
+            }
+            MessageBox.Show("Oficio modificado.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Close();
+        }
+
+
+
+
+
+        /*
+
+        private void GuardarOficio()
+        {
             if (string.IsNullOrWhiteSpace(txtNumeroOficio.Text))
             {
                 MessageBox.Show("Debe capturar el número de oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -226,9 +330,7 @@ namespace OficiosTI
                 MessageBox.Show("Ese número de oficio ya existe. Por favor, asigne otro folio.", "Folio Duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             OficioRespuesta snapshotAnterior = null;
-
             if (!esNuevo)
             {
                 snapshotAnterior = new OficioRespuesta
@@ -288,7 +390,7 @@ namespace OficiosTI
 
             bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
 
-          /*  if (huboCambios)
+            if (huboCambios)
             {
                 string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
 
@@ -301,10 +403,87 @@ namespace OficiosTI
                 }
                 _ticket.Cat_TicketStatusId = 3;
                 _service.ActualizarOficio(_oficioActual);
+
+                MessageBox.Show("Oficio generado y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
             }
-          */
+
+            if (esNuevo)
+            {
+            //    _ticket.Cat_TicketStatusId = 3;
+            //    _service.ActualizarOficio(_oficioActual);
+            }
+
+            MessageBox.Show("Oficio modificado.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Close();
+
+
+        }
+
+        */
+
+     /*
+        bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
 
             if (huboCambios)
+            {
+                string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
+
+                // 1. BUSCAR TODOS LOS TICKETS VINCULADOS AL MISMO OFICIO ANTERIOR
+
+                var ticketsAsociados = _context.ticket
+                    .Where(t => t.id_of == idOficioAnterior)
+                    .ToList();
+
+                // 2. RECORREMOS CADA TICKET ENCONTRADO
+                foreach (var ticketRelacionado in ticketsAsociados)
+                {
+           
+                    if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
+                    {
+                        _service.RegistrarHiloOficio(ticketRelacionado.TicketId, descripcion);
+                    }
+
+                    // Cambiamos el estatus a "Cerrado" (3) para cada ticket
+                    //  ticketRelacionado.Cat_TicketStatusId = 3;
+                }
+
+                // 3. GUARDAMOS LOS CAMBIOS DE LOS TICKETS Y EL OFICIO
+                _service.ActualizarOficio(_oficioActual); 
+                       //  _context.SaveChanges(); 
+                    }
+
+                    MessageBox.Show($"Oficio generado y {ticketsAsociados.Count} ticket(s) cerrado(s) correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
+
+        }
+
+        */
+
+
+     /*   bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
+
+            if (huboCambios)
+              {
+                  string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
+
+                  if (!_service.HiloYaExiste(_ticket.TicketId, descripcion))
+                  {
+                      _service.RegistrarHiloOficio(
+                          _ticket.TicketId,
+                          descripcion
+                      );
+                  }
+                  _ticket.Cat_TicketStatusId = 3;
+                  _service.ActualizarOficio(_oficioActual);
+
+
+                     MessageBox.Show($"Oficio generado y {ticketsAsociados.Count} ticket(s) cerrado(s) correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                  Close();
+              }
+            
+
+       /*     if (huboCambios)
             {
                 string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
 
@@ -326,7 +505,7 @@ namespace OficiosTI
                 }
               */
 
-                foreach (var ticketRelacionado in ticketsAsociados)
+          /*      foreach (var ticketRelacionado in ticketsAsociados)
                 {
                     if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
                     {
@@ -348,10 +527,10 @@ namespace OficiosTI
 
                 MessageBox.Show($"Oficio generado y {ticketsAsociados.Count} ticket(s) cerrado(s) correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Close();
-            }
+            }*/
 
             
-        }
+     //   }
 
 
 
@@ -458,10 +637,10 @@ namespace OficiosTI
                 Normalizar(anterior.NumeroOficio) != Normalizar(actual.NumeroOficio) ||
                 Normalizar(anterior.OficioReferencia) != Normalizar(actual.OficioReferencia) ||
                 Normalizar(anterior.Asunto) != Normalizar(actual.Asunto) ||
-                Normalizar(anterior.Destinatario) != Normalizar(actual.Destinatario) ||
-                Normalizar(anterior.CargoDestinatario) != Normalizar(actual.CargoDestinatario) ||
-                Normalizar(anterior.CuerpoRespuesta) != Normalizar(actual.CuerpoRespuesta) ||
-                Normalizar(anterior.Copias) != Normalizar(actual.Copias);
+            //  Normalizar(anterior.Destinatario) != Normalizar(actual.Destinatario) 
+            //  Normalizar(anterior.CargoDestinatario) != Normalizar(actual.CargoDestinatario);
+                Normalizar(anterior.CuerpoRespuesta) != Normalizar(actual.CuerpoRespuesta);
+            //  Normalizar(anterior.Copias) != Normalizar(actual.Copias);
         }
 
         private string Normalizar(string valor)
@@ -572,7 +751,7 @@ namespace OficiosTI
 
            }*/
 
-        private string ObtenerFundamentoLegal(string cargoFirmante)
+   /*     private string ObtenerFundamentoLegal(string cargoFirmante)
         {
             string cargoNormalizado = cargoFirmante.Trim();
 
@@ -591,6 +770,16 @@ namespace OficiosTI
                     return @"De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo del Estado de Veracruz de Ignacio de la Llave; 3 segundo párrafo del Código de Procedimientos Administrativos; 186 fracción III del Código Financiero del Estado; así como los artículos 2, 3, 6 fracción XIII, 11 fracciones VI y VIII y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz;";
 
             }
+        }
+   */
+
+        private string ObtenerFundamentoLegal(string cargoFirmante)
+        {
+            string cargoNormalizado = cargoFirmante.Trim();
+
+            var firma = _context.Firmante
+                           .FirstOrDefault(q => q.Cargo == cargoNormalizado);
+            return firma.FundamentoLegal.Trim();
         }
 
         private void txtDestinatario_Leave(object sender, EventArgs e)
