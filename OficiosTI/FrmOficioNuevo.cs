@@ -23,7 +23,7 @@ namespace OficiosTI
         private OficiosContext _context;
         private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA 
 
-      //private NumOficio _oficioconse;
+     // private NumOficio _oficioconse;
         private OficioRespuestaService _service;
 
      /* public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp)
@@ -51,7 +51,7 @@ namespace OficiosTI
             _oficioActual = OficioResp;
             CargarFirma();
           //CargarOficios(3);
-          //TuFormulario_Load();
+     
             if (string.IsNullOrEmpty(txtCcp.Text))
             {
                 txtCcp.Text = ObtenerCopiasDefault();
@@ -68,7 +68,6 @@ namespace OficiosTI
             var firmantes = _context.Firmante
                 .Where(x => x.Activo)
                 .ToList();
-
             cmbFirmas.DataSource = firmantes;
             cmbFirmas.DisplayMember = "NombreCompleto";
             cmbFirmas.ValueMember = "FirmanteId";
@@ -406,14 +405,13 @@ namespace OficiosTI
         } 
    */
        private string ObtenerFundamentoLegal(string cargoFirmante)
-        {
+       {
             string cargoNormalizado = cargoFirmante.Trim();
 
             var firma = _context.Firmante
                            .FirstOrDefault(q => q.Cargo == cargoNormalizado);
             return firma.FundamentoLegal.Trim();
-        }
-
+       }
         /*
             switch (cargoNormalizado)
             {
@@ -428,8 +426,8 @@ namespace OficiosTI
 
                 default:
                     return @"De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo del Estado de Veracruz de Ignacio de la Llave; 3 segundo párrafo del Código de Procedimientos Administrativos; 186 fracción III del Código Financiero del Estado; así como los artículos 2, 3, 6 fracción XIII, 11 fracciones VI y VIII y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz;";
-
-            }*/
+            }
+        */
 
 
         private string ObtenerCopiasDefault()
@@ -464,8 +462,8 @@ namespace OficiosTI
                 FirmanteId = firmanteSeleccionado,
                 OficioId =0,
                 RespuestaId =0,
-             //   OficioId = registroOficio1?.OficioId,
-             //   RespuestaId = nuevoNumeroCreado.OficioId,
+             // OficioId = registroOficio1?.OficioId,
+             // RespuestaId = nuevoNumeroCreado.OficioId,
             };
 
 

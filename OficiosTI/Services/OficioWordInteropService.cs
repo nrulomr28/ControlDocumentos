@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Word;
 using OficiosTI.Documents;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using WordInterop = Microsoft.Office.Interop.Word;
 
@@ -33,14 +34,14 @@ namespace OficiosTI.Services
                 doc.PageSetup.PaperSize = WordInterop.WdPaperSize.wdPaperLetter;
 
                 // =========================
-                // HEADER (BANNER OFICIAL)
+                // HEADER 
                 // =========================
 
                string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
              //string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
                string absoluteHeaderPath = Path.GetFullPath(headerPath);
                 // Acceder directamente al rango del encabezado de la primera sección y asignarle el texto               
-                if (File.Exists(absoluteHeaderPath))
+               if (File.Exists(absoluteHeaderPath))
                 {                    
                     foreach (WordInterop.Section section in doc.Sections)
                     {
@@ -71,7 +72,6 @@ namespace OficiosTI.Services
                 //  var sel = wordApp.Selection;
                 doc.Activate();
                 wordApp.ActiveWindow.ActivePane.View.SeekView = WordInterop.WdSeekView.wdSeekMainDocument;
-
                 var sel = wordApp.Selection;
 
                 // =========================
@@ -92,18 +92,24 @@ namespace OficiosTI.Services
                 sel.TypeText($"Oficio No. {model.NumeroOficio}");
                 sel.TypeParagraph();
 
-                sel.TypeText($"Asunto: {model.Asunto}");
+             // sel.TypeText($"Asunto: {model.Asunto}");
+       
+                string texto_a = model.Asunto;
+              
+                if (!string.IsNullOrEmpty(texto_a))
+                {
+                    string resultadoa = char.ToUpper(texto_a[0]) + texto_a.Substring(1).ToLower();
+                    sel.TypeText($"Asunto: {resultadoa}");
+                }
                 sel.TypeParagraph();
 
                 if (!string.IsNullOrWhiteSpace(model.OficioReferencia))
                 {
-                    sel.TypeText($"En respuesta al oficio: {model.OficioReferencia}");
+                    sel.TypeText($"{model.OficioReferencia}");
                     sel.TypeParagraph();
                 }
-              //  sel.TypeText($"En respuesta al oficio: {model.OficioReferencia}");
+              //sel.TypeText($"En respuesta al oficio: {model.OficioReferencia}");
                 sel.TypeParagraph();
-
-
                 sel.TypeText($"Xalapa-Enríquez, Ver., a {model.Fecha:dd 'de' MMMM 'de' yyyy}");
                 sel.TypeParagraph();
 
@@ -121,15 +127,32 @@ namespace OficiosTI.Services
                 // =========================
                 // DESTINATARIO
                 // =========================
-
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphLeft;
-
                 sel.Font.Bold = 1;
-                sel.TypeText(model.Destinatario);
+            
+                string texto = model.Destinatario;
+                if (!string.IsNullOrEmpty(texto))
+                {
+                    TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+
+                    string resultado = textInfo.ToTitleCase(texto.ToLower());
+
+                    sel.TypeText(resultado);
+                }
+
                 sel.TypeParagraph();
+             // sel.TypeText StrConv(model.Destinatario, vbProperCase);
+             // sel.TypeText(model.Destinatario);
+             // sel.TypeParagraph();
 
                 sel.Font.Bold = 0;
-                sel.TypeText(model.CargoDestinatario);
+                string textCarg = model.CargoDestinatario;
+                if (!string.IsNullOrEmpty(textCarg))
+                {
+                    string resultadox = char.ToUpper(textCarg[0]) + textCarg.Substring(1).ToLower();
+                    sel.TypeText(resultadox);
+                }
+             // sel.TypeText(model.CargoDestinatario);
                 sel.TypeParagraph();
 
                 sel.TypeText("P R E S E N T E");
@@ -169,7 +192,7 @@ namespace OficiosTI.Services
                 sel.TypeText(model.DirectorNombre);
                 sel.TypeParagraph();
 
-                sel.Font.Bold = 1;
+                sel.Font.Bold = 0;
                 sel.TypeText(model.DirectorCargo);
                 sel.TypeParagraph();
                 sel.TypeParagraph();

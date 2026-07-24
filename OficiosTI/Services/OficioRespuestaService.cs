@@ -166,7 +166,14 @@ namespace OficiosTI.Services
            // var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
             return globales.Contains(org?.Trim().ToUpper() ?? "");
         }
-
+      /*  public bool EsUsuarioGlobal()
+        {
+            string org = ObtenerUnidadOrganizativa();
+            var globales = new List<string> { "JEFATURA" };
+            // var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
+            return globales.Contains(org?.Trim().ToUpper() ?? "");
+        }
+      */
 
         /*  public int NumeroTicketExiste(string numeroOficio)
             {

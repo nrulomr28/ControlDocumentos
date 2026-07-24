@@ -22,11 +22,11 @@ namespace OficiosTI
             CargarOficinas();
             CargarTiposD();
 
-            if (_service.EsUsuarioGlobal())
+         /*   if (_service.EsUsuarioGlobal())
             {
                 AsignarF.Enabled = true;
 
-            }
+            }*/
             if (_ticket != null)
             {
                 CargarDatosTicket();
@@ -131,7 +131,6 @@ namespace OficiosTI
             }
             string conse = txtNumOf.Text.Trim();   /// NUMERO DE OFICIO
             int anioActual = DateTime.Now.Year;
-
             /*  if (_ticket != null)
                 {
                     var yaTieneOficio = _context.NumOficio.Any(x => x.TicketId == _ticket.TicketId);

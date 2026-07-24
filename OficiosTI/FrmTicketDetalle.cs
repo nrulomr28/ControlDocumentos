@@ -21,14 +21,14 @@ namespace OficiosTI
     {
         private readonly Ticket _ticket;
         private readonly OficiosContext _context;
-        private readonly Oficinas _oficinas; 
+        private readonly Oficinas _oficinas;
 
         public FrmTicketDetalle(Ticket ticket, OficiosContext context)
         {
             InitializeComponent();
 
             _ticket = ticket;
-            _context = context;          
+            _context = context;
             CargarDatosTicket();
             CargarHilo();
             CargarTicketsR();
@@ -38,7 +38,7 @@ namespace OficiosTI
         {
             lblTicketId.Text = $"Ticket #{_ticket.TicketId}";
             txtPersona.Text = _ticket.TicketPersona;
-            txtAsunto.Text = _ticket.TicketMensaje ;
+            txtAsunto.Text = _ticket.TicketMensaje;
             txtMensaje.Text = _ticket.TicketAsunto;
         }
 
@@ -51,8 +51,7 @@ namespace OficiosTI
             dataGridHilo.DataSource = hilo;
         }
 
-
-        private void CargarTicketsR()
+         private void CargarTicketsR()   ////// TICKETS RELACIONADOS 
         {
             if (_ticket == null || _ticket.id_of == 0 || _ticket.id_of == null)
             {
@@ -77,7 +76,7 @@ namespace OficiosTI
                                            Oficina = o.OficinasNombre,
                                            Oficio = x.NumeroOficio,
                                            Estado = s.Cat_TicketStatusStatus,
-                                           
+
                                        }).ToList();
 
             dataGridRelacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -104,46 +103,81 @@ namespace OficiosTI
             CargarHilo();
         }
 
-        /// BOTON DE GENERAR OFICIO PERO DEENTRO DEL ROW 
-       /* private void BtnGenerarOficio_Click(object sender, EventArgs e)
+
+
+        /// BOTON PARA VER EL OFICIO DE SOLICITUD  
+        private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
-            var modelo = new OficioModel
+            var archivoBd = _context.Archivo.FirstOrDefault(p => p.OficioId == _ticket.id_of);
+
+             if (archivoBd == null || archivoBd.ArchivoArchivo == null || archivoBd.ArchivoArchivo.Length == 0)
             {
-            //    NumeroOficio = { _oficioActual. = },
-                NumeroOficio = "SSP/OM/DTI/0273/2026",
+                MessageBox.Show("El documento no existe o está vacío.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-                Asunto = $"Respuesta a ticket {_ticket.TicketId}",
-
-                Fecha = DateTime.Now,
-
-                Destinatario = _ticket.TicketPersona,
-
-                CargoDestinatario = "",
-
-                Cuerpo = _ticket.TicketMensaje,
-
-                DirectorNombre = "Ing. Luis Felipe Ramírez Flores",
-
-                DirectorCargo = "Director de Tecnologías de la Información",
-
-                Copias = "C.C.P. Archivo."
-            };
-
-            var documento = new OficioRespuestaPdf(modelo);
-
-            string ruta = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                $"Oficio_Ticket_{_ticket.TicketId}.pdf");
-
-            documento.GeneratePdf(ruta);
-
-            MessageBox.Show("Oficio generado:\n" + ruta);
-
-            System.Diagnostics.Process.Start(new ProcessStartInfo
+            try
             {
-                FileName = ruta,
-                UseShellExecute = true
-            });
-        }*/
+                string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";
+                string rutaTemporal = System.IO.Path.Combine(System.IO.Path.GetTempPath(), nombreArchivo);
+
+                System.IO.File.WriteAllBytes(rutaTemporal, archivoBd.ArchivoArchivo);
+
+                var psi = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = rutaTemporal,
+                    UseShellExecute = true
+                };
+                System.Diagnostics.Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al abrir el PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        
+
+
+        /// BOTON DE GENERAR OFICIO PERO DEENTRO DEL ROW 
+        /* private void BtnGenerarOficio_Click(object sender, EventArgs e)
+         {
+             var modelo = new OficioModel
+             {
+             //    NumeroOficio = { _oficioActual. = },
+                 NumeroOficio = "SSP/OM/DTI/0273/2026",
+
+                 Asunto = $"Respuesta a ticket {_ticket.TicketId}",
+
+                 Fecha = DateTime.Now,
+
+                 Destinatario = _ticket.TicketPersona,
+
+                 CargoDestinatario = "",
+
+                 Cuerpo = _ticket.TicketMensaje,
+
+                 DirectorNombre = "Ing. Luis Felipe Ramírez Flores",
+
+                 DirectorCargo = "Director de Tecnologías de la Información",
+
+                 Copias = "C.C.P. Archivo."
+             };
+
+             var documento = new OficioRespuestaPdf(modelo);
+
+             string ruta = Path.Combine(
+                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                 $"Oficio_Ticket_{_ticket.TicketId}.pdf");
+
+             documento.GeneratePdf(ruta);
+
+             MessageBox.Show("Oficio generado:\n" + ruta);
+
+             System.Diagnostics.Process.Start(new ProcessStartInfo
+             {
+                 FileName = ruta,
+                 UseShellExecute = true
+             });
+         }*/
     }
 }

@@ -30,15 +30,15 @@ namespace OficiosTI
             string org =    _service.ObtenerUnidadOrganizativa();
             int idOficina = _service.ObtenerUnidadOrgId(org);
             ObtenerSegmentoDeRed();
-            // Aplicamos los permisos a los botones
+            // permisos a los botones
             AplicarPermisosInterfaz(idOficina, org);
         }
 
-        private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
+ /*      private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
         {
           ////BOTONES PARA VALIDAR QUIEN ASIGNA LOS OFICIOS ////
           string ou = nombreOU?.Trim().ToUpper() ?? "";
-          if (ou == "DESARROLLO DIGITAL" || ou == "JEFATURA" || ou=="SOPORTE TÉCNICO" || ou=="JEFATURA")
+          if (ou == "DESARROLLO DIGITAL" || ou == "REDES" || ou=="SOPORTE TÉCNICO" || ou=="JEFATURA")
           //   if (ou ==  "JEFATURA")
             {
                 btnAsignar.Visible = true;
@@ -51,7 +51,18 @@ namespace OficiosTI
        
             }
         }
-      
+   */
+
+       private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
+        {
+             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
+
+             bool tienePermiso = _context.Oficinas
+                                        .Any(x => x.OficinasId == miOficinaId && x.Permiso == 1);
+            btnAsignar.Visible = tienePermiso;
+            btnSinTicket.Visible = tienePermiso;
+        }
+   
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -150,50 +161,84 @@ namespace OficiosTI
                 query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId > 1);
             }
            //  .Where(t => t.OficinasId == idorg && t.id_of != null);   /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
-
             if (!string.IsNullOrWhiteSpace(textoBuscar))
             {
                 query = query.Where(t =>
                     t.TicketPersona.Contains(textoBuscar) ||
                     t.TicketAsunto.Contains(textoBuscar));
             }
-
             if (!string.IsNullOrWhiteSpace(prioridad) && prioridad != "Todos")
             {
                 query = query.Where(t => t.TicketPrioridad == prioridad);
             }
-
             if (!string.IsNullOrWhiteSpace(status) && status != "Todos")
             {
                 int statusId = int.Parse(status);
                 query = query.Where(t => t.Cat_TicketStatusId == statusId);
             }
+        var tickets = query
+        .Select(t => new TicketGridModel
+        {
+            TicketId = t.TicketId,
+            TicketPersona = t.TicketPersona,
+            TicketAsunto = t.TicketAsunto,
+            TicketPrioridad = t.TicketPrioridad,
+            TicketFecha = t.TicketFecha,
+            Cat_TicketStatusId = t.Cat_TicketStatusId,
+            EstadoTicket = _context.Cat_TicketStatus
+             .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
+             .Select(o => o.Cat_TicketStatusStatus)
+             .FirstOrDefault(),
+            OficinasNombre = _context.Oficinas
+             .Where(o => o.OficinasId == t.OficinasId)
+             .Select(o => o.OficinasNombre)
+             .FirstOrDefault(),
+            NumeroOficio = _context.OficioRespuesta
+                 .Where(o => o.TicketId == t.TicketId)
+                 .Select(o => o.NumeroOficio)
+                 .FirstOrDefault()
+        })
+        .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
+        // --- NUEVO ORDENAMIENTO ---
+        .OrderBy(t => (t.NumeroOficio == null || t.NumeroOficio == "") ? 1 : // 1° Sin oficio
+                      (t.Cat_TicketStatusId == 3) ? 3 :                      // 2° Estado 2 (con oficio)
+                      (t.Cat_TicketStatusId == 2) ? 2 :                      // 3° Estado 3 (con oficio)
+                      4)                                                     // 
+        .ThenByDescending(t => t.Cat_TicketStatusId)                         // 
+        .ToList();
 
-            var tickets = query
+
+         /*   var tickets = query
                .Select(t => new TicketGridModel
-                {
-                    TicketId = t.TicketId,
-                    TicketPersona = t.TicketPersona,
-                    TicketAsunto = t.TicketAsunto,
-                    TicketPrioridad = t.TicketPrioridad,
-                    TicketFecha = t.TicketFecha,
-                     Cat_TicketStatusId = t.Cat_TicketStatusId,
-                     EstadoTicket = _context.Cat_TicketStatus
+               {
+                   TicketId = t.TicketId,
+                   TicketPersona = t.TicketPersona,
+                   TicketAsunto = t.TicketAsunto,
+                   TicketPrioridad = t.TicketPrioridad,
+                   TicketFecha = t.TicketFecha,
+                   Cat_TicketStatusId = t.Cat_TicketStatusId,
+                   EstadoTicket = _context.Cat_TicketStatus
                     .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
-                    .Select(o=> o.Cat_TicketStatusStatus)
+                    .Select(o => o.Cat_TicketStatusStatus)
                     .FirstOrDefault(),
-                    OficinasNombre = _context.Oficinas
+                   OficinasNombre = _context.Oficinas
                     .Where(o => o.OficinasId == t.OficinasId)
-                    .Select(o =>o.OficinasNombre)
-                    .FirstOrDefault(),                                   
-                    NumeroOficio = _context.OficioRespuesta
+                    .Select(o => o.OficinasNombre)
+                    .FirstOrDefault(),
+                   NumeroOficio = _context.OficioRespuesta
                         .Where(o => o.TicketId == t.TicketId)
                         .Select(o => o.NumeroOficio)
                         .FirstOrDefault()
-                })
+               })
                 .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
-                .OrderByDescending(t => t.TicketFecha)
-                .ToList();
+           //     .OrderBy(o => o.NumeroOficio)
+              //  .OrderBy(t => t.Cat_TicketStatusId) 
+                .OrderByDescending(t => t.Cat_TicketStatusId)
+                           .ThenBy(o => o.NumeroOficio)                      
+                           .ThenByDescending(t => t.TicketFecha)             
+                .ToList();*/
+
+
             DataGridTickets.DataSource = null;
             var bs = new BindingSource();
             bs.DataSource = tickets;
@@ -453,6 +498,7 @@ namespace OficiosTI
             col.Width = 60;
             DataGridTickets.Columns.Add(col);
         }
+
 
         private void DataGridTickets_CellClick(object sender, DataGridViewCellEventArgs e)
         {

@@ -33,15 +33,10 @@ namespace OficiosTI
         public FrmOficioSin(OficiosContext context)
         {
             InitializeComponent();
-
             _context = context;
-
-            var service = new OficioRespuestaService(_context);
-         
+            var service = new OficioRespuestaService(_context);         
             int miOficinaId = service.ObtenerUnidadOrgId(service.ObtenerUnidadOrganizativa());
-
             InicializarGrid(miOficinaId);
-
             dataGridOficios.CellDoubleClick += dataGridOficios_CellDoubleClick;
             btnCrearOficio.Enabled = false;
         }
@@ -79,7 +74,7 @@ namespace OficiosTI
             }
         }
      
-    /*   private void btnCrearOficio_Click(object sender, EventArgs e)
+    /*  private void btnCrearOficio_Click(object sender, EventArgs e)
         {
             FrmOficioNuevo frmNuevo = new FrmOficioNuevo(_context, null);
 
@@ -87,7 +82,8 @@ namespace OficiosTI
             {
                 InicializarGrid(oficina);
             }
-        }*/
+        }
+    */
 
         private void dataGridOficios_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {

@@ -255,7 +255,8 @@
             BtnGenerarOficio.Name = "BtnGenerarOficio";
             BtnGenerarOficio.Size = new Size(150, 30);
             BtnGenerarOficio.TabIndex = 1;
-            BtnGenerarOficio.Text = "Generar Oficio";
+            BtnGenerarOficio.Text = "Ver Oficio Solicitud";
+            BtnGenerarOficio.Click += BtnGenerarOficio_Click;
             // 
             // FrmTicketDetalle
             // 

@@ -50,6 +50,9 @@
             lbTicket = new Label();
             lblTitulo = new Label();
             panelFormulario = new Panel();
+            btnAgregar = new Button();
+            cmbCopias = new ComboBox();
+            label2 = new Label();
             label1 = new Label();
             comboBox1 = new ComboBox();
             lblNumeroOficio = new Label();
@@ -111,6 +114,9 @@
             // panelFormulario
             // 
             panelFormulario.BackColor = SystemColors.Control;
+            panelFormulario.Controls.Add(btnAgregar);
+            panelFormulario.Controls.Add(cmbCopias);
+            panelFormulario.Controls.Add(label2);
             panelFormulario.Controls.Add(label1);
             panelFormulario.Controls.Add(comboBox1);
             panelFormulario.Controls.Add(lblNumeroOficio);
@@ -134,10 +140,37 @@
             panelFormulario.Size = new Size(575, 655);
             panelFormulario.TabIndex = 0;
             // 
+            // btnAgregar
+            // 
+            btnAgregar.Location = new Point(477, 447);
+            btnAgregar.Name = "btnAgregar";
+            btnAgregar.Size = new Size(75, 23);
+            btnAgregar.TabIndex = 19;
+            btnAgregar.Text = "Agregar";
+            btnAgregar.UseVisualStyleBackColor = true;
+            btnAgregar.Click += btnAgregar_Click_1;
+            // 
+            // cmbCopias
+            // 
+            cmbCopias.FormattingEnabled = true;
+            cmbCopias.Location = new Point(136, 406);
+            cmbCopias.Name = "cmbCopias";
+            cmbCopias.Size = new Size(416, 23);
+            cmbCopias.TabIndex = 18;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(28, 406);
+            label2.Name = "label2";
+            label2.Size = new Size(43, 15);
+            label2.TabIndex = 17;
+            label2.Text = "Copias";
+            // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(27, 507);
+            label1.Location = new Point(26, 601);
             label1.Name = "label1";
             label1.Size = new Size(64, 15);
             label1.TabIndex = 16;
@@ -146,7 +179,7 @@
             // comboBox1
             // 
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(136, 499);
+            comboBox1.Location = new Point(136, 593);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(424, 23);
             comboBox1.TabIndex = 14;
@@ -256,7 +289,7 @@
             // lblCopias
             // 
             lblCopias.AutoSize = true;
-            lblCopias.Location = new Point(20, 402);
+            lblCopias.Location = new Point(23, 486);
             lblCopias.Name = "lblCopias";
             lblCopias.Size = new Size(86, 15);
             lblCopias.TabIndex = 12;
@@ -264,7 +297,7 @@
             // 
             // txtCopias
             // 
-            txtCopias.Location = new Point(20, 420);
+            txtCopias.Location = new Point(23, 504);
             txtCopias.Multiline = true;
             txtCopias.Name = "txtCopias";
             txtCopias.Size = new Size(540, 70);
@@ -327,5 +360,8 @@
         private ComboBox comboBox1;
         private Label label1;
         private Label lbTicket;
+        private Button btnAgregar;
+        private ComboBox cmbCopias;
+        private Label label2;
     }
 }

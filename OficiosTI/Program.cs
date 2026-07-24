@@ -20,10 +20,10 @@ namespace OficiosTI
             // ==========================================
 
             const string ConnectionString =
-      //     "Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True";
+          "Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True";
           // Desarrollo local
           // const string ConnectionString =
-            "Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True";
+       //    "Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True";
             var options = new DbContextOptionsBuilder<OficiosContext>()
                 .UseSqlServer(ConnectionString)
                 .Options;

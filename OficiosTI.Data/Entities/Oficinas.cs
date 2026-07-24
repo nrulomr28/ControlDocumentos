@@ -11,7 +11,8 @@ namespace OficiosTI.Data.Entities
         public int OficinasId { get; set; }
         public string? OficinasNombre { get; set; }
         public string NombreArea { get; set; }
-        public string? UnidadOrganizativa { get; set; }
+        public string?UnidadOrganizativa { get; set; }
+        public int?Permiso { get; set; }
 
     }
 }
