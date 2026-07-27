@@ -54,14 +54,13 @@ namespace OficiosTI
    */
 
        private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
-        {
+       {
              int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
-
              bool tienePermiso = _context.Oficinas
                                         .Any(x => x.OficinasId == miOficinaId && x.Permiso == 1);
             btnAsignar.Visible = tienePermiso;
             btnSinTicket.Visible = tienePermiso;
-        }
+       }
    
         protected override void OnLoad(EventArgs e)
         {
@@ -83,7 +82,7 @@ namespace OficiosTI
         private void ObtenerSegmentoDeRed()
         {
             lbSegmento.Text = $"Segmento: {_service.ObtenerSegmentoDeRed()}";
-          //  lbSegmento.Text = $"Segmento: {_service.ObtenerUnidadOrgId()}";
+       
             
         }
         private void ObtenerOrganizacion()
@@ -137,7 +136,7 @@ namespace OficiosTI
      */
 
         /// MODIFICAR PARA CARGA DE TICKETS
-        /// FALTA PONER EL ESTADO Y LA OFICINA
+        /// FALTA PONER EL ESTADO Y LA OFICINA   YA SE AGREGÓ ****
 
         private void CargarTickets()
         {

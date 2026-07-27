@@ -37,8 +37,8 @@ namespace OficiosTI.Services
                 // HEADER 
                 // =========================
 
-               string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
-             //string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
+              string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
+             //  string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
                string absoluteHeaderPath = Path.GetFullPath(headerPath);
                 // Acceder directamente al rango del encabezado de la primera sección y asignarle el texto               
                if (File.Exists(absoluteHeaderPath))
@@ -84,18 +84,18 @@ namespace OficiosTI.Services
                 sel.Font.Bold = 2;
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphRight;
 
-                sel.TypeText($"DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN");
-                sel.TypeParagraph();
+             //   sel.TypeText($"DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN");
+           //     sel.TypeParagraph();
                 sel.ParagraphFormat.SpaceAfter = 0f;
                 sel.ParagraphFormat.SpaceBefore = 0f;
-               
+                sel.Font.Bold = 0;
                 sel.TypeText($"Oficio No. {model.NumeroOficio}");
                 sel.TypeParagraph();
 
              // sel.TypeText($"Asunto: {model.Asunto}");
        
                 string texto_a = model.Asunto;
-              
+               
                 if (!string.IsNullOrEmpty(texto_a))
                 {
                     string resultadoa = char.ToUpper(texto_a[0]) + texto_a.Substring(1).ToLower();
@@ -105,11 +105,13 @@ namespace OficiosTI.Services
 
                 if (!string.IsNullOrWhiteSpace(model.OficioReferencia))
                 {
+                    sel.Font.Bold = 0;
                     sel.TypeText($"{model.OficioReferencia}");
                     sel.TypeParagraph();
                 }
               //sel.TypeText($"En respuesta al oficio: {model.OficioReferencia}");
                 sel.TypeParagraph();
+                sel.Font.Bold = 0;
                 sel.TypeText($"Xalapa-Enríquez, Ver., a {model.Fecha:dd 'de' MMMM 'de' yyyy}");
                 sel.TypeParagraph();
 
@@ -249,6 +251,7 @@ namespace OficiosTI.Services
                 doc.SaveAs2(ruta);
                 return ruta;
             }
+
             catch (COMException ex)
             {
                 throw new InvalidOperationException("Error al generar el documento Word", ex);
