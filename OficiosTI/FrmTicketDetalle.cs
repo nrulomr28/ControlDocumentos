@@ -52,7 +52,7 @@ namespace OficiosTI
         }
 
          private void CargarTicketsR()   ////// TICKETS RELACIONADOS 
-        {
+         {
             if (_ticket == null || _ticket.id_of == 0 || _ticket.id_of == null)
             {
                 dataGridRelacion.DataSource = null;
@@ -109,20 +109,16 @@ namespace OficiosTI
         private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
             var archivoBd = _context.Archivo.FirstOrDefault(p => p.OficioId == _ticket.id_of);
-
              if (archivoBd == null || archivoBd.ArchivoArchivo == null || archivoBd.ArchivoArchivo.Length == 0)
             {
-                MessageBox.Show("El documento no existe o está vacío.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("El documento no existe o está vacío.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             try
             {
                 string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";
                 string rutaTemporal = System.IO.Path.Combine(System.IO.Path.GetTempPath(), nombreArchivo);
-
                 System.IO.File.WriteAllBytes(rutaTemporal, archivoBd.ArchivoArchivo);
-
                 var psi = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = rutaTemporal,
@@ -132,13 +128,12 @@ namespace OficiosTI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ocurrió un error al abrir el PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Ocurrió un error al abrir el PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-        
+      
 
-
-        /// BOTON DE GENERAR OFICIO PERO DEENTRO DEL ROW 
+        /// BOTON DE GENERAR OFICIO PERO DENTRO DEL ROW 
         /* private void BtnGenerarOficio_Click(object sender, EventArgs e)
          {
              var modelo = new OficioModel

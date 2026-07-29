@@ -47,6 +47,9 @@
             panel1 = new Panel();
             btnWord = new Button();
             btnGuardarNu = new Button();
+            label8 = new Label();
+            cmbCopias = new ComboBox();
+            btnAgregar = new Button();
             panelHeader.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -139,7 +142,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(12, 246);
+            label5.Location = new Point(15, 233);
             label5.Name = "label5";
             label5.Size = new Size(60, 15);
             label5.TabIndex = 12;
@@ -147,7 +150,7 @@
             // 
             // txtRespC
             // 
-            txtRespC.Location = new Point(12, 264);
+            txtRespC.Location = new Point(15, 251);
             txtRespC.Multiline = true;
             txtRespC.Name = "txtRespC";
             txtRespC.Size = new Size(552, 184);
@@ -164,7 +167,7 @@
             // 
             // txtCcp
             // 
-            txtCcp.Location = new Point(17, 490);
+            txtCcp.Location = new Point(15, 508);
             txtCcp.Multiline = true;
             txtCcp.Name = "txtCcp";
             txtCcp.Size = new Size(547, 39);
@@ -216,11 +219,42 @@
             btnGuardarNu.UseVisualStyleBackColor = true;
             btnGuardarNu.Click += btnGuardarNu_Click;
             // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(12, 438);
+            label8.Name = "label8";
+            label8.Size = new Size(43, 15);
+            label8.TabIndex = 19;
+            label8.Text = "Copias";
+            // 
+            // cmbCopias
+            // 
+            cmbCopias.FormattingEnabled = true;
+            cmbCopias.Location = new Point(120, 438);
+            cmbCopias.Name = "cmbCopias";
+            cmbCopias.Size = new Size(444, 23);
+            cmbCopias.TabIndex = 20;
+            // 
+            // btnAgregar
+            // 
+            btnAgregar.Location = new Point(487, 467);
+            btnAgregar.Name = "btnAgregar";
+            btnAgregar.Size = new Size(75, 23);
+            btnAgregar.TabIndex = 21;
+            btnAgregar.Text = "Agregar";
+            btnAgregar.TextAlign = ContentAlignment.MiddleRight;
+            btnAgregar.UseVisualStyleBackColor = true;
+            btnAgregar.Click += btnAgregar_Click;
+            // 
             // FrmOficioNuevo
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(585, 703);
+            Controls.Add(btnAgregar);
+            Controls.Add(cmbCopias);
+            Controls.Add(label8);
             Controls.Add(panel1);
             Controls.Add(cmbFirmas);
             Controls.Add(label7);
@@ -268,5 +302,8 @@
         private Panel panel1;
         private Button btnWord;
         private Button btnGuardarNu;
+        private Label label8;
+        private ComboBox cmbCopias;
+        private Button btnAgregar;
     }
 }

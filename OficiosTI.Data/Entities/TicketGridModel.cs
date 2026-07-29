@@ -25,7 +25,6 @@ namespace OficiosTI.Data.Entities
         public string NumeroOficio { get; set; }
 
         public string OficinasNombre { get; set; }
-
       
     }
 }

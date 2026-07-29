@@ -89,6 +89,10 @@ namespace OficiosTI
 
         private void BtnPreview_Click(object sender, EventArgs e)
         {
+            if (!ValidacionesPreview())
+            {
+                return;
+            }
             try
             {
                 this.Cursor = Cursors.WaitCursor;
@@ -138,8 +142,10 @@ namespace OficiosTI
             }
         }
 
-        /* private void BtnPreview_Click(object sender, EventArgs e)
-         {
+        /*
+          
+        private void BtnPreview_Click(object sender, EventArgs e)
+        {
              //var model = new OficioModel
              //{
              //    NumeroOficio = txtNumeroOficio.Text,
@@ -198,15 +204,34 @@ namespace OficiosTI
                  FileName = ruta,
                  UseShellExecute = true
              });
+        }
 
-
-         }
-
-         */
+       */
 
         private void BtnGuardar_Click(object sender, EventArgs e)
         {
             GuardarOficio();
+        }
+
+
+        private bool ValidacionesPreview()
+        {
+            if (string.IsNullOrWhiteSpace(txtNumeroOficio.Text))   ///NUMERO DE OFICIO 
+            {
+                MessageBox.Show("Debe capturar el número de oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(comboBox1.Text))   /// FIRMANTE 
+            {
+                MessageBox.Show("Debe seleccionar quien firma.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(txtCargo.Text))   ////REMITENTE-CARGO
+            {
+                MessageBox.Show("Debe capturar el cargo del remitente.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+            return true;
         }
 
         private void GuardarOficio()
@@ -280,7 +305,7 @@ namespace OficiosTI
 
             //  PROCESO ANTERIOR PARA MODIFICAR TICKETS SIN ALTERAR A LOS DEMAS .....
             /*  
-             * bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
+               bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
                if (huboCambios)
                {
                    string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
@@ -319,9 +344,8 @@ namespace OficiosTI
                         _service.RegistrarHiloOficio(ticketRelacionado.TicketId, descripcion, accionAsignada);
                     }
 
-                    // ticketRelacionado.Cat_TicketStatusId = 3;    //// SI SE QUIEREN CERRAR TODOS 
+                // ticketRelacionado.Cat_TicketStatusId = 3;    //// SI SE QUIEREN CERRAR TODOS 
                 }
-
                 /*    foreach (var ticketRelacionado in ticketsAsociados)
                     {
                         if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
@@ -777,12 +801,13 @@ namespace OficiosTI
 
         }*/
 
-        /*   private string ObtenerFundamentoLegal()
+       /*   private string ObtenerFundamentoLegal()
                 {
 
                     return @"De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo del Estado de Veracruz de Ignacio de la Llave; 3 segundo párrafo del Código de Procedimientos Administrativos; 186 fracción III del Código Financiero del Estado; así como los artículos 2, 3, 6 fracción XIII, 11 fracciones VI y VIII y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz;";
 
-                }*/
+                }
+       */
 
         /*     private string ObtenerFundamentoLegal(string cargoFirmante)
              {
@@ -897,7 +922,7 @@ namespace OficiosTI
             string itemSeleccionado = cmbCopias.Text;
             if (txtCopias.Text.Contains(itemSeleccionado))
             {
-                MessageBox.Show("Este elmento ya está en la lista.");
+                MessageBox.Show("Este elemento ya está en la lista.");
                 return;
             }
             if (!string.IsNullOrEmpty(txtCopias.Text) && !txtCopias.Text.EndsWith(Environment.NewLine))

@@ -17,8 +17,9 @@ namespace OficiosTI.Services
     public class OficioRespuestaService
     {
         private readonly OficiosContext _context;
-        private NumOficio _oficioAnterior; 
-     // private Oficio1 _oficioAnterior;     ///// OFICIOREFRENCIA
+        private NumOficio _oficioAnterior;
+        // private Oficio1 _oficioAnterior;     ///// OFICIOREFRENCIA
+    
 
         public OficioRespuestaService(OficiosContext context)
         {
@@ -158,35 +159,48 @@ namespace OficiosTI.Services
             return oficina?.OficinasId ?? 0;
         }
 
-
         public bool EsUsuarioGlobal()
         {
             string org = ObtenerUnidadOrganizativa();
             var globales = new List<string> { "JEFATURA" };
-           // var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
+          //var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
             return globales.Contains(org?.Trim().ToUpper() ?? "");
         }
-      /*  public bool EsUsuarioGlobal()
-        {
-            string org = ObtenerUnidadOrganizativa();
-            var globales = new List<string> { "JEFATURA" };
-            // var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
-            return globales.Contains(org?.Trim().ToUpper() ?? "");
-        }
-      */
+
+
+        /*   private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
+           {
+               int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
+               bool tienePermiso = _context.Oficinas
+                                          .Any(x => x.OficinasId == miOficinaId && x.Permiso == 1);
+               //btnAsignar.Visible = tienePermiso;
+              // btnSinTicket.Visible = tienePermiso;
+           }
+        */
+
+
+        /*
+          public bool EsUsuarioGlobal()
+          {
+              string org = ObtenerUnidadOrganizativa();
+              var globales = new List<string> { "JEFATURA" };
+              // var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
+              return globales.Contains(org?.Trim().ToUpper() ?? "");
+          }
+        */
 
         /*  public int NumeroTicketExiste(string numeroOficio)
-            {
-                /// OBTENER PRIMERO EL ID DEL OFICIO PARA BUSCARLO EN LA TABLA DE OficioRespuesta
-                var ofin = _context.NumOficio
-                   .Where(x => x.NumeroConsecutivo == numeroOficio)
-                   .OrderByDescending(x => x.OficioId)
-                   .FirstOrDefault();
+              {
+                  /// OBTENER PRIMERO EL ID DEL OFICIO PARA BUSCARLO EN LA TABLA DE OficioRespuesta
+                  var ofin = _context.NumOficio
+                     .Where(x => x.NumeroConsecutivo == numeroOficio)
+                     .OrderByDescending(x => x.OficioId)
+                     .FirstOrDefault();
 
 
-                return 0;
-            }
-        */
+                  return 0;
+              }
+          */
 
         /*    private int ObtenerUnidadOrgId()
                   {
@@ -462,9 +476,7 @@ namespace OficiosTI.Services
             {
                 TicketId = ticketId,
                 HiloTicketFecha = DateTime.Now,
-
                 HiloTicketAccion = accion,
-
                 HiloTicketMensaje = numeroOficio,
                 UsuarioId = 0
             };

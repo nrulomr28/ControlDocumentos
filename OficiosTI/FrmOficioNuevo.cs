@@ -23,26 +23,26 @@ namespace OficiosTI
         private OficiosContext _context;
         private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA 
 
-     // private NumOficio _oficioconse;
+        // private NumOficio _oficioconse;
         private OficioRespuestaService _service;
 
-     /* public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp)
-        {
-            InitializeComponent();
-            _context = context;
-            _oficioActual = OficioResp;
-            CargarFirma();
+        /* public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp)
+           {
+               InitializeComponent();
+               _context = context;
+               _oficioActual = OficioResp;
+               CargarFirma();
 
-            if (txtCcp.Text == string.Empty)
-            {
-                txtCcp.Text = ObtenerCopiasDefault();
-            }
+               if (txtCcp.Text == string.Empty)
+               {
+                   txtCcp.Text = ObtenerCopiasDefault();
+               }
 
-            CargarResp(OficioResp);
-        }
-     */
+               CargarResp(OficioResp);
+           }
+        */
 
-  
+
         public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp = null)
         {
             InitializeComponent();
@@ -50,8 +50,9 @@ namespace OficiosTI
             _service = new OficioRespuestaService(_context);
             _oficioActual = OficioResp;
             CargarFirma();
-          //CargarOficios(3);
-     
+            CargarCopias();
+            //CargarOficios(3);
+
             if (string.IsNullOrEmpty(txtCcp.Text))
             {
                 txtCcp.Text = ObtenerCopiasDefault();
@@ -74,22 +75,32 @@ namespace OficiosTI
             cmbFirmas.SelectedIndex = -1;
         }
 
+        private void CargarCopias()
+        {
+            var Copias = _context.Cat_Copias
+                .Where(x => x.Activo)
+                .ToList();
+            cmbCopias.DataSource = Copias;
+            cmbCopias.DisplayMember = "NombreCompleto";
+            cmbCopias.ValueMember = "CcpId";
+            cmbCopias.SelectedIndex = -1;
+        }
 
 
         /*   private void CargarOficios(int idOficinaDeseada)
-           {
-               if (_context == null) return;
+              {
+                  if (_context == null) return;
 
-               var of_conse = _context.NumOficio
-                   .Where(x => x.Oficinas_Id == idOficinaDeseada)
-                   .OrderByDescending(x => x.OficioId)
-                   .ToList();
+                  var of_conse = _context.NumOficio
+                      .Where(x => x.Oficinas_Id == idOficinaDeseada)
+                      .OrderByDescending(x => x.OficioId)
+                      .ToList();
 
-               cmbOf.DataSource = of_conse;
-               cmbOf.DisplayMember = "NumeroConsecutivo";
-               cmbOf.ValueMember = "OficioId";
-           }
-        */
+                  cmbOf.DataSource = of_conse;
+                  cmbOf.DisplayMember = "NumeroConsecutivo";
+                  cmbOf.ValueMember = "OficioId";
+              }
+           */
         /*  private void CargarOficios(int idOficinaDeseada)
           {
               if (_context == null) return;
@@ -235,8 +246,6 @@ namespace OficiosTI
             GuardarOficio();
         }
 
-
-   
         private void GuardarOficio()
         {
             try
@@ -344,7 +353,6 @@ namespace OficiosTI
                     DirectorNombre = nombreExtraido,
                     DirectorCargo = cargoExtraido,
 
-
                 };
 
                 var servicio = new OficioWordInteropService();
@@ -383,35 +391,13 @@ namespace OficiosTI
 
         }
 
-/*     private string ObtenerFundamentoLegal(string cargoFirmante)
+        private string ObtenerFundamentoLegal(string cargoFirmante)
         {
             string cargoNormalizado = cargoFirmante.Trim();
-
-            switch (cargoNormalizado)
-            {
-                case "Director de Tecnologías de la Información":
-                    return @"De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo del Estado de Veracruz de Ignacio de la Llave; 3 segundo párrafo del Código de Procedimientos Administrativos; 186 fracción III del Código Financiero del Estado; así como los artículos 2, 3, 6 fracción XIII, 11 fracciones VI y VIII y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz;";
-
-                case "Jefe del Departamento de Seguridad de Redes en la Dirección de Tecnologías de la Información":
-                    return "De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo; 3, segundo párrafo, del Código de Procedimientos Administrativos, todos del Estado de Veracruz de Ignacio de la Llave; así como 2, 3, 6 fracción XIII, 11 fracciones VI y VIII, 40 fracciones VII y XXVIII, y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz, demás disposiciones legales aplicables, y por instrucciones del Ing. Luis Felipe Ramírez Flores, Director de Tecnologías de la Información,";
-
-                case "Jefe del Departamento de Desarrollo Digital en la Dirección de Tecnologías de la Información":
-                    return "De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo; 3, segundo párrafo, del Código de Procedimientos Administrativos, todos del Estado de Veracruz de Ignacio de la Llave; así como 2, 3, 6 fracción XIII, 11 fracciones VI y VIII, 40 fracciones VII y XXVIII, y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz, demás disposiciones legales aplicables, y por instrucciones del Ing. Luis Felipe Ramírez Flores, Director de Tecnologías de la Información,";
-
-                default:
-                    return @"De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo del Estado de Veracruz de Ignacio de la Llave; 3 segundo párrafo del Código de Procedimientos Administrativos; 186 fracción III del Código Financiero del Estado; así como los artículos 2, 3, 6 fracción XIII, 11 fracciones VI y VIII y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz;";
-
-            }
-        } 
-   */
-       private string ObtenerFundamentoLegal(string cargoFirmante)
-       {
-            string cargoNormalizado = cargoFirmante.Trim();
-
             var firma = _context.Firmante
                            .FirstOrDefault(q => q.Cargo == cargoNormalizado);
             return firma.FundamentoLegal.Trim();
-       }
+        }
         /*
             switch (cargoNormalizado)
             {
@@ -480,7 +466,7 @@ namespace OficiosTI
         private void CargarResp(OficioRespuesta oficio)
         {
             _oficioActual = oficio ?? new OficioRespuesta();
-            txtNof.Text = _oficioActual.NumeroOficio ?? string.Empty;       
+            txtNof.Text = _oficioActual.NumeroOficio ?? string.Empty;
             txtAsunto.Text = _oficioActual.Asunto ?? string.Empty;
             txtDest.Text = _oficioActual.Destinatario ?? string.Empty;
             txtCrgo.Text = _oficioActual.CargoDestinatario ?? string.Empty;
@@ -495,6 +481,28 @@ namespace OficiosTI
             {
                 cmbFirmas.SelectedIndex = -1;
             }
+        }
+
+        private void btnAgregar_Click(object sender, EventArgs e)
+        {
+            if (cmbCopias.SelectedIndex == -1)
+            {
+                MessageBox.Show("Seleccione un elemento primero.");
+                return;
+            }
+            string itemSeleccionado = cmbCopias.Text;
+            if (txtCcp.Text.Contains(itemSeleccionado))
+            {
+                MessageBox.Show("Este elemento ya está en la lista.");
+                return;
+            }
+            if (!string.IsNullOrEmpty(txtCcp.Text) && !txtCcp.Text.EndsWith(Environment.NewLine))
+            {
+                txtCcp.AppendText(Environment.NewLine);
+            }
+
+            txtCcp.AppendText("C.C.P. " + itemSeleccionado + "- Para su conocimiento.- Presente");
+            cmbCopias.SelectedIndex = -1;
         }
     }
 }

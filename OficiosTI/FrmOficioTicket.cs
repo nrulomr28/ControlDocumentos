@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.InkML;
+using Microsoft.EntityFrameworkCore;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 using OficiosTI.Services;
@@ -22,11 +23,12 @@ namespace OficiosTI
             CargarOficinas();
             CargarTiposD();
 
-         /*   if (_service.EsUsuarioGlobal())
+         /* if (_service.EsUsuarioGlobal())
             {
                 AsignarF.Enabled = true;
+            }
+         */
 
-            }*/
             if (_ticket != null)
             {
                 CargarDatosTicket();
@@ -57,10 +59,9 @@ namespace OficiosTI
         private void CargarOficinas()
         {
             var query = _context.Oficinas.AsQueryable();
-
             if (_service.EsUsuarioGlobal())
             {
-                query = query.Where(x => x.OficinasId != null);
+                query = query.Where(x => x.OficinasId <=5);
             }
             else
             {
@@ -78,7 +79,7 @@ namespace OficiosTI
             cmbOficinas.DisplayMember = "OficinasNombre";
             cmbOficinas.ValueMember = "OficinasId";
             cmbOficinas.SelectedIndex = -1;
-            //  cmbOficinas.Enabled = _service.EsUsuarioGlobal();
+         // cmbOficinas.Enabled = _service.EsUsuarioGlobal();
         }
 
        private void CargarTiposD()
@@ -94,8 +95,6 @@ namespace OficiosTI
             cmbTipos.ValueMember = "Id";
             cmbTipos.SelectedIndex = 0;
         }
-
-
 
         private void CargarDatosTicket()
         {
@@ -144,14 +143,28 @@ namespace OficiosTI
             */
 
             /// buscar el numero de oficio si existe en la tabla
-            var oficioExistente = _context.NumOficio
-                .FirstOrDefault(x => x.NumeroConsecutivo == conse && x.Anio == anioActual);
+          /*  var oficioExistente = _context.NumOficio
+               .FirstOrDefault(x => x.NumeroConsecutivo == conse && x.Anio == anioActual);
+          */
+
+            //muestra el nombre de la oficina que tiene el ticket 
+            var oficioExistente = (from ofi in _context.NumOficio
+                                   join oficinas in _context.Oficinas
+                                        on ofi.Oficinas_Id equals oficinas.OficinasId
+                                   where ofi.NumeroConsecutivo == conse && ofi.Anio == anioActual
+                                   select new
+                                   {
+                                       TicketId = ofi.TicketId,
+                                       Oficina = oficinas.OficinasNombre
+                                      
+                                    
+                                   }).FirstOrDefault();
 
             if (oficioExistente != null)
             {
                 DialogResult respuesta = MessageBox.Show(
                     $"El número de oficio '{conse}' ya está asignado actualmente al Ticket ID: {oficioExistente.TicketId}, " +
-                    $"OFICINA: {oficioExistente.Oficinas_Id}.\n\n¿Desea continuar y usar este número de todos modos?",
+                    $"OFICINA: {oficioExistente.Oficina}.\n\n¿Desea continuar y usar este número de todos modos?",
                     "Número ya registrado",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);

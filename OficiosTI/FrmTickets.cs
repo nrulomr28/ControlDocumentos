@@ -90,26 +90,7 @@ namespace OficiosTI
            // lbOrganizacion.Text = $"Departamento: {_service.ObtenerUnidadOrganizativa()}";
             LabelTitulo.Text =  $"Tickets - {_service.ObtenerUnidadOrganizativa()} TI";
         }
-        /*     public void ExtraerInfoBasicaAD()
-                 {
-                     using (PrincipalContext contexto = new PrincipalContext(ContextType.Domain))
-                     {
-                         // Buscamos al usuario actual de Windows
-                         UserPrincipal usuarioAD = UserPrincipal.FindByIdentity(contexto, Environment.UserName);
-
-                         if (usuarioAD != null)
-                         {
-                             // Propiedades directas que te da C#
-                             string nombreMostrar = usuarioAD.DisplayName;      
-                             string correo = usuarioAD.EmailAddress;            
-                             string telefono = usuarioAD.VoiceTelephoneNumber;  
-                             string numEmpleado = usuarioAD.EmployeeId;          
-                             string nombrePila = usuarioAD.GivenName;         
-                             string apellidos = usuarioAD.Surname;              
-                         }
-                     }
-                 }
-        */
+        
         private void InicializarGrid()
         {
             DataGridTickets.AutoGenerateColumns = true;
@@ -175,37 +156,36 @@ namespace OficiosTI
                 int statusId = int.Parse(status);
                 query = query.Where(t => t.Cat_TicketStatusId == statusId);
             }
-        var tickets = query
-        .Select(t => new TicketGridModel
-        {
-            TicketId = t.TicketId,
-            TicketPersona = t.TicketPersona,
-            TicketAsunto = t.TicketAsunto,
-            TicketPrioridad = t.TicketPrioridad,
-            TicketFecha = t.TicketFecha,
-            Cat_TicketStatusId = t.Cat_TicketStatusId,
-            EstadoTicket = _context.Cat_TicketStatus
-             .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
-             .Select(o => o.Cat_TicketStatusStatus)
-             .FirstOrDefault(),
-            OficinasNombre = _context.Oficinas
-             .Where(o => o.OficinasId == t.OficinasId)
-             .Select(o => o.OficinasNombre)
-             .FirstOrDefault(),
-            NumeroOficio = _context.OficioRespuesta
-                 .Where(o => o.TicketId == t.TicketId)
-                 .Select(o => o.NumeroOficio)
-                 .FirstOrDefault()
-        })
-        .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
-        // --- NUEVO ORDENAMIENTO ---
-        .OrderBy(t => (t.NumeroOficio == null || t.NumeroOficio == "") ? 1 : // 1° Sin oficio
-                      (t.Cat_TicketStatusId == 3) ? 3 :                      // 2° Estado 2 (con oficio)
-                      (t.Cat_TicketStatusId == 2) ? 2 :                      // 3° Estado 3 (con oficio)
-                      4)                                                     // 
-        .ThenByDescending(t => t.Cat_TicketStatusId)                         // 
-        .ToList();
-
+            var tickets = query
+            .Select(t => new TicketGridModel
+            {
+                TicketId = t.TicketId,
+                TicketPersona = t.TicketPersona,
+                TicketAsunto = t.TicketAsunto,
+                TicketPrioridad = t.TicketPrioridad,
+                TicketFecha = t.TicketFecha,
+                Cat_TicketStatusId = t.Cat_TicketStatusId,
+                EstadoTicket = _context.Cat_TicketStatus
+                 .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
+                 .Select(o => o.Cat_TicketStatusStatus)
+                 .FirstOrDefault(),
+                OficinasNombre = _context.Oficinas
+                 .Where(o => o.OficinasId == t.OficinasId)
+                 .Select(o => o.OficinasNombre)
+                 .FirstOrDefault(),
+                NumeroOficio = _context.OficioRespuesta
+                     .Where(o => o.TicketId == t.TicketId)
+                     .Select(o => o.NumeroOficio)
+                     .FirstOrDefault()
+            })
+            .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
+            // --- NUEVO ORDENAMIENTO ---
+            .OrderBy(t => (t.NumeroOficio == null || t.NumeroOficio == "") ? 1 : // 1° Sin oficio
+                          (t.Cat_TicketStatusId == 3) ? 3 :                      // 2° Estado 2 
+                          (t.Cat_TicketStatusId == 2) ? 2 :                      // 3° Estado 3 (con oficio)
+                          4)                                                     // 
+            .ThenByDescending(t => t.Cat_TicketStatusId)                         // 
+            .ToList();
 
          /*   var tickets = query
                .Select(t => new TicketGridModel
@@ -229,14 +209,13 @@ namespace OficiosTI
                         .Select(o => o.NumeroOficio)
                         .FirstOrDefault()
                })
-                .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
+                  .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
            //     .OrderBy(o => o.NumeroOficio)
               //  .OrderBy(t => t.Cat_TicketStatusId) 
-                .OrderByDescending(t => t.Cat_TicketStatusId)
+                  .OrderByDescending(t => t.Cat_TicketStatusId)
                            .ThenBy(o => o.NumeroOficio)                      
                            .ThenByDescending(t => t.TicketFecha)             
                 .ToList();*/
-
 
             DataGridTickets.DataSource = null;
             var bs = new BindingSource();
@@ -372,7 +351,6 @@ namespace OficiosTI
 
                 var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
 
-
                 if (!string.IsNullOrEmpty(gridItem.NumeroOficio))
                 {
                     var r = MessageBox.Show(
@@ -419,7 +397,7 @@ namespace OficiosTI
             col0.DefaultCellStyle.SelectionBackColor = DataGridTickets.DefaultCellStyle.BackColor;
         }
 
-   /*     private void ResaltarOficios()
+     /* private void ResaltarOficios()
         {
             foreach (DataGridViewRow row in DataGridTickets.Rows)
             {
@@ -433,9 +411,10 @@ namespace OficiosTI
                     row.DefaultCellStyle.BackColor = Color.Honeydew;
                 }
              }
-        }*/
-        private void ResaltarOficios()
-        {
+        }
+     */
+       private void ResaltarOficios()
+       {
             foreach (DataGridViewRow row in DataGridTickets.Rows)
             {
                 if (row.IsNewRow) continue;
@@ -446,14 +425,13 @@ namespace OficiosTI
                 if (oficio != null && !string.IsNullOrWhiteSpace(oficio.ToString()))
                 {
                     row.Cells["NumeroOficio"].Style.ForeColor = Color.DarkGreen;
-                    row.Cells["NumeroOficio"].Style.Font = new Font(DataGridTickets.Font, FontStyle.Bold);
-                  
+                    row.Cells["NumeroOficio"].Style.Font = new Font(DataGridTickets.Font, FontStyle.Bold);                  
                 }
            
                 if (estado != null && int.TryParse(estado.ToString(), out int estadoId))
                 {
                     if (estadoId == 2)
-                    {///// EN PROCESO            
+                    {  ///// EN PROCESO            
                         row.Cells["NumeroOficio"].Style.ForeColor = Color.CornflowerBlue;
                         row.DefaultCellStyle.BackColor = Color.WhiteSmoke;
                     }
@@ -530,7 +508,6 @@ namespace OficiosTI
             var frm = new FrmOficioRespuesta(ticket, _context);
 
             frm.ShowDialog();
-
             CargarTickets();
         }
 
@@ -570,33 +547,20 @@ namespace OficiosTI
         private void BtnAdjuntos_Click(object sender, EventArgs e)
         {
             var ticket = ObtenerTicketSeleccionado();
-
             if (ticket == null)
                 return;
-
             var frm = new FrmAdjuntos(ticket.TicketId, _context);
-
             frm.ShowDialog();
-
             CargarTickets();
         }
 
 
+
         private void BtnAbrirTicket_Click_1(object sender, EventArgs e)
         {
-          //  FrmPanelTickets formAsignar = new FrmPanelTickets();
-            //formAsignar.ShowDialog();
+            var formOficioSin = new FrmPanelTickets(_context);
+            formOficioSin.ShowDialog();
         }
-
-        /*
-                private void button1_Click(object sender, EventArgs e)
-                {
-                    FrmOficioTicket FormAsignar = new FrmOficioTicket();
-                    FormAsignar.ShowDialog();
-
-                    var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
-                }*/
-
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -605,7 +569,6 @@ namespace OficiosTI
                 MessageBox.Show("Por favor, seleccione un ticket de la lista primero.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
             Ticket ticketSeleccionado = _context.Ticket.Find(gridItem.TicketId);
             FrmOficioTicket FormAsignar = new FrmOficioTicket(ticketSeleccionado, _context);
@@ -616,7 +579,6 @@ namespace OficiosTI
         {
             FrmOficioSin FormOficiosin = new FrmOficioSin(_context);
             FormOficiosin.ShowDialog();
-
         }
         /*
             private void btnSinTicket_Click_1(object sender, EventArgs e)
@@ -639,7 +601,6 @@ namespace OficiosTI
         private void btnSinTicket_Click_1(object sender, EventArgs e)
         {
             Ticket ticketNulo = null;
-
             FrmOficioTicket formAsignar = new FrmOficioTicket(ticketNulo, _context);
             formAsignar.ShowDialog();
         }

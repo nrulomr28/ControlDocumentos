@@ -300,7 +300,7 @@
             BtnAbrirTicket.Name = "BtnAbrirTicket";
             BtnAbrirTicket.Size = new Size(120, 30);
             BtnAbrirTicket.TabIndex = 0;
-            BtnAbrirTicket.Text = "Abrir Ticket";
+            BtnAbrirTicket.Text = "Panel ";
             BtnAbrirTicket.Click += BtnAbrirTicket_Click_1;
             // 
             // BtnAdjuntos

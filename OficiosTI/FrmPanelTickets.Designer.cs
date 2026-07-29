@@ -282,6 +282,7 @@
             gridCerrados.Name = "gridCerrados";
             gridCerrados.Size = new Size(1092, 487);
             gridCerrados.TabIndex = 0;
+         // gridCerrados.CellContentClick += gridCerrados_CellContentClick;
             // 
             // tabAnalista
             // 
