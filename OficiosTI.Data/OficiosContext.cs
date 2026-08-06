@@ -21,4 +21,5 @@ public class OficiosContext : DbContext
     public DbSet<Cat_TicketStatus> Cat_TicketStatus { get; set; }
     public DbSet<Cat_copias> Cat_Copias { get; set; }
     public DbSet<Archivo> Archivo { get; set; }
+    public DbSet<Ticket_SinOficio>Ticket_SinOficio { get; set; }
 }
