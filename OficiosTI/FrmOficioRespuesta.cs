@@ -18,14 +18,14 @@ namespace OficiosTI
         private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA 
         // private Oficio1 _oficioAntes;           ////// OFICIO DE DONDE VIENE EL TICKET
         // private DestinatarioService _destinatarioService;
-        // private List<DestinatarioItem> _destinatariosCache;
+        // private List<DestinatarioItem> _destinatariosCache; 
         private bool _autocompletando = false;
 
         public FrmOficioRespuesta(Ticket ticket, OficiosContext context)
         {
             InitializeComponent();
 
-            _ticket = ticket;
+            _ticket = ticket; 
             _context = context;
             _service = new OficioRespuestaService(_context);
             var oficio = _service.ObtenerOficioPorTicket(ticket.TicketId);

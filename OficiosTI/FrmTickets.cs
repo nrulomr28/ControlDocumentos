@@ -22,7 +22,7 @@ namespace OficiosTI
             InicializarGrid();
             CargarTickets();
             DataGridTickets.DataBindingComplete += DataGridTickets_DataBindingComplete;
-            DataGridTickets.CellClick += DataGridTickets_CellClick;
+            DataGridTickets.CellClick += DataGridTickets_CellClick; 
             DataGridTickets.CellFormatting += DataGridTickets_CellFormatting;
             CargarUser();
             CargarDominio();           

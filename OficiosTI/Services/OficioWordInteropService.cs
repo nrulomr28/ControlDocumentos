@@ -32,7 +32,7 @@ namespace OficiosTI.Services
 
                 doc = wordApp.Documents.Add();
                 doc.PageSetup.PaperSize = WordInterop.WdPaperSize.wdPaperLetter;
-
+                  
                 // =========================
                 // HEADER 
                 // =========================

@@ -39,7 +39,7 @@ namespace OficiosTI.Services
                 .OrderByDescending(x => x.HiloTicketFecha)
                 .FirstOrDefault();
 
-            if (hilo == null)
+            if (hilo == null) 
                 return "";
 
             return hilo.HiloTicketMensaje;

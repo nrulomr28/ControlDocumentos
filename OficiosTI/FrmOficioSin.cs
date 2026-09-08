@@ -23,7 +23,7 @@ namespace OficiosTI
         /*
         public FrmOficioSin(OficiosContext context)
         {         
-            InitializeComponent();
+            InitializeComponent(); 
             _context = context;
             InicializarGrid(oficina);
             dataGridOficios.CellDoubleClick += dataGridOficios_CellDoubleClick;
