@@ -25,7 +25,7 @@ namespace OficiosTI.Data.Entities
         public int? TicketId { get; set; }
         public string? UsuarioId { get; set; }
 
-     //   public int ReferenciaOficioId { get; set; }    
+      //  public int ReferenciaOficioId { get; set; }    
     }
 }
 

@@ -63,6 +63,7 @@
             txtNumOf.ScrollBars = ScrollBars.Vertical;
             txtNumOf.Size = new Size(125, 23);
             txtNumOf.TabIndex = 2;
+         //   txtNumOf.TextChanged += txtNumOf_TextChanged;
             // 
             // label2
             // 

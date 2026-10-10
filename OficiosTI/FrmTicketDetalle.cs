@@ -31,6 +31,7 @@ namespace OficiosTI
             CargarDatosTicket();
             CargarHilo();
             CargarTicketsR();
+            this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
 
         private void CargarDatosTicket()

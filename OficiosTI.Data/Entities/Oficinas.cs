@@ -13,6 +13,7 @@ namespace OficiosTI.Data.Entities
         public string NombreArea { get; set; }
         public string?UnidadOrganizativa { get; set; }
         public int?Permiso { get; set; }
+        public int UsuarioGlobal {  get; set; }
 
     }
 }

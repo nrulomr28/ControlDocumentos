@@ -56,6 +56,7 @@
             labelRespuesta = new Label();
             txtRespuesta = new TextBox();
             PanelAcciones = new Panel();
+            chkCerrarTicket = new CheckBox();
             BtnGuardarRespuesta = new Button();
             BtnGenerarOficio = new Button();
             PanelHeader.SuspendLayout();
@@ -232,6 +233,7 @@
             // PanelAcciones
             // 
             PanelAcciones.BackColor = Color.WhiteSmoke;
+            PanelAcciones.Controls.Add(chkCerrarTicket);
             PanelAcciones.Controls.Add(BtnGuardarRespuesta);
             PanelAcciones.Controls.Add(BtnGenerarOficio);
             PanelAcciones.Dock = DockStyle.Bottom;
@@ -240,9 +242,19 @@
             PanelAcciones.Size = new Size(794, 50);
             PanelAcciones.TabIndex = 3;
             // 
+            // chkCerrarTicket
+            // 
+            chkCerrarTicket.AutoSize = true;
+            chkCerrarTicket.Location = new Point(12, 15);
+            chkCerrarTicket.Name = "chkCerrarTicket";
+            chkCerrarTicket.Size = new Size(109, 19);
+            chkCerrarTicket.TabIndex = 2;
+            chkCerrarTicket.Text = "Cerrar sin oficio";
+            chkCerrarTicket.UseVisualStyleBackColor = true;
+            // 
             // BtnGuardarRespuesta
             // 
-            BtnGuardarRespuesta.Location = new Point(15, 10);
+            BtnGuardarRespuesta.Location = new Point(127, 8);
             BtnGuardarRespuesta.Name = "BtnGuardarRespuesta";
             BtnGuardarRespuesta.Size = new Size(150, 30);
             BtnGuardarRespuesta.TabIndex = 0;
@@ -251,7 +263,7 @@
             // 
             // BtnGenerarOficio
             // 
-            BtnGenerarOficio.Location = new Point(180, 10);
+            BtnGenerarOficio.Location = new Point(292, 8);
             BtnGenerarOficio.Name = "BtnGenerarOficio";
             BtnGenerarOficio.Size = new Size(150, 30);
             BtnGenerarOficio.TabIndex = 1;
@@ -281,10 +293,12 @@
             PanelRespuesta.ResumeLayout(false);
             PanelRespuesta.PerformLayout();
             PanelAcciones.ResumeLayout(false);
+            PanelAcciones.PerformLayout();
             ResumeLayout(false);
         }
 
         private Label label1;
         private DataGridView dataGridRelacion;
+        private CheckBox chkCerrarTicket;
     }
 }

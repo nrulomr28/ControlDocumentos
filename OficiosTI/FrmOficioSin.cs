@@ -18,7 +18,7 @@ namespace OficiosTI
     public partial class FrmOficioSin : Form
     {
         private OficiosContext _context;
-       // int oficina = 2;
+       
       
         /*
         public FrmOficioSin(OficiosContext context)
@@ -39,6 +39,7 @@ namespace OficiosTI
             InicializarGrid(miOficinaId);
             dataGridOficios.CellDoubleClick += dataGridOficios_CellDoubleClick;
             btnCrearOficio.Enabled = false;
+            this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
 
         private void InicializarGrid(int idOficinaDeseada)
@@ -71,6 +72,8 @@ namespace OficiosTI
                 {
                     dataGridOficios.Columns["OficioRespuestaId"].Visible = false;
                 }
+
+              //  ConfigurarGrid();
             }
         }
      

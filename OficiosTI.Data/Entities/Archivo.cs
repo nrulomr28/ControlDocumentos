@@ -12,7 +12,7 @@ namespace OficiosTI.Data.Entities
     {
         [Key] public int ArchivoId { get; set; }
         public string? ArchivoNombre { get; set; }
-        public byte[]? ArchivoArchivo { get; set; }
+        public byte[]? ArchivoArchivo { get; set; }  
         public DateTime ArchivoFecha { get; set; }
         public int? OficioId { get; set; }
 

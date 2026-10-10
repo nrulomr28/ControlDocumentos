@@ -20,8 +20,11 @@ namespace OficiosTI
 {
     public partial class FrmOficioNuevo : Form
     {
+        private Ticket _ticket;
         private OficiosContext _context;
         private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA 
+
+       
 
         // private NumOficio _oficioconse;
         private OficioRespuestaService _service;
@@ -52,6 +55,7 @@ namespace OficiosTI
             CargarFirma();
             CargarCopias();
             //CargarOficios(3);
+            this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
 
             if (string.IsNullOrEmpty(txtCcp.Text))
             {
@@ -326,7 +330,9 @@ namespace OficiosTI
                 string textoCombo = cmbFirmas.Text;
                 string nombreExtraido = textoCombo;
                 string cargoExtraido = "Sin Cargo";
-
+                //  var OfiF = _context.OficioRespuesta.FirstOrDefault(y => y.TicketId == _ticket.TicketId);
+                var OfiF = _context.NumOficio.FirstOrDefault(y => y.OficioId == _oficioActual.RespuestaId);
+              
                 if (!string.IsNullOrEmpty(textoCombo) && textoCombo.Contains("-"))
                 {
                     var partes = textoCombo.Split('-', StringSplitOptions.TrimEntries);
@@ -349,13 +355,13 @@ namespace OficiosTI
                     FundamentoLegal = ObtenerFundamentoLegal(cargoExtraido),
                     Cuerpo = txtRespC.Text,
                     Copias = txtCcp.Text,
-                    Fecha = DateTime.Now,
+                   // Fecha = OfiF.FechaCaptura,
                     DirectorNombre = nombreExtraido,
                     DirectorCargo = cargoExtraido,
+                    RespuestaId = OfiF.OficioId,
 
                 };
-
-                var servicio = new OficioWordInteropService();
+                var servicio = new OficioWordInteropService(_context);
                 string ruta = servicio.Generar(model);
 
                 Process.Start(new ProcessStartInfo

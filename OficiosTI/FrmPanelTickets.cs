@@ -25,6 +25,7 @@ namespace OficiosTI
             _context = context;
             _service = new OficioRespuestaService(_context);
             tabControlMain.SelectedIndexChanged += tabControlMain_SelectedIndexChanged;
+            this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -127,7 +128,6 @@ namespace OficiosTI
                 !string.IsNullOrEmpty(t.NumeroOficio));
 
             int pendientes = total - respondidos;
-
             LabelTotalTickets.Text = $"Tickets derivados: {total}";
             LabelRespondidos.Text = $"Respondidos: {respondidos}";
             LabelPendientes.Text = $"Pendientes: {pendientes}";

@@ -266,7 +266,7 @@
             txtCargo.Name = "txtCargo";
             txtCargo.Size = new Size(260, 23);
             txtCargo.TabIndex = 9;
-            txtCargo.Leave += txtCargo_Leave;
+           // txtCargo.Leave += txtCargo_Leave;
             // 
             // lblRespuesta
             // 

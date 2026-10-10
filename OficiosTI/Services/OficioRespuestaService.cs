@@ -18,8 +18,7 @@ namespace OficiosTI.Services
     {
         private readonly OficiosContext _context;
         private NumOficio _oficioAnterior;
-        // private Oficio1 _oficioAnterior;     ///// OFICIOREFRENCIA
-    
+        // private Oficio1 _oficioAnterior;     ///// OFICIOREFRENCIA    
 
         public OficioRespuestaService(OficiosContext context)
         {
@@ -153,41 +152,28 @@ namespace OficiosTI.Services
       
         public int ObtenerUnidadOrgId(string nombreOU)
         {   //// OBTENER EL ID DEL DEPARTAMENTO          
-          string org  =  ObtenerUnidadOrganizativa();
+           // string org  =  ObtenerUnidadOrganizativa();
             var oficina =  _context.Oficinas
                                   .FirstOrDefault(q => q.UnidadOrganizativa == nombreOU);
             return oficina?.OficinasId ?? 0;
         }
 
+        /*    public bool EsUsuarioGlobal()
+            {
+                string org = ObtenerUnidadOrganizativa();
+                var globales = new List<string> { "JEFATURA" };
+                //var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
+                return globales.Contains(org?.Trim().ToUpper() ?? "");
+            }
+        */
+
         public bool EsUsuarioGlobal()
         {
             string org = ObtenerUnidadOrganizativa();
-            var globales = new List<string> { "JEFATURA" };
-          //var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
-            return globales.Contains(org?.Trim().ToUpper() ?? "");
+            return _context.Oficinas
+                           .Any(q => q.UnidadOrganizativa == org && q.UsuarioGlobal == 1);
         }
-
-
-        /*   private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
-           {
-               int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
-               bool tienePermiso = _context.Oficinas
-                                          .Any(x => x.OficinasId == miOficinaId && x.Permiso == 1);
-               //btnAsignar.Visible = tienePermiso;
-              // btnSinTicket.Visible = tienePermiso;
-           }
-        */
-
-
-        /*
-          public bool EsUsuarioGlobal()
-          {
-              string org = ObtenerUnidadOrganizativa();
-              var globales = new List<string> { "JEFATURA" };
-              // var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
-              return globales.Contains(org?.Trim().ToUpper() ?? "");
-          }
-        */
+       
 
         /*  public int NumeroTicketExiste(string numeroOficio)
               {
@@ -394,7 +380,6 @@ namespace OficiosTI.Services
                 .Where(x => x.TicketId == ticket.TicketId)
                 .OrderByDescending(x => x.HiloTicketFecha)
                 .FirstOrDefault();
-
             var registroOficio1 = _context.Oficio1
                 .Where(y => y.OficioId == ticket.id_of)
                 .FirstOrDefault();
@@ -408,7 +393,7 @@ namespace OficiosTI.Services
                 FechaCaptura = DateTime.Now,
                 Anio = (short)DateTime.Now.Year,
                 OficioReferencia = $"{registroOficio1.OficioNoOficio}",
-               /// OficioReferencia = registroOficio1?.OficioNoControl ?? string.Empty,
+            /// OficioReferencia = registroOficio1?.OficioNoControl ?? string.Empty,
                 FirmanteId = firmante?.FirmanteId,
                 OficioId = registroOficio1?.OficioId
             };
@@ -480,7 +465,6 @@ namespace OficiosTI.Services
                 HiloTicketMensaje = numeroOficio,
                 UsuarioId = 0
             };
-
             _context.HiloTicket.Add(hilo);
             _context.SaveChanges();
         }

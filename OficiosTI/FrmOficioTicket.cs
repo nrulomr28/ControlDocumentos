@@ -23,12 +23,13 @@ namespace OficiosTI
             _service = new OficioRespuestaService(_context);
             CargarOficinas();
             CargarTiposD();
+            this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
 
-         /* if (_service.EsUsuarioGlobal())
-            {
-                AsignarF.Enabled = true;
-            }
-         */
+            /* if (_service.EsUsuarioGlobal())
+               {
+                   AsignarF.Enabled = true;
+               }
+            */
 
             if (_ticket != null)
             {
@@ -62,7 +63,7 @@ namespace OficiosTI
             var query = _context.Oficinas.AsQueryable();
             if (_service.EsUsuarioGlobal())
             {
-                query = query.Where(x => x.OficinasId <=5);              
+                query = query.Where(x => x.OficinasId <= 5);
 
             }
             else
@@ -84,8 +85,8 @@ namespace OficiosTI
             // cmbOficinas.Enabled = _service.EsUsuarioGlobal();
         }
 
-       private void CargarTiposD()
-       {
+        private void CargarTiposD()
+        {
             var listaTipos = new[]
             {
              new { Id = 1, Nombre = "OFICIOS" },
@@ -96,7 +97,7 @@ namespace OficiosTI
             cmbTipos.DisplayMember = "Nombre";
             cmbTipos.ValueMember = "Id";
             cmbTipos.SelectedIndex = 0;
-       }
+        }
 
         private void CargarDatosTicket()
         {
@@ -161,15 +162,15 @@ namespace OficiosTI
                                      {
                                          TicketId = ofi.TicketId,
                                          Oficina = oficinas.OficinasNombre
-                                     }).ToList();           
+                                     }).ToList();
             if (oficiosExistentes.Any())
             {
-                 string listaTickets = string.Join("\n", oficiosExistentes.Select(o =>
-                    $"• Ticket #: {o.TicketId}, OFICINA: {o.Oficina}"));
+                string listaTickets = string.Join("\n", oficiosExistentes.Select(o =>
+                   $"• Ticket #: {o.TicketId}, OFICINA: {o.Oficina}"));
 
-                 string mensaje = $"El número de oficio '{conse}' ya está asignado actualmente a los siguientes registros:\n\n" +
-                                 $"{listaTickets}\n\n" +
-                                 $"¿Desea continuar y usar este número de todos modos?";
+                string mensaje = $"El número de oficio '{conse}' ya está asignado actualmente a los siguientes registros:\n\n" +
+                                $"{listaTickets}\n\n" +
+                                $"¿Desea continuar y usar este número de todos modos?";
                 DialogResult respuesta = MessageBox.Show(
                     mensaje,
                     "Número ya registrado",
@@ -181,38 +182,38 @@ namespace OficiosTI
                 }
             }
 
-        ////MOSTRAR SOLO 1 OFICIO 
-        /*  var oficioExistente = (from ofi in _context.NumOficio
-                                   join oficinas in _context.Oficinas
-                                        on ofi.Oficinas_Id equals oficinas.OficinasId
-                                   where ofi.NumeroConsecutivo == conse && ofi.Anio == anioActual
-                                   select new
-                                   {
-                                       TicketId = ofi.TicketId,
-                                       Oficina = oficinas.OficinasNombre
-                                      
-                                    
-                                   }).ToList();
+            ////MOSTRAR SOLO 1 OFICIO 
+            /*  var oficioExistente = (from ofi in _context.NumOficio
+                                       join oficinas in _context.Oficinas
+                                            on ofi.Oficinas_Id equals oficinas.OficinasId
+                                       where ofi.NumeroConsecutivo == conse && ofi.Anio == anioActual
+                                       select new
+                                       {
+                                           TicketId = ofi.TicketId,
+                                           Oficina = oficinas.OficinasNombre
 
-            if (oficioExistente.Any())
-            {
-                DialogResult respuesta = MessageBox.Show(
-                    $"El número de oficio '{conse}' ya está asignado actualmente al Ticket #: {oficioExistente.TicketId}, " +
-                    $"OFICINA: {oficioExistente.Oficina}.\n\n¿Desea continuar y usar este número de todos modos?",
-                    "Número ya registrado",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
 
-                if (respuesta == DialogResult.No)
+                                       }).ToList();
+
+                if (oficioExistente.Any())
                 {
-                    return;
+                    DialogResult respuesta = MessageBox.Show(
+                        $"El número de oficio '{conse}' ya está asignado actualmente al Ticket #: {oficioExistente.TicketId}, " +
+                        $"OFICINA: {oficioExistente.Oficina}.\n\n¿Desea continuar y usar este número de todos modos?",
+                        "Número ya registrado",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (respuesta == DialogResult.No)
+                    {
+                        return;
+                    }
                 }
-            }
-        */
+            */
             if (_ticket != null)
             {
                 // Buscamos el registro del oficio que ya pertenece a este ticket
-                var oficioDelTicket = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId);             
+                var oficioDelTicket = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId);
 
                 if (oficioDelTicket != null)
                 {
@@ -244,9 +245,9 @@ namespace OficiosTI
                                             "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
-                    return;                   
+                    return;
                 }
-            }       
+            }
             ///// SI ES REGISTRO NUEVO SE CREA ////
             try
             {
@@ -295,6 +296,8 @@ namespace OficiosTI
                                 "Error Detallado", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        
     }
 }
 

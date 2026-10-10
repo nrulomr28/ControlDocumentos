@@ -23,5 +23,8 @@
         public string? DirectorNombre { get; set; }
 
         public string? DirectorCargo { get; set; }
+        public int ? RespuestaId { get; set; }
+
+
     }
 }

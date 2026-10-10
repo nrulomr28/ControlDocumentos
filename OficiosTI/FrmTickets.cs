@@ -34,6 +34,7 @@ namespace OficiosTI
             ObtenerSegmentoDeRed();
             // permisos a los botones
             AplicarPermisosInterfaz(idOficina, org);
+            this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
 
  /*      private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
@@ -55,14 +56,14 @@ namespace OficiosTI
         }
    */
 
-       private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
-       {
+        private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
+        {
              int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
              bool tienePermiso = _context.Oficinas
                                         .Any(x => x.OficinasId == miOficinaId && x.Permiso == 1);
             btnAsignar.Visible = tienePermiso;
             btnSinTicket.Visible = tienePermiso;
-       }
+        }
    
         protected override void OnLoad(EventArgs e)
         {
@@ -227,26 +228,24 @@ namespace OficiosTI
             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
             bool esUsuarioGlobal = _service.EsUsuarioGlobal();
             DateTime fechaLimite = DateTime.Now.AddMonths(-2);
-
             var query = _context.Ticket.AsQueryable();
 
             if (esUsuarioGlobal)
             {
-                query = query.Where(t => t.id_of != null && t.Cat_TicketStatusId > 1);
+                query = query.Where(t => t.id_of != null && t.Cat_TicketStatusId >= 1); /// USUARIO GLOBAL VE TODOS LOS TICKETS PARA CERRARLOS SI SE EQUIVOCAN
             }
             else
             {
                 query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId > 1);
             }
-            query = query.Where(t => t.TicketFecha >= fechaLimite);
+                query = query.Where(t => t.TicketFecha >= fechaLimite);
 
             if (!string.IsNullOrWhiteSpace(textoBuscar))
             {
                 query = query.Where(t => t.TicketPersona.Contains(textoBuscar) ||
                                          t.TicketAsunto.Contains(textoBuscar));
             }
-            if (!string.IsNullOrWhiteSpace(prioridad) &&
-                !prioridad.Equals("TODOS", StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrWhiteSpace(prioridad) && !prioridad.Equals("TODOS", StringComparison.OrdinalIgnoreCase))
             {
                 query = query.Where(t => t.TicketPrioridad == prioridad);
             }
@@ -504,7 +503,7 @@ namespace OficiosTI
         //    ConfigurarGrid();
         //}
 
-        private void BtnBuscar_Click(object sender, EventArgs e)
+        private void BtnBuscar_Click(object sender, EventArgs e)   ////  BUSCAR POR GLOBAL O USUARIO NORMAL 
         {
             string texto = TextBuscar.Text.Trim();
             string prioridad = ComboPrioridad.Text;
@@ -512,7 +511,18 @@ namespace OficiosTI
             string org = _service.ObtenerUnidadOrganizativa();
             int idorg = _service.ObtenerUnidadOrgId(org);
             var query = _context.Ticket.AsQueryable();
-            query = query.Where(t => t.OficinasId == idorg);
+            bool esUsuarioGlobal = _service.EsUsuarioGlobal();          
+            if (esUsuarioGlobal)
+            {
+                query = query.Where(t => t.id_of != null && t.Cat_TicketStatusId >= 1); /// USUARIO GLOBAL VE TODOS LOS TICKETS PARA CERRARLOS SI SE EQUIVOCAN
+            }
+            else
+            {
+               // query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId > 1);
+                query = query.Where(t => t.OficinasId == idorg);
+            }
+         //   query = query.Where(t => t.TicketFecha >= fechaLimite);
+           // query = query.Where(t => t.OficinasId == idorg);
             if (!string.IsNullOrWhiteSpace(texto))
             {
                 query = query.Where(t =>
@@ -545,9 +555,7 @@ namespace OficiosTI
                     EstadoTicket = _context.Cat_TicketStatus
                         .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
                         .Select(o => o.Cat_TicketStatusStatus)
-                        .FirstOrDefault(),
-
-           
+                        .FirstOrDefault(),                    
                     OficinasNombre = _context.Oficinas
                         .Where(o => o.OficinasId == t.OficinasId)
                         .Select(o => o.OficinasNombre)
@@ -558,6 +566,7 @@ namespace OficiosTI
                         .Select(o => o.NumeroOficio)
                         .FirstOrDefault(),
 
+                   /// TABLA DE ESTADOS SIN OFICIO 
                     EstadoSinOficio = _context.Ticket_SinOficio
                         .Where(s => s.TicketId == t.TicketId)
                         .Select(s => s.Cat_TicketStatusStatus)
@@ -666,7 +675,7 @@ namespace OficiosTI
             var col0 = DataGridTickets.Columns[0];
             col0.ReadOnly = true;
             col0.SortMode = DataGridViewColumnSortMode.NotSortable;
-            col0.DefaultCellStyle.SelectionBackColor = DataGridTickets.DefaultCellStyle.BackColor;
+        //  col0.DefaultCellStyle.SelectionBackColor = DataGridTickets.DefaultCellStyle.BackColor;
         }
 
        private void ResaltarOficios()
@@ -795,8 +804,8 @@ namespace OficiosTI
             int pendientes = total - respondidos;  /// TICKETS PENDIENTES SON LOS QUE NO TIENEN OFICIO, INCLUYENDO LOS CERRADOS Y EN PROCESO. 
 
             LabelTotalTickets.Text = $"Tickets derivados: {total}";
-            LabelRespondidos.Text = $"Respondidos: {respondidos}";
-            LabelPendientes.Text = $"Pendientes: {pendientes}";
+            LabelRespondidos.Text =  $"Respondidos: {respondidos}";
+            LabelPendientes.Text =  $"Pendientes: {pendientes}";
         }    
 
         private void BtnAdjuntos_Click(object sender, EventArgs e)

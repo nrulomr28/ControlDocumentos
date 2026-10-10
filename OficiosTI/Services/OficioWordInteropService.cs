@@ -1,5 +1,7 @@
 ﻿using Microsoft.Office.Core;
 using Microsoft.Office.Interop.Word;
+using OficiosTI.Data;
+using OficiosTI.Data.Entities;
 using OficiosTI.Documents;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -9,13 +11,24 @@ namespace OficiosTI.Services
 {
     public class OficioWordInteropService
     {
+        private readonly OficiosContext _context;
+
+        public OficioWordInteropService(OficiosContext context)
+        {
+            _context = context;
+        }
         public string Generar(OficioModel model)
         {
 
+           int? tipoId = _context.NumOficio
+           .Where(n => n.OficioId == model.RespuestaId)
+           .Select(n => n.Tipo) 
+           .FirstOrDefault();
+
             string ruta = Path.Combine(
                 Path.GetTempPath(),
-           //   $"oficio_.docx");
-         //  $"oficio_{model.NumeroOficio}.docx");
+     //   $"oficio_.docx");
+      //  $"oficio_{model.NumeroOficio}.docx");
           $"oficio_{Guid.NewGuid()}.docx");
 
             WordInterop.Application wordApp = null; 
@@ -32,13 +45,13 @@ namespace OficiosTI.Services
 
                 doc = wordApp.Documents.Add();
                 doc.PageSetup.PaperSize = WordInterop.WdPaperSize.wdPaperLetter;
-                  
+
                 // =========================
                 // HEADER 
                 // =========================
 
-              string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
-             //  string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
+               string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
+             //string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
                string absoluteHeaderPath = Path.GetFullPath(headerPath);
                 // Acceder directamente al rango del encabezado de la primera sección y asignarle el texto               
                if (File.Exists(absoluteHeaderPath))
@@ -68,7 +81,6 @@ namespace OficiosTI.Services
                 var rangoPrincipal = doc.Range();
                 rangoPrincipal.Collapse(WordInterop.WdCollapseDirection.wdCollapseEnd);
                 rangoPrincipal.Select();
-
                 //  var sel = wordApp.Selection;
                 doc.Activate();
                 wordApp.ActiveWindow.ActivePane.View.SeekView = WordInterop.WdSeekView.wdSeekMainDocument;
@@ -84,15 +96,23 @@ namespace OficiosTI.Services
                 sel.Font.Bold = 2;
                 sel.ParagraphFormat.Alignment = WordInterop.WdParagraphAlignment.wdAlignParagraphRight;
 
-             //   sel.TypeText($"DIRECCIÓN DE TECNOLOGÍAS DE LA INFORMACIÓN");
-           //     sel.TypeParagraph();
+       
                 sel.ParagraphFormat.SpaceAfter = 0f;
                 sel.ParagraphFormat.SpaceBefore = 0f;
                 sel.Font.Bold = 0;
-                sel.TypeText($"Oficio No. {model.NumeroOficio}");
+                string prefijoDocumento = "Oficio"; // Valor por defecto
+                if (tipoId == 1)
+                {
+                    prefijoDocumento = "Oficio";
+                }
+                else if (tipoId == 2)
+                {
+                    prefijoDocumento = "Tarjeta";
+                }
+                sel.TypeText($"{prefijoDocumento} No. {model.NumeroOficio}");
+               // sel.TypeText($"Oficio No. {model.NumeroOficio}");
                 sel.TypeParagraph();
 
-             // sel.TypeText($"Asunto: {model.Asunto}");
        
                 string texto_a = model.Asunto;
                
@@ -107,11 +127,14 @@ namespace OficiosTI.Services
                 {
                     sel.Font.Bold = 0;
                     sel.TypeText($"{model.OficioReferencia}");
+                 
                     sel.TypeParagraph();
                 }
               //sel.TypeText($"En respuesta al oficio: {model.OficioReferencia}");
                 sel.TypeParagraph();
                 sel.Font.Bold = 0;
+             // sel.TypeText($"Xalapa-Enríquez, Ver., a {model.Fecha:dd 'de' MMMM 'de' yyyy}"); 
+             // FECHA QUE SE GUARDA EN BD 
                 sel.TypeText($"Xalapa-Enríquez, Ver., a {model.Fecha:dd 'de' MMMM 'de' yyyy}");
                 sel.TypeParagraph();
 

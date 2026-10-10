@@ -366,6 +366,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
             ClientSize = new Size(1000, 600);
             Controls.Add(DataGridTickets);
             Controls.Add(PanelFiltros);
