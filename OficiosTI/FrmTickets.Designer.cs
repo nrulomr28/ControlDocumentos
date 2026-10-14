@@ -48,6 +48,9 @@
             lbUser = new Label();
             LabelTitulo = new Label();
             PanelFiltros = new Panel();
+            btnSuplente = new Button();
+            cmbSuplente = new ComboBox();
+            lblSuplente = new Label();
             LabelBuscar = new Label();
             TextBuscar = new TextBox();
             LabelPrioridad = new Label();
@@ -132,6 +135,9 @@
             // PanelFiltros
             // 
             PanelFiltros.BackColor = Color.FromArgb(244, 246, 249);
+            PanelFiltros.Controls.Add(btnSuplente);
+            PanelFiltros.Controls.Add(cmbSuplente);
+            PanelFiltros.Controls.Add(lblSuplente);
             PanelFiltros.Controls.Add(LabelBuscar);
             PanelFiltros.Controls.Add(TextBuscar);
             PanelFiltros.Controls.Add(LabelPrioridad);
@@ -145,6 +151,33 @@
             PanelFiltros.Name = "PanelFiltros";
             PanelFiltros.Size = new Size(220, 460);
             PanelFiltros.TabIndex = 1;
+            // 
+            // btnSuplente
+            // 
+            btnSuplente.Location = new Point(19, 381);
+            btnSuplente.Name = "btnSuplente";
+            btnSuplente.Size = new Size(176, 23);
+            btnSuplente.TabIndex = 3;
+            btnSuplente.Text = "Asignar Suplente";
+            btnSuplente.UseVisualStyleBackColor = true;
+            btnSuplente.Click += btnSuplente_Click;
+            // 
+            // cmbSuplente
+            // 
+            cmbSuplente.FormattingEnabled = true;
+            cmbSuplente.Location = new Point(19, 352);
+            cmbSuplente.Name = "cmbSuplente";
+            cmbSuplente.Size = new Size(176, 23);
+            cmbSuplente.TabIndex = 3;
+            // 
+            // lblSuplente
+            // 
+            lblSuplente.AutoSize = true;
+            lblSuplente.Location = new Point(19, 334);
+            lblSuplente.Name = "lblSuplente";
+            lblSuplente.Size = new Size(96, 15);
+            lblSuplente.TabIndex = 3;
+            lblSuplente.Text = "Asignar Suplente";
             // 
             // LabelBuscar
             // 
@@ -393,5 +426,8 @@
         private Label lbUser;
         private Label lbDominio;
         private Label lbSegmento;
+        private Button btnSuplente;
+        private ComboBox cmbSuplente;
+        private Label lblSuplente;
     }
 }

@@ -37,12 +37,12 @@ namespace OficiosTI
         }
         private void ActualizarIndicadores()
         {
-   
+
             int total = _context.CapturaOficios
-                                .Count(resp => resp.Activo == 1);            
+                                .Count(resp => resp.Activo == 1);
             int cerrados = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "CERRADO");
             int abiertos = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "ABIERTO");
-            int proceso = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "EN PROCESO");        
+            int proceso = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "EN PROCESO");
 
             lblAbiertosTotal.Text = $"Total: {abiertos}";
             lblCerradosTotal.Text = $"Cerrados: {cerrados}";
@@ -104,10 +104,10 @@ namespace OficiosTI
 
         private void CargarEstado()
         {
-        
-        var listaEstado = new[]
-            {
-        new { Id = -1, Nombre = "TODOS" },     
+
+            var listaEstado = new[]
+                {
+        new { Id = -1, Nombre = "TODOS" },
         new { Id =  0, Nombre = "ABIERTO" },
         new { Id =  1, Nombre = "CERRADO" },
         new { Id =  2, Nombre = "EN PROCESO" }
@@ -116,18 +116,18 @@ namespace OficiosTI
             cmbEstado.DataSource = listaEstado;
             cmbEstado.DisplayMember = "Nombre";
             cmbEstado.ValueMember = "Id";
-            cmbEstado.SelectedIndex = 0; 
+            cmbEstado.SelectedIndex = 0;
         }
 
         private void CargarTipoCaptura()
         {
 
-        var listaCaptura= new[]
-                {
+            var listaCaptura = new[]
+                    {
         new { Id = -1, Nombre = "TODOS" },
         new { Id =  0, Nombre = "RECIBIDO" },
         new { Id =  1, Nombre = "ENVIADO" }
-      
+
         }.ToList();
 
             cmbTipoCaptura.DataSource = listaCaptura;
@@ -142,7 +142,7 @@ namespace OficiosTI
             {
                 frmCaptura.ShowDialog();
                 frmCaptura.Size = new System.Drawing.Size(1030, 567);
-               
+
             }
         }
 
@@ -152,7 +152,7 @@ namespace OficiosTI
             using (FrmTickets frmPanel = new FrmTickets(_context))
             {
                 frmPanel.ShowDialog();
-               
+
             }
         }
 
@@ -275,19 +275,19 @@ namespace OficiosTI
              }
      */
 
-   
+
         private void InicializarGrid()     /// OFICIOS CAPTURADOS POR DOCUMENTACION 
-        {  
+        {
             DataGridOficios.AutoGenerateColumns = true;
             if (_context != null)
-            {      
+            {
                 var consultaBD = (from resp in _context.CapturaOficios
                                   join remi in _context.Remitente
                                   on resp.Remitente equals remi.RemitenteId
                                   join desti in _context.Destinatario
                                   on resp.Destinatario equals desti.DestinatarioId
                                   join ticket in _context.Ticket
-                                  on resp.CapturaOficioId equals ticket.id_of into ticketGroup                                
+                                  on resp.CapturaOficioId equals ticket.id_of into ticketGroup
                                   where resp.Activo == 1
                                   orderby resp.CapturaOficioId descending
                                   select new
@@ -303,78 +303,78 @@ namespace OficiosTI
                                       Remitente = remi.RemitenteNombre,
                                       Destinatario = desti.DestinatarioNombre,
                                       RequiereTicket = resp.RequiereTicket,
-                                      OficioRespuesta = resp.OficioRespuestaId,                              
-                                      ListaTickets = ticketGroup.Select(t => t.TicketId) 
+                                      OficioRespuesta = resp.OficioRespuestaId,
+                                      ListaTickets = ticketGroup.Select(t => t.TicketId)
                                   }).ToList();
-               
-                    var historialOficios = consultaBD.Select(x => 
+
+                var historialOficios = consultaBD.Select(x =>
+                {
+                    bool requiere = x.RequiereTicket != null && x.RequiereTicket.ToString().Trim().ToUpper() == "SI";    /// SE MUESTRAN LOS TICKETS DEL OFICIO       
+                    int totalPendientes = consultaBD.Count(x =>
+                         x.RequiereTicket != null &&
+                         x.RequiereTicket.ToString().Trim().ToUpper() == "SI" &&
+                         !x.ListaTickets.Any()
+                     );
+
+                    lblTicketFaltante.Text = $"Generar Tickets: {totalPendientes}";
+                    string textoTickets = "";
+                    int ticketspendientes = 0;
+                    if (requiere)
                     {
-                        bool requiere = x.RequiereTicket != null && x.RequiereTicket.ToString().Trim().ToUpper() == "SI";    /// SE MUESTRAN LOS TICKETS DEL OFICIO       
-                           int totalPendientes = consultaBD.Count(x =>
-                            x.RequiereTicket != null &&
-                            x.RequiereTicket.ToString().Trim().ToUpper() == "SI" &&
-                            !x.ListaTickets.Any()
-                        );
-                
-                        lblTicketFaltante.Text = $"Generar Tickets: {totalPendientes}";
-                        string textoTickets = "";
-                        int ticketspendientes = 0;
-                        if (requiere)
+                        if (x.ListaTickets.Any())
                         {
-                            if (x.ListaTickets.Any())
-                            {
-                                textoTickets = string.Join(", ", x.ListaTickets);                  
-                            }
-                            else
-                            {
-                                textoTickets = "Pendiente";
-                                ticketspendientes = x.ListaTickets.Count();                                                
-                             }
+                            textoTickets = string.Join(", ", x.ListaTickets);
                         }
                         else
                         {
-                            textoTickets = "No requiere"; // SIN TICKET
-                        }           
-                        return new
-                        {
-                            x.CapOficio,
-                            x.TipoCaptura,
-                            x.Estado,
-                            x.NumOficio,
-                            x.TipoDocumento,
-                            x.Asunto,
-                            x.Peticion,
-                            x.NumeroControl,
-                            x.Remitente,
-                            x.Destinatario,
-                            x.RequiereTicket,
-                            x.OficioRespuesta,
-                            Tickets = textoTickets 
-                        };
-                    }).ToList();
+                            textoTickets = "Pendiente";
+                            ticketspendientes = x.ListaTickets.Count();
+                        }
+                    }
+                    else
+                    {
+                        textoTickets = "No requiere"; // SIN TICKET
+                    }
+                    return new
+                    {
+                        x.CapOficio,
+                        x.TipoCaptura,
+                        x.Estado,
+                        x.NumOficio,
+                        x.TipoDocumento,
+                        x.Asunto,
+                        x.Peticion,
+                        x.NumeroControl,
+                        x.Remitente,
+                        x.Destinatario,
+                        x.RequiereTicket,
+                        x.OficioRespuesta,
+                        Tickets = textoTickets
+                    };
+                }).ToList();
 
-                DataGridOficios.DataSource = historialOficios;        
+                DataGridOficios.DataSource = historialOficios;
                 if (DataGridOficios.Columns.Contains("CapOficio"))
                 {
                     DataGridOficios.Columns["CapOficio"].Visible = false;
                 }
             }
-    
+
             ConfigurarGrid();
             ActualizarIndicadores();
         }
 
         private void DataGridOficios_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-           
+
             if (e.RowIndex >= 0 && DataGridOficios.Columns[e.ColumnIndex].Name == "Tickets")
-            {             
+            {
                 if (e.Value != null && e.Value.ToString() == "Pendiente")
-                {                  
-                    e.CellStyle.ForeColor = Color.Red;                 
-                    e.CellStyle.Font = new Font(DataGridOficios.Font, FontStyle.Bold);                   
-                //    e.CellStyle.BackColor = Color.Orange;
-                //    e.CellStyle.ForeColor = Color.White; 
+                {
+                    e.CellStyle.ForeColor = Color.Red;
+                    e.CellStyle.Font = new Font(DataGridOficios.Font, FontStyle.Bold);
+                    //    e.CellStyle.BackColor = Color.Orange;
+                    //    e.CellStyle.ForeColor = Color.White; 
                 }
             }
         }
@@ -477,7 +477,7 @@ namespace OficiosTI
                             row.Cells["Estado"].Style.Font = boldFont;
                             break;
                     }
-                }               
+                }
             }
         }
 
@@ -521,7 +521,7 @@ namespace OficiosTI
 
         private void btnbuscar_Click(object sender, EventArgs e)
         {
-            string texto = txtBuscar.Text.Trim();      
+            string texto = txtBuscar.Text.Trim();
             string estadoSeleccionado = cmbEstado.Text.Trim();
             string tipoCaptura = cmbTipoCaptura.Text.Trim();
 
@@ -534,12 +534,12 @@ namespace OficiosTI
                                   on resp.Destinatario equals desti.DestinatarioId
                                   join ticket in _context.Ticket
                                   on resp.CapturaOficioId equals ticket.id_of into ticketGroup
-                                  where resp.Activo == 1 &&                                       
+                                  where resp.Activo == 1 &&
                                         (string.IsNullOrEmpty(texto) ||
                                          resp.NumeroOficio.Contains(texto) ||
                                          resp.Asunto.Contains(texto) ||
                                          resp.Peticion.Contains(texto)) &&
-                                       
+
                                         (string.IsNullOrEmpty(estadoSeleccionado) ||
                                          estadoSeleccionado == "TODOS" ||
                                          resp.Estatus == estadoSeleccionado) &&
@@ -605,6 +605,17 @@ namespace OficiosTI
                 }
 
                 ConfigurarGrid();
+            }
+        }
+
+        private void btnCrearTicket_Click(object sender, EventArgs e)
+        {
+            using (FrmCrearTicket frmTicket = new FrmCrearTicket(_context, _usuarioActual))
+            {
+              //  frmTicket.IdOficioVinculado = idOficioGuardado;
+              //  frmTicket.AsuntoPredefinido = TextAsunto.Text.Trim();
+              //  frmTicket.Instruccion = TextPeticion.Text.Trim();
+                frmTicket.ShowDialog();
             }
         }
 

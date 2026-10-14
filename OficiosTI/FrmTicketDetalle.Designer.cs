@@ -41,6 +41,15 @@
             PanelHeader = new Panel();
             lblTicketId = new Label();
             PanelDatos = new Panel();
+            label5 = new Label();
+            btnAsignarTicket = new Button();
+            txtInstruccion = new RichTextBox();
+            cmbAnalistas = new ComboBox();
+            label4 = new Label();
+            label3 = new Label();
+            txtPrioridad = new TextBox();
+            txtExtension = new TextBox();
+            label2 = new Label();
             labelPersona = new Label();
             txtPersona = new TextBox();
             labelAsunto = new Label();
@@ -75,7 +84,7 @@
             PanelHeader.Dock = DockStyle.Top;
             PanelHeader.Location = new Point(0, 0);
             PanelHeader.Name = "PanelHeader";
-            PanelHeader.Size = new Size(794, 50);
+            PanelHeader.Size = new Size(817, 50);
             PanelHeader.TabIndex = 4;
             // 
             // lblTicketId
@@ -92,6 +101,15 @@
             // PanelDatos
             // 
             PanelDatos.BackColor = Color.WhiteSmoke;
+            PanelDatos.Controls.Add(label5);
+            PanelDatos.Controls.Add(btnAsignarTicket);
+            PanelDatos.Controls.Add(txtInstruccion);
+            PanelDatos.Controls.Add(cmbAnalistas);
+            PanelDatos.Controls.Add(label4);
+            PanelDatos.Controls.Add(label3);
+            PanelDatos.Controls.Add(txtPrioridad);
+            PanelDatos.Controls.Add(txtExtension);
+            PanelDatos.Controls.Add(label2);
             PanelDatos.Controls.Add(labelPersona);
             PanelDatos.Controls.Add(txtPersona);
             PanelDatos.Controls.Add(labelAsunto);
@@ -101,8 +119,87 @@
             PanelDatos.Dock = DockStyle.Top;
             PanelDatos.Location = new Point(0, 50);
             PanelDatos.Name = "PanelDatos";
-            PanelDatos.Size = new Size(794, 150);
+            PanelDatos.Size = new Size(817, 279);
             PanelDatos.TabIndex = 1;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(264, 150);
+            label5.Name = "label5";
+            label5.Size = new Size(66, 15);
+            label5.TabIndex = 14;
+            label5.Text = "Instrucción";
+            // 
+            // btnAsignarTicket
+            // 
+            btnAsignarTicket.Location = new Point(702, 214);
+            btnAsignarTicket.Name = "btnAsignarTicket";
+            btnAsignarTicket.Size = new Size(98, 23);
+            btnAsignarTicket.TabIndex = 13;
+            btnAsignarTicket.Text = "Asignar Ticket";
+            btnAsignarTicket.UseVisualStyleBackColor = true;
+            btnAsignarTicket.Click += btnAsignarTicket_Click;
+            // 
+            // txtInstruccion
+            // 
+            txtInstruccion.Location = new Point(264, 170);
+            txtInstruccion.Name = "txtInstruccion";
+            txtInstruccion.Size = new Size(421, 96);
+            txtInstruccion.TabIndex = 12;
+            txtInstruccion.Text = "";
+            // 
+            // cmbAnalistas
+            // 
+            cmbAnalistas.BackColor = SystemColors.Control;
+            cmbAnalistas.FormattingEnabled = true;
+            cmbAnalistas.Location = new Point(15, 175);
+            cmbAnalistas.Name = "cmbAnalistas";
+            cmbAnalistas.Size = new Size(243, 23);
+            cmbAnalistas.TabIndex = 11;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(15, 150);
+            label4.Name = "label4";
+            label4.Size = new Size(62, 15);
+            label4.TabIndex = 10;
+            label4.Text = "Asignar a: ";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(702, 70);
+            label3.Name = "label3";
+            label3.Size = new Size(55, 15);
+            label3.TabIndex = 9;
+            label3.Text = "Prioridad";
+            // 
+            // txtPrioridad
+            // 
+            txtPrioridad.BackColor = SystemColors.Control;
+            txtPrioridad.Location = new Point(700, 90);
+            txtPrioridad.Name = "txtPrioridad";
+            txtPrioridad.Size = new Size(100, 23);
+            txtPrioridad.TabIndex = 8;
+            // 
+            // txtExtension
+            // 
+            txtExtension.BackColor = SystemColors.Control;
+            txtExtension.Location = new Point(700, 35);
+            txtExtension.Name = "txtExtension";
+            txtExtension.Size = new Size(100, 23);
+            txtExtension.TabIndex = 7;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(700, 15);
+            label2.Name = "label2";
+            label2.Size = new Size(57, 15);
+            label2.TabIndex = 6;
+            label2.Text = "Extensión";
             // 
             // labelPersona
             // 
@@ -133,7 +230,7 @@
             txtAsunto.Location = new Point(330, 35);
             txtAsunto.Name = "txtAsunto";
             txtAsunto.ReadOnly = true;
-            txtAsunto.Size = new Size(452, 23);
+            txtAsunto.Size = new Size(355, 23);
             txtAsunto.TabIndex = 3;
             // 
             // labelMensaje
@@ -150,7 +247,7 @@
             txtMensaje.Multiline = true;
             txtMensaje.Name = "txtMensaje";
             txtMensaje.ReadOnly = true;
-            txtMensaje.Size = new Size(767, 45);
+            txtMensaje.Size = new Size(670, 47);
             txtMensaje.TabIndex = 5;
             // 
             // PanelHilo
@@ -161,23 +258,23 @@
             PanelHilo.Controls.Add(labelHilo);
             PanelHilo.Controls.Add(dataGridHilo);
             PanelHilo.Dock = DockStyle.Fill;
-            PanelHilo.Location = new Point(0, 200);
+            PanelHilo.Location = new Point(0, 329);
             PanelHilo.Name = "PanelHilo";
-            PanelHilo.Size = new Size(794, 438);
+            PanelHilo.Size = new Size(817, 396);
             PanelHilo.TabIndex = 0;
             // 
             // dataGridRelacion
             // 
             dataGridRelacion.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridRelacion.Location = new Point(15, 256);
+            dataGridRelacion.Location = new Point(15, 253);
             dataGridRelacion.Name = "dataGridRelacion";
-            dataGridRelacion.Size = new Size(767, 150);
+            dataGridRelacion.Size = new Size(788, 150);
             dataGridRelacion.TabIndex = 3;
             // 
             // label1
             // 
-            label1.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            label1.Location = new Point(15, 230);
+            label1.Font = new Font("Gotham", 9.749999F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(15, 227);
             label1.Name = "label1";
             label1.Size = new Size(180, 23);
             label1.TabIndex = 2;
@@ -185,22 +282,22 @@
             // 
             // labelHilo
             // 
-            labelHilo.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            labelHilo.Location = new Point(15, 10);
+            labelHilo.Font = new Font("Gotham", 9.749999F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            labelHilo.Location = new Point(15, 7);
             labelHilo.Name = "labelHilo";
-            labelHilo.Size = new Size(100, 23);
+            labelHilo.Size = new Size(149, 23);
             labelHilo.TabIndex = 0;
             labelHilo.Text = "Hilo del Ticket";
             // 
             // dataGridHilo
             // 
             dataGridHilo.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridHilo.Location = new Point(15, 35);
+            dataGridHilo.Location = new Point(15, 33);
             dataGridHilo.MultiSelect = false;
             dataGridHilo.Name = "dataGridHilo";
             dataGridHilo.ReadOnly = true;
             dataGridHilo.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridHilo.Size = new Size(767, 182);
+            dataGridHilo.Size = new Size(788, 182);
             dataGridHilo.TabIndex = 1;
             // 
             // PanelRespuesta
@@ -209,16 +306,17 @@
             PanelRespuesta.Controls.Add(labelRespuesta);
             PanelRespuesta.Controls.Add(txtRespuesta);
             PanelRespuesta.Dock = DockStyle.Bottom;
-            PanelRespuesta.Location = new Point(0, 638);
+            PanelRespuesta.Location = new Point(0, 725);
             PanelRespuesta.Name = "PanelRespuesta";
-            PanelRespuesta.Size = new Size(794, 120);
+            PanelRespuesta.Size = new Size(817, 120);
             PanelRespuesta.TabIndex = 2;
             // 
             // labelRespuesta
             // 
+            labelRespuesta.Font = new Font("Gotham", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             labelRespuesta.Location = new Point(15, 10);
             labelRespuesta.Name = "labelRespuesta";
-            labelRespuesta.Size = new Size(100, 23);
+            labelRespuesta.Size = new Size(149, 23);
             labelRespuesta.TabIndex = 0;
             labelRespuesta.Text = "Nueva respuesta";
             // 
@@ -227,7 +325,7 @@
             txtRespuesta.Location = new Point(15, 30);
             txtRespuesta.Multiline = true;
             txtRespuesta.Name = "txtRespuesta";
-            txtRespuesta.Size = new Size(767, 60);
+            txtRespuesta.Size = new Size(794, 60);
             txtRespuesta.TabIndex = 1;
             // 
             // PanelAcciones
@@ -237,9 +335,9 @@
             PanelAcciones.Controls.Add(BtnGuardarRespuesta);
             PanelAcciones.Controls.Add(BtnGenerarOficio);
             PanelAcciones.Dock = DockStyle.Bottom;
-            PanelAcciones.Location = new Point(0, 758);
+            PanelAcciones.Location = new Point(0, 845);
             PanelAcciones.Name = "PanelAcciones";
-            PanelAcciones.Size = new Size(794, 50);
+            PanelAcciones.Size = new Size(817, 50);
             PanelAcciones.TabIndex = 3;
             // 
             // chkCerrarTicket
@@ -254,7 +352,7 @@
             // 
             // BtnGuardarRespuesta
             // 
-            BtnGuardarRespuesta.Location = new Point(127, 8);
+            BtnGuardarRespuesta.Location = new Point(264, 8);
             BtnGuardarRespuesta.Name = "BtnGuardarRespuesta";
             BtnGuardarRespuesta.Size = new Size(150, 30);
             BtnGuardarRespuesta.TabIndex = 0;
@@ -263,7 +361,7 @@
             // 
             // BtnGenerarOficio
             // 
-            BtnGenerarOficio.Location = new Point(292, 8);
+            BtnGenerarOficio.Location = new Point(526, 8);
             BtnGenerarOficio.Name = "BtnGenerarOficio";
             BtnGenerarOficio.Size = new Size(150, 30);
             BtnGenerarOficio.TabIndex = 1;
@@ -274,7 +372,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(794, 808);
+            ClientSize = new Size(817, 895);
             Controls.Add(PanelHilo);
             Controls.Add(PanelDatos);
             Controls.Add(PanelRespuesta);
@@ -300,5 +398,14 @@
         private Label label1;
         private DataGridView dataGridRelacion;
         private CheckBox chkCerrarTicket;
+        private TextBox txtPrioridad;
+        private TextBox txtExtension;
+        private Label label2;
+        private ComboBox cmbAnalistas;
+        private Label label4;
+        private Label label3;
+        private RichTextBox txtInstruccion;
+        private Button btnAsignarTicket;
+        private Label label5;
     }
 }

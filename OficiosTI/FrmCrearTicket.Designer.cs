@@ -46,6 +46,8 @@
             txtTel = new TextBox();
             label6 = new Label();
             cmbPrioridad = new ComboBox();
+            txtExtension = new TextBox();
+            label7 = new Label();
             SuspendLayout();
             // 
             // chcOficina1
@@ -115,6 +117,7 @@
             // 
             // textInstruccion
             // 
+            textInstruccion.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             textInstruccion.Location = new Point(469, 160);
             textInstruccion.Name = "textInstruccion";
             textInstruccion.Size = new Size(436, 156);
@@ -175,16 +178,18 @@
             // 
             // txtNombre
             // 
+            txtNombre.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtNombre.Location = new Point(22, 36);
             txtNombre.Name = "txtNombre";
-            txtNombre.Size = new Size(436, 23);
+            txtNombre.Size = new Size(436, 22);
             txtNombre.TabIndex = 14;
             // 
             // txtAsunto
             // 
+            txtAsunto.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtAsunto.Location = new Point(22, 93);
             txtAsunto.Name = "txtAsunto";
-            txtAsunto.Size = new Size(436, 23);
+            txtAsunto.Size = new Size(436, 22);
             txtAsunto.TabIndex = 15;
             // 
             // label5
@@ -193,15 +198,16 @@
             label5.Font = new Font("Gotham", 11.9999981F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(469, 9);
             label5.Name = "label5";
-            label5.Size = new Size(179, 19);
+            label5.Size = new Size(80, 19);
             label5.TabIndex = 16;
-            label5.Text = "Teléfono / Extensión";
+            label5.Text = "Teléfono";
             // 
             // txtTel
             // 
+            txtTel.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtTel.Location = new Point(469, 37);
             txtTel.Name = "txtTel";
-            txtTel.Size = new Size(436, 23);
+            txtTel.Size = new Size(164, 22);
             txtTel.TabIndex = 17;
             // 
             // label6
@@ -216,17 +222,38 @@
             // 
             // cmbPrioridad
             // 
+            cmbPrioridad.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cmbPrioridad.FormattingEnabled = true;
             cmbPrioridad.Location = new Point(469, 93);
             cmbPrioridad.Name = "cmbPrioridad";
             cmbPrioridad.Size = new Size(436, 23);
             cmbPrioridad.TabIndex = 19;
             // 
+            // txtExtension
+            // 
+            txtExtension.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            txtExtension.Location = new Point(639, 37);
+            txtExtension.Name = "txtExtension";
+            txtExtension.Size = new Size(100, 22);
+            txtExtension.TabIndex = 20;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Gotham", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label7.Location = new Point(639, 13);
+            label7.Name = "label7";
+            label7.Size = new Size(66, 15);
+            label7.TabIndex = 21;
+            label7.Text = "Extensión";
+            // 
             // FrmCrearTicket
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(917, 416);
+            Controls.Add(label7);
+            Controls.Add(txtExtension);
             Controls.Add(cmbPrioridad);
             Controls.Add(label6);
             Controls.Add(txtTel);
@@ -272,5 +299,7 @@
         private TextBox txtTel;
         private Label label6;
         private ComboBox cmbPrioridad;
+        private TextBox txtExtension;
+        private Label label7;
     }
 }

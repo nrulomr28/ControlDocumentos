@@ -25,14 +25,14 @@ namespace OficiosTI.Data.Entities
         public DateTime TicketFecha { get; set; }   /// FECHA DE CAPTURA DEL TICKET
 
         public int Cat_TicketStatusId { get; set; }   /// ESTADO DEL TICKET 
-
-        public int TicketUUsuario { get; set; }    /// CAPTURADO POR 
-
-        public int OficinasId { get; set; }
+        public int OficinasId { get; set; }           
+      
         [ForeignKey("id_of")]
         public int? id_of { get; set; }
+        public int TicketUUsuario { get; set; }    /// QUIEN TIENE EL TICKET
+
+        public int ?TicketExt {  get; set; }   /// EXTENSION DEL USUARIO 
     }
 }
-
 
 

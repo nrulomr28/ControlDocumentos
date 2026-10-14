@@ -16,7 +16,7 @@ namespace OficiosTI.Data.Entities
 
         public string HiloTicketMensaje { get; set; }
 
-        public decimal UsuarioId { get; set; }
+        public decimal? UsuarioId { get; set; }
 
         public int TicketId { get; set; }
     }

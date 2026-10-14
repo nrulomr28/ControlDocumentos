@@ -36,6 +36,7 @@
             btnbuscar = new Button();
             label1 = new Label();
             panel1 = new Panel();
+            btnCrearTicket = new Button();
             label5 = new Label();
             cmbTipoCaptura = new ComboBox();
             label4 = new Label();
@@ -78,11 +79,11 @@
             // btnPanelAdmin
             // 
             btnPanelAdmin.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnPanelAdmin.Location = new Point(3, 293);
+            btnPanelAdmin.Location = new Point(3, 342);
             btnPanelAdmin.Name = "btnPanelAdmin";
             btnPanelAdmin.Size = new Size(133, 45);
             btnPanelAdmin.TabIndex = 2;
-            btnPanelAdmin.Text = "Tickets";
+            btnPanelAdmin.Text = "Panel de Tickets";
             btnPanelAdmin.UseVisualStyleBackColor = true;
             btnPanelAdmin.Click += btnPanelAdmin_Click;
             // 
@@ -129,6 +130,7 @@
             // panel1
             // 
             panel1.BackColor = SystemColors.GradientInactiveCaption;
+            panel1.Controls.Add(btnCrearTicket);
             panel1.Controls.Add(label5);
             panel1.Controls.Add(cmbTipoCaptura);
             panel1.Controls.Add(label4);
@@ -152,6 +154,16 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(155, 746);
             panel1.TabIndex = 7;
+            // 
+            // btnCrearTicket
+            // 
+            btnCrearTicket.Location = new Point(3, 293);
+            btnCrearTicket.Name = "btnCrearTicket";
+            btnCrearTicket.Size = new Size(133, 47);
+            btnCrearTicket.TabIndex = 8;
+            btnCrearTicket.Text = "Crear Ticket";
+            btnCrearTicket.UseVisualStyleBackColor = true;
+            btnCrearTicket.Click += btnCrearTicket_Click;
             // 
             // label5
             // 
@@ -324,5 +336,6 @@
         private Label label4;
         private Label label5;
         private ComboBox cmbTipoCaptura;
+        private Button btnCrearTicket;
     }
 }

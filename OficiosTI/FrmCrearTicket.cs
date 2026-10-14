@@ -40,17 +40,22 @@ namespace OficiosTI
 
         protected override void OnLoad(EventArgs e)
         {
+            base.OnLoad(e);           
             var Ofinum = _context.CapturaOficios.FirstOrDefault(y => y.CapturaOficioId == this.IdOficioVinculado);
             int idRemitente = Ofinum?.Remitente ?? 0;
-            var Remitente = _context.Remitente.FirstOrDefault(y => y.RemitenteId == idRemitente);
-            string nombreRemitente = Remitente.RemitenteNombre ?? null;
-            base.OnLoad(e);
+            var remitente = _context.Remitente.FirstOrDefault(y => y.RemitenteId == idRemitente);
+            string nombreRemitente = remitente?.RemitenteNombre ?? "";
             if (!string.IsNullOrEmpty(AsuntoPredefinido))
-                txtAsunto.Text = AsuntoPredefinido;         
-                txtNombre.Text = nombreRemitente;
+            {
+                txtAsunto.Text = AsuntoPredefinido;
+            }
+
+            txtNombre.Text = nombreRemitente;
 
             if (!string.IsNullOrEmpty(Instruccion))
+            {
                 textInstruccion.Text = Instruccion;
+            }
         }
 
         private void CargarPrioridad()
@@ -59,7 +64,6 @@ namespace OficiosTI
             {
              new { Id =  "1",  Nombre = "NORMAL" },
              new { Id =  "2", Nombre = "URGENTE" },
-
             }.ToList();
             cmbPrioridad.DataSource = listaPrioridad;
             cmbPrioridad.DisplayMember = "Nombre";
@@ -101,6 +105,14 @@ namespace OficiosTI
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(txtExtension.Text))
+            {
+                MessageBox.Show("Falta la extensión del usuario", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                textInstruccion.Focus();
+                return;
+            }
+                       
+
             List<int> oficinasSeleccionadas = new List<int>();
             if (chcOficina1.Checked) oficinasSeleccionadas.Add(1); // REDES
             if (chcOficina2.Checked) oficinasSeleccionadas.Add(2); // CONTROL Y RESGUARDO
@@ -128,51 +140,54 @@ namespace OficiosTI
                         string nombrePersona = !string.IsNullOrWhiteSpace(txtNombre.Text)
                                                ? txtNombre.Text.Trim()
                                                : (Remitente?.RemitenteNombre ?? "");
-                        string usuariodominio =  _service.ObtenerDominioYUsuario();                  
+                        string usuariodominio =  _service.ObtenerDominioYUsuario();   
+                        
                         int idusuario = _context.Usuarios
-                                                        .Where(y => y.UsuarioDominio == usuariodominio)
+                                                        .Where(y => y.UsuarioDominio == usuariodominio)  /// USUARIO QUE CAPTURA EL TICKET 
                                                         .Select(y => y.UsuarioAnterior)
                                                         .FirstOrDefault();
 
                         foreach (int idOficina in oficinasSeleccionadas)
-                        {                            
+                        {
+                            int idJefeOficina = _context.Usuarios
+                                                        .Where(y => y.IdOficina == idOficina && y.Jefe == 1)    /// JEFE DE OFICINA 
+                                                        .Select(y => y.UsuarioId)
+                                                        .FirstOrDefault();
                             Ticket nuevoticket = new Ticket
                             {
                                 TicketPersona = nombrePersona,
                                 TicketTel = txtTel.Text.Trim(),
                                 TicketAsunto = txtAsunto.Text.Trim(),
                                 TicketMensaje = textInstruccion.Text.Trim(),
-                                TicketPrioridad = cmbPrioridad.Text.Trim(),
+                                TicketPrioridad = cmbPrioridad.Text.Trim(),                               
                                 TicketFecha = DateTime.Now,
                                 Cat_TicketStatusId = 1, // ESTADO CREADO
-                                TicketUUsuario = idusuario,
                                 OficinasId = idOficina,
                                 id_of = this.IdOficioVinculado,
+                                TicketUUsuario = idJefeOficina,   /// se asigna al jefe 
+                                TicketExt = int.Parse(txtExtension.Text),
                             };
                             _context.Ticket.Add(nuevoticket);
                             _context.SaveChanges();
-                            /// QUIEN ASIGNO EL TICKET                         
+                                                
                             var hilo = new HiloTicket
                             {
                                 TicketId = nuevoticket.TicketId,
                                 HiloTicketFecha = DateTime.Now,
                                 HiloTicketAccion = "CREADO",
                                 HiloTicketMensaje = textInstruccion.Text.Trim(),
-                                UsuarioId = idusuario,
+                                UsuarioId = idusuario,   /// quien capturo el ticket 
                             };
                             _context.HiloTicket.Add(hilo);
                             _context.SaveChanges();
-                            int idJefeOficina = _context.Usuarios
-                                                        .Where(y => y.IdOficina == idOficina && y.Jefe == 1)
-                                                        .Select(y => y.UsuarioId)
-                                                        .FirstOrDefault();
+                            
                             var hilo2 = new HiloTicket
                             {
                                 TicketId = nuevoticket.TicketId,    /// ASIGNADO AL DEPARTAMENTO 
                                 HiloTicketFecha = DateTime.Now,
                                 HiloTicketAccion = "ASIGNADO",
                                 HiloTicketMensaje = "ASIGNADO AUTOMATICAMENTE",
-                                UsuarioId = idJefeOficina
+                                UsuarioId = idJefeOficina       //// ID DEL JEFE 
                             };
                             _context.HiloTicket.Add(hilo2);
                             _context.SaveChanges();
