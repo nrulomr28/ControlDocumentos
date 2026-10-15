@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic.ApplicationServices;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 using OficiosTI.Services;
@@ -22,7 +23,6 @@ namespace OficiosTI
             _ticket = ticket;
             _context = context;
             _service = new OficioRespuestaService(_context);
-
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
             this.Load += FrmTicketDetalle_Load;
         }
@@ -57,7 +57,7 @@ namespace OficiosTI
                                                         .FirstOrDefault();
 
                 var status = _context.Usuarios
-                    .Where(x => x.IdOficina == miOficinaId && x.Activo == 1 && x.UsuarioId != idusuario)
+                    .Where(x => x.IdOficina == miOficinaId && x.Activo == 1 && x.UsuarioAnterior != idusuario)
                     .ToList();
 
                 cmbAnalistas.DisplayMember = "NombreCompleto";
@@ -76,8 +76,8 @@ namespace OficiosTI
             try
             {
                 var hilo = (from h in _context.HiloTicket
-                            where h.TicketId == _ticket.TicketId                     
-                            join u in _context.Usuarios on h.UsuarioId equals u.UsuarioAnterior into usuarios                         
+                            where h.TicketId == _ticket.TicketId
+                            join u in _context.Usuarios on h.UsuarioId equals u.UsuarioAnterior into usuarios
                             from usr in usuarios.DefaultIfEmpty()
                             orderby h.HiloTicketFecha
                             select new
@@ -96,6 +96,7 @@ namespace OficiosTI
                 MessageBox.Show($"Error al cargar el historial del ticket: {ex.Message}", "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
         private void CargarTicketsR()
         {
@@ -117,8 +118,8 @@ namespace OficiosTI
                                            select new
                                            {
                                                Ticket = t.TicketId,
-                                               Remitente = t.TicketPersona,
-                                               Asunto = t.TicketMensaje,
+                                               //  Remitente = t.TicketPersona,
+                                               //    Asunto = t.TicketMensaje,
                                                Oficina = o.OficinasNombre,
                                                Estado = s.Cat_TicketStatusStatus,
                                                Oficio = r != null ? r.NumeroOficio : "SIN OFICIO",
@@ -172,12 +173,10 @@ namespace OficiosTI
             try
             {
                 _context.HiloTicket.Add(hilo);
-
-                _ticket.TicketUUsuario = idanalista.Value;
+                _ticket.TicketUUsuario = idanalista.Value;   /// asignar al analista
+                _ticket.Cat_TicketStatusId = 2;              //// cambiar el estado del ticket a en proceso   
                 _context.Ticket.Update(_ticket);
-
                 _context.SaveChanges();
-
                 txtInstruccion.Clear();
                 cmbAnalistas.SelectedIndex = -1;
                 CargarHilo();
@@ -190,72 +189,7 @@ namespace OficiosTI
             }
         }
 
-        private void BtnGuardarRespuesta_Click(object sender, EventArgs e)
-        {
-            if (_ticket.Cat_TicketStatusId == 3)
-            {
-                MessageBox.Show("Este ticket ya se encuentra cerrado. No se pueden agregar más respuestas.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtRespuesta.Text))
-            {
-                MessageBox.Show("Por favor, escribe una respuesta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            string usuariodominio = _service.ObtenerDominioYUsuario();
-            int idanalista = _context.Usuarios
-                                                    .Where(y => y.UsuarioDominio == usuariodominio)  /// USUARIO QUE CAPTURA EL TICKET 
-                                                    .Select(y => y.UsuarioAnterior)
-                                                    .FirstOrDefault();
-            bool cerrarTicket = chkCerrarTicket.Checked;
-            var hilo = new HiloTicket
-            {
-                TicketId = _ticket.TicketId,
-                HiloTicketFecha = DateTime.Now,
-                HiloTicketAccion = cerrarTicket ? "CERRADO" : "RESPUESTA",
-                HiloTicketMensaje = txtRespuesta.Text,
-                UsuarioId = idanalista
-            };
-
-            try
-            {
-                _context.HiloTicket.Add(hilo);
-
-                if (cerrarTicket)
-                {
-                    var sinOficio = new Ticket_SinOficio
-                    {
-                        TicketId = _ticket.TicketId,
-                        Cat_TicketStatusId = 3,
-                        Cat_TicketStatusStatus = "CERRADO - SIN OFICIO",
-                        Fecha = DateTime.Now,
-                    };
-                    _context.Add(sinOficio);
-                    _ticket.Cat_TicketStatusId = 3;
-                    _context.Ticket.Update(_ticket);
-                }
-
-                _context.SaveChanges();
-
-                if (cerrarTicket)
-                {
-                    MessageBox.Show("Respuesta guardada y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.Close();
-                }
-                else
-                {
-                    txtRespuesta.Clear();
-                    CargarHilo();
-                    MessageBox.Show("Respuesta guardada.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ocurrió un error al guardar la respuesta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
+       
         private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
             try
@@ -271,7 +205,6 @@ namespace OficiosTI
                 string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";
                 string rutaTemporal = System.IO.Path.Combine(System.IO.Path.GetTempPath(), nombreArchivo);
                 System.IO.File.WriteAllBytes(rutaTemporal, archivoBd.ArchivoArchivo);
-
                 var psi = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = rutaTemporal,
@@ -284,5 +217,227 @@ namespace OficiosTI
                 MessageBox.Show($"Ocurrió un error al abrir el PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+
+       
+        private void BtnGuardarRespuesta_Click(object sender, EventArgs e)
+        {
+            bool cerrarYsinOficio = chkCerrarTicket.Checked;
+            ProcesarRespuesta(cerrarTicket: cerrarYsinOficio, esSinOficio: cerrarYsinOficio);
+        }
+
+   
+        private void btnGuardaryCerrar_Click(object sender, EventArgs e)
+        {
+          
+            ProcesarRespuesta(cerrarTicket: true, esSinOficio: false);
+        }
+
+     
+        private void ProcesarRespuesta(bool cerrarTicket, bool esSinOficio)
+        {
+            if (_ticket.Cat_TicketStatusId == 3)
+            {
+                MessageBox.Show("Este ticket ya se encuentra cerrado. No se pueden agregar más respuestas.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtRespuesta.Text))
+            {
+                MessageBox.Show("Por favor, escribe una respuesta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            this.Enabled = false;
+
+            try
+            {
+                string usuariodominio = _service.ObtenerDominioYUsuario();
+                int idanalista = _context.Usuarios
+                    .Where(y => y.UsuarioDominio == usuariodominio)
+                    .Select(y => y.UsuarioAnterior)
+                    .FirstOrDefault();
+
+                var hilo = new HiloTicket
+                {
+                    TicketId = _ticket.TicketId,
+                    HiloTicketFecha = DateTime.Now,
+                    HiloTicketAccion = cerrarTicket ? "CERRADO" : "RESPUESTA",
+                    HiloTicketMensaje = txtRespuesta.Text.Trim(),
+                    UsuarioId = idanalista
+                };
+
+                _context.HiloTicket.Add(hilo);
+
+               
+                if (cerrarTicket)
+                {
+                   
+                    if (esSinOficio)
+                    {
+                        var sinOficio = new Ticket_SinOficio
+                        {
+                            TicketId = _ticket.TicketId,
+                            Cat_TicketStatusId = 3,
+                            Cat_TicketStatusStatus = "CERRADO - SIN OFICIO",
+                            Fecha = DateTime.Now,
+                        };
+                        _context.Add(sinOficio);
+                    }
+
+                 
+                    _ticket.Cat_TicketStatusId = 3;
+                    _context.Ticket.Update(_ticket);
+                }
+
+                _context.SaveChanges();
+
+                if (cerrarTicket)
+                {
+                    MessageBox.Show("Respuesta guardada y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                }
+                else
+                {
+                    txtRespuesta.Clear();
+                    chkCerrarTicket.Checked = false;
+                    CargarHilo();
+                    MessageBox.Show("Respuesta guardada.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al guardar la respuesta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                this.Enabled = true;
+            }
+        }
+
+
+        /*  private void BtnGuardarRespuesta_Click(object sender, EventArgs e)
+          {
+              if (_ticket.Cat_TicketStatusId == 3)
+              {
+                  MessageBox.Show("Este ticket ya se encuentra cerrado. No se pueden agregar más respuestas.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+
+              if (string.IsNullOrWhiteSpace(txtRespuesta.Text))
+              {
+                  MessageBox.Show("Por favor, escribe una respuesta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+              string usuariodominio = _service.ObtenerDominioYUsuario();
+              int idanalista = _context.Usuarios
+                                                      .Where(y => y.UsuarioDominio == usuariodominio)  /// USUARIO QUE CAPTURA EL TICKET 
+                                                      .Select(y => y.UsuarioAnterior)
+                                                      .FirstOrDefault();
+
+              bool cerrarTicket = chkCerrarTicket.Checked;
+
+
+              var hilo = new HiloTicket
+              {
+                  TicketId = _ticket.TicketId,
+                  HiloTicketFecha = DateTime.Now,
+                  HiloTicketAccion = cerrarTicket ? "CERRADO" : "RESPUESTA",
+                  HiloTicketMensaje = txtRespuesta.Text,
+                  UsuarioId = idanalista
+              };
+
+              try
+              {
+                  _context.HiloTicket.Add(hilo);
+
+                  if (cerrarTicket)
+                  {
+                      var sinOficio = new Ticket_SinOficio
+                      {
+                          TicketId = _ticket.TicketId,
+                          Cat_TicketStatusId = 3,
+                          Cat_TicketStatusStatus = "CERRADO - SIN OFICIO",
+                          Fecha = DateTime.Now,
+                      };
+                      _context.Add(sinOficio);
+                      _ticket.Cat_TicketStatusId = 3;
+                      _context.Ticket.Update(_ticket);
+                  }
+
+                  _context.SaveChanges();
+
+                  if (cerrarTicket)
+                  {
+                      MessageBox.Show("Respuesta guardada y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                      this.Close();
+                  }
+                  else
+                  {
+                      txtRespuesta.Clear();
+                      CargarHilo();
+                      MessageBox.Show("Respuesta guardada.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                  }
+              }
+              catch (Exception ex)
+              {
+                  MessageBox.Show($"Ocurrió un error al guardar la respuesta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              }
+          }
+
+          private void btnGuardaryCerrar_Click(object sender, EventArgs e)
+          {
+              if (_ticket.Cat_TicketStatusId == 3)
+              {
+                  MessageBox.Show("Este ticket ya se encuentra cerrado. No se pueden agregar más respuestas.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+
+              if (string.IsNullOrWhiteSpace(txtRespuesta.Text))
+              {
+                  MessageBox.Show("Por favor, escribe una respuesta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+
+              btnGuardaryCerrar.Enabled = false;
+
+              try
+              {
+                  string usuariodominio = _service.ObtenerDominioYUsuario();
+                  int idanalista = _context.Usuarios
+                      .Where(y => y.UsuarioDominio == usuariodominio)
+                      .Select(y => y.UsuarioAnterior)
+                      .FirstOrDefault();
+
+                  var hilo = new HiloTicket
+                  {
+                      TicketId = _ticket.TicketId,
+                      HiloTicketFecha = DateTime.Now,
+                      HiloTicketAccion = "CERRADO",
+                      HiloTicketMensaje = txtRespuesta.Text.Trim(),
+                      UsuarioId = idanalista
+                  };
+
+                  _context.HiloTicket.Add(hilo);
+
+
+                  _ticket.Cat_TicketStatusId = 3;
+                  _context.Ticket.Update(_ticket);
+
+                  _context.SaveChanges();
+
+                  MessageBox.Show("Respuesta guardada y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                  this.Close();
+              }
+              catch (Exception ex)
+              {
+                  MessageBox.Show($"Ocurrió un error al guardar la respuesta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              }
+              finally
+              {
+                  btnGuardaryCerrar.Enabled = true;
+              }
+          }
+        */
     }
 }

@@ -48,6 +48,7 @@
             lbUser = new Label();
             LabelTitulo = new Label();
             PanelFiltros = new Panel();
+            lblSuplenteAsignado = new Label();
             btnSuplente = new Button();
             cmbSuplente = new ComboBox();
             lblSuplente = new Label();
@@ -88,7 +89,7 @@
             PanelHeader.Dock = DockStyle.Top;
             PanelHeader.Location = new Point(0, 40);
             PanelHeader.Name = "PanelHeader";
-            PanelHeader.Size = new Size(1000, 50);
+            PanelHeader.Size = new Size(1485, 50);
             PanelHeader.TabIndex = 3;
             // 
             // lbSegmento
@@ -135,6 +136,7 @@
             // PanelFiltros
             // 
             PanelFiltros.BackColor = Color.FromArgb(244, 246, 249);
+            PanelFiltros.Controls.Add(lblSuplenteAsignado);
             PanelFiltros.Controls.Add(btnSuplente);
             PanelFiltros.Controls.Add(cmbSuplente);
             PanelFiltros.Controls.Add(lblSuplente);
@@ -149,14 +151,25 @@
             PanelFiltros.Dock = DockStyle.Left;
             PanelFiltros.Location = new Point(0, 90);
             PanelFiltros.Name = "PanelFiltros";
-            PanelFiltros.Size = new Size(220, 460);
+            PanelFiltros.Size = new Size(220, 606);
             PanelFiltros.TabIndex = 1;
+            // 
+            // lblSuplenteAsignado
+            // 
+            lblSuplenteAsignado.AutoSize = true;
+            lblSuplenteAsignado.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblSuplenteAsignado.Location = new Point(8, 427);
+            lblSuplenteAsignado.Name = "lblSuplenteAsignado";
+            lblSuplenteAsignado.Size = new Size(126, 15);
+            lblSuplenteAsignado.TabIndex = 3;
+            lblSuplenteAsignado.Text = "Suplente Asignado: ";
+            lblSuplenteAsignado.TextAlign = ContentAlignment.TopCenter;
             // 
             // btnSuplente
             // 
-            btnSuplente.Location = new Point(19, 381);
+            btnSuplente.Location = new Point(8, 381);
             btnSuplente.Name = "btnSuplente";
-            btnSuplente.Size = new Size(176, 23);
+            btnSuplente.Size = new Size(206, 23);
             btnSuplente.TabIndex = 3;
             btnSuplente.Text = "Asignar Suplente";
             btnSuplente.UseVisualStyleBackColor = true;
@@ -165,9 +178,9 @@
             // cmbSuplente
             // 
             cmbSuplente.FormattingEnabled = true;
-            cmbSuplente.Location = new Point(19, 352);
+            cmbSuplente.Location = new Point(8, 352);
             cmbSuplente.Name = "cmbSuplente";
-            cmbSuplente.Size = new Size(176, 23);
+            cmbSuplente.Size = new Size(206, 23);
             cmbSuplente.TabIndex = 3;
             // 
             // lblSuplente
@@ -192,7 +205,7 @@
             // 
             TextBuscar.Location = new Point(15, 40);
             TextBuscar.Name = "TextBuscar";
-            TextBuscar.Size = new Size(180, 23);
+            TextBuscar.Size = new Size(199, 23);
             TextBuscar.TabIndex = 1;
             // 
             // LabelPrioridad
@@ -209,7 +222,7 @@
             ComboPrioridad.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboPrioridad.Location = new Point(15, 100);
             ComboPrioridad.Name = "ComboPrioridad";
-            ComboPrioridad.Size = new Size(180, 23);
+            ComboPrioridad.Size = new Size(199, 23);
             ComboPrioridad.TabIndex = 3;
             // 
             // LabelStatus
@@ -226,7 +239,7 @@
             ComboStatus.DropDownStyle = ComboBoxStyle.DropDownList;
             ComboStatus.Location = new Point(15, 160);
             ComboStatus.Name = "ComboStatus";
-            ComboStatus.Size = new Size(180, 23);
+            ComboStatus.Size = new Size(199, 23);
             ComboStatus.TabIndex = 5;
             // 
             // BtnBuscar
@@ -276,7 +289,7 @@
             DataGridTickets.Name = "DataGridTickets";
             DataGridTickets.ReadOnly = true;
             DataGridTickets.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            DataGridTickets.Size = new Size(780, 460);
+            DataGridTickets.Size = new Size(1265, 606);
             DataGridTickets.TabIndex = 0;
             DataGridTickets.CellClick += DataGridTickets_CellClick;
             DataGridTickets.CellDoubleClick += DataGridTickets_CellDoubleClick;
@@ -292,9 +305,9 @@
             PanelAcciones.Controls.Add(BtnAdjuntos);
             PanelAcciones.Controls.Add(BtnGenerarOficio);
             PanelAcciones.Dock = DockStyle.Bottom;
-            PanelAcciones.Location = new Point(0, 550);
+            PanelAcciones.Location = new Point(0, 696);
             PanelAcciones.Name = "PanelAcciones";
-            PanelAcciones.Size = new Size(1000, 50);
+            PanelAcciones.Size = new Size(1485, 50);
             PanelAcciones.TabIndex = 2;
             // 
             // btnSinTicket
@@ -363,7 +376,7 @@
             PanelIndicadores.Dock = DockStyle.Top;
             PanelIndicadores.Location = new Point(0, 0);
             PanelIndicadores.Name = "PanelIndicadores";
-            PanelIndicadores.Size = new Size(1000, 40);
+            PanelIndicadores.Size = new Size(1485, 40);
             PanelIndicadores.TabIndex = 4;
             // 
             // LabelTotalTickets
@@ -400,7 +413,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1000, 600);
+            ClientSize = new Size(1485, 746);
             Controls.Add(DataGridTickets);
             Controls.Add(PanelFiltros);
             Controls.Add(PanelAcciones);
@@ -409,6 +422,7 @@
             Name = "FrmTickets";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Tickets TI";
+            Load += FrmTickets_Load;
             PanelHeader.ResumeLayout(false);
             PanelHeader.PerformLayout();
             PanelFiltros.ResumeLayout(false);
@@ -429,5 +443,6 @@
         private Button btnSuplente;
         private ComboBox cmbSuplente;
         private Label lblSuplente;
+        private Label lblSuplenteAsignado;
     }
 }

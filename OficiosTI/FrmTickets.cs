@@ -12,7 +12,6 @@ namespace OficiosTI
     public partial class FrmTickets : Form
     {
         private readonly OficiosContext _context;
-
         private OficioRespuestaService _service;
         public FrmTickets(OficiosContext context)
         {
@@ -220,47 +219,64 @@ namespace OficiosTI
          }
         */
 
+        public class ItemComboUsuario
+        {
+            public string NombreCompleto { get; set; }
+            public int? SuplenteJefe { get; set; }
+            public int UsuarioAnterior { get; set; }
+            public int? Jefe { get; set; }         
+        }
+
         private void CargarComboSuplente()
         {
             try
             {
-                int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
-                string usuariodominio = _service.ObtenerDominioYUsuario();
+                int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());               
+                var usuariosSuplentes = _context.Usuarios
+                    .Where(x => x.IdOficina == miOficinaId &&
+                                x.Activo == 1 &&
+                                x.Jefe == 0)
+                    .Select(x => new ItemComboUsuario 
+                    {
+                        NombreCompleto = x.NombreCompleto,
+                        SuplenteJefe = x.SuplenteJefe,
+                        UsuarioAnterior = x.UsuarioAnterior,
+                        Jefe = x.Jefe
+                    })
+                    .ToList();               
+                var listaCombo = new List<ItemComboUsuario>();   
+                listaCombo.Add(new ItemComboUsuario 
+                {
+                    NombreCompleto = "-- SIN SUPLENTE --",
+                    SuplenteJefe = 0,
+                    UsuarioAnterior = 0,
+                    Jefe = 0
+                });
 
-                var usuarioActual = _context.Usuarios
-                             .Where(y => y.UsuarioDominio == usuariodominio)
-                             .Select(y => new
-                             {
-                                 y.UsuarioAnterior,
-                                 y.Jefe,
-                                 y.SuplenteJefe
-                             })
-                             .FirstOrDefault();
-
-                int idUsuarioActual = 0;
-                bool esJefe = false;
-                int idusuario = _context.Usuarios
-                                                        .Where(y => y.UsuarioDominio == usuariodominio)  /// USUARIO QUE CAPTURA EL TICKET 
-                                                        .Select(y => y.UsuarioAnterior)
-                                                        .FirstOrDefault();
-
-                var status = _context.Usuarios
-                    .Where(x => x.IdOficina == miOficinaId && x.Activo == 1 && x.UsuarioId != idUsuarioActual)
-                    .ToList();
-
+                listaCombo.AddRange(usuariosSuplentes);                
                 cmbSuplente.DisplayMember = "NombreCompleto";
                 cmbSuplente.ValueMember = "UsuarioAnterior";
-                cmbSuplente.DataSource = status;
-                cmbSuplente.SelectedIndex = -1;
+                cmbSuplente.DataSource = listaCombo;
+
+                var idsuplente = usuariosSuplentes.FirstOrDefault(x => x.SuplenteJefe == 1);
+
+                if (idsuplente != null)
+                {
+                    cmbSuplente.SelectedValue = idsuplente.UsuarioAnterior;
+                    lblSuplenteAsignado.Text = $"Suplente: {idsuplente.NombreCompleto}";
+                }
+                else
+                {
+                    cmbSuplente.SelectedIndex = 0;
+                    lblSuplenteAsignado.Text = "No hay Suplente";
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al cargar los analistas: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-
+   
         private void CargarTickets()
         {
             string textoBuscar = TextBuscar.Text.Trim();
@@ -1009,10 +1025,140 @@ namespace OficiosTI
             formAsignar.ShowDialog();
         }
 
+        
+     /*   private void btnSuplente_Click(object sender, EventArgs e)
+        {
+           
+            if (cmbSuplente.SelectedValue == null)
+            {
+                MessageBox.Show("Por favor, seleccione un usuario de la lista.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
+
+                int idNuevoSuplente = Convert.ToInt32(cmbSuplente.SelectedValue);
+
+                var suplenteActual = _context.Usuarios
+                    .FirstOrDefault(x => x.IdOficina == miOficinaId &&
+                                         x.Activo == 1 &&
+                                         x.SuplenteJefe == 1);
+
+                if (suplenteActual != null)
+                {
+                    if (suplenteActual.UsuarioAnterior == idNuevoSuplente)
+                    {
+                        MessageBox.Show("Este usuario ya es el suplente actual.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }                                      
+                    suplenteActual.SuplenteJefe = 0;
+                }
+
+                var nuevoSuplente = _context.Usuarios
+                    .FirstOrDefault(x => x.IdOficina == miOficinaId &&
+                                         x.Activo == 1 &&
+                                         x.UsuarioAnterior == idNuevoSuplente);
+
+                if (nuevoSuplente != null)
+                {
+                    nuevoSuplente.SuplenteJefe = 1;
+
+                  
+                    _context.SaveChanges();
+
+                    MessageBox.Show("El suplente ha sido asignado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    lblSuplenteAsignado.Text = $"Suplente: {nuevoSuplente.NombreCompleto}";
+                }
+                else
+                {
+                    MessageBox.Show("No se encontró el usuario seleccionado en la base de datos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al asignar el suplente: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+     */
         private void btnSuplente_Click(object sender, EventArgs e)
         {
-            /// ASIGNAR EL USUARIO QUE SERA EL SUPLENTE 
-            /// 
+            if (cmbSuplente.SelectedValue == null)
+            {
+                MessageBox.Show("Por favor, seleccione una opción de la lista.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
+                int idSeleccionado = Convert.ToInt32(cmbSuplente.SelectedValue);
+
+             
+                var suplenteActual = _context.Usuarios
+                    .FirstOrDefault(x => x.IdOficina == miOficinaId &&
+                                         x.Activo == 1 &&
+                                         x.SuplenteJefe == 1);
+
+                if (idSeleccionado == 0)
+                {
+                    if (suplenteActual != null)
+                    {
+                        suplenteActual.SuplenteJefe = 0;
+                        _context.SaveChanges();
+
+                        lblSuplenteAsignado.Text = "No hay Suplente";
+                        MessageBox.Show("El suplente ha sido removido exitosamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("No hay ningún suplente asignado actualmente.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    return;
+                }              
+                if (suplenteActual != null && suplenteActual.UsuarioAnterior == idSeleccionado)
+                {
+                    MessageBox.Show("Este usuario ya es el suplente actual.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                if (suplenteActual != null)
+                {
+                    suplenteActual.SuplenteJefe = 0;
+                }
+                
+                var nuevoSuplente = _context.Usuarios
+                    .FirstOrDefault(x => x.IdOficina == miOficinaId &&
+                                         x.Activo == 1 &&
+                                         x.UsuarioAnterior == idSeleccionado);
+
+                if (nuevoSuplente != null)
+                {
+                    nuevoSuplente.SuplenteJefe = 1;
+
+                  
+                    _context.SaveChanges();
+
+                    lblSuplenteAsignado.Text = $"Suplente: {nuevoSuplente.NombreCompleto}";
+                    MessageBox.Show("El suplente ha sido asignado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("No se encontró el usuario seleccionado en la base de datos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al guardar los cambios: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void FrmTickets_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

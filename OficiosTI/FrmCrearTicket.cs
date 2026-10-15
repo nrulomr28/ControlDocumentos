@@ -151,7 +151,7 @@ namespace OficiosTI
                         {
                             int idJefeOficina = _context.Usuarios
                                                         .Where(y => y.IdOficina == idOficina && y.Jefe == 1)    /// JEFE DE OFICINA 
-                                                        .Select(y => y.UsuarioId)
+                                                        .Select(y => y.UsuarioAnterior)
                                                         .FirstOrDefault();
                             Ticket nuevoticket = new Ticket
                             {

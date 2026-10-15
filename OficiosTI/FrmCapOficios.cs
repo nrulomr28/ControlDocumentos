@@ -880,240 +880,359 @@ namespace OficiosTI
 
 
 
-      /*  private void btnGuardar_Click(object sender, EventArgs e)
+        /*  private void btnGuardar_Click(object sender, EventArgs e)
+          {
+              if (string.IsNullOrWhiteSpace(_rutaArchivoTemporal))
+              {
+                  MessageBox.Show("Falta adjuntar el oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+              if (string.IsNullOrWhiteSpace(CmbTipo.Text))
+              {
+                  MessageBox.Show("Seleccione el tipo de captura", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+              if (!DateRecepcion.Checked)
+              {
+                  MessageBox.Show("Por favor, marca la casilla y selecciona una fecha de recepción.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  DateRecepcion.Focus();
+                  return;
+              }
+
+              if (string.IsNullOrWhiteSpace(CmbRemitente.Text))
+              {
+                  MessageBox.Show("Seleccione el remitente", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  CmbRemitente.Focus();
+                  return;
+              }
+
+              if (string.IsNullOrWhiteSpace(TxtNumOficio.Text))
+              {
+                  MessageBox.Show("Escriba el número de oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  TxtNumOficio.Focus();
+                  return;
+              }
+              if (!DateDocumento.Checked)
+              {
+                  MessageBox.Show("Por favor, marca la casilla y selecciona una fecha de documento.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  DateDocumento.Focus();
+                  return;
+              }
+              if (string.IsNullOrWhiteSpace(CmbPrioridad.Text))
+              {
+                  MessageBox.Show("Debe seleccionar la prioridad del oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+
+              if (CmbTipo.Text == "RECIBIDO")
+              {
+                  if (string.IsNullOrWhiteSpace(CmbTicket.Text))
+                  {
+                      MessageBox.Show("Requiere Ticket????.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                      CmbTicket.Focus();
+                      return;
+                  }
+              }
+
+              if (string.IsNullOrWhiteSpace(TextPeticion.Text))
+              {
+                  MessageBox.Show("Escriba la petición del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+
+              if (string.IsNullOrWhiteSpace(TextAsunto.Text))
+              {
+                  MessageBox.Show("Escriba el asunto del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+
+              if (string.IsNullOrWhiteSpace(CmbClasif.Text))
+              {
+                  MessageBox.Show("Escriba la clasificación del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+
+              if (string.IsNullOrWhiteSpace(TextFolioIni.Text))
+              {
+                  MessageBox.Show("Escriba el Folio del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+
+              if (!TextFolioIni.Text.Trim().All(char.IsDigit))
+              {
+                  MessageBox.Show("El campo de Folio inicial solo acepta caracteres numéricos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  TextFolioIni.Focus();
+                  return;
+              }
+
+              int FolioIni;
+              if (!int.TryParse(TextFolioIni.Text, out FolioIni))
+              {
+                  MessageBox.Show("Por favor, ingrese un número válido en el folio inicial.", "Error de formato", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                  TextFolioIni.Focus();
+                  return;
+              }
+
+              if (!string.IsNullOrWhiteSpace(TextFolioFin.Text))
+              {
+                  if (!TextFolioFin.Text.Trim().All(char.IsDigit))
+                  {
+                      MessageBox.Show("El campo de Folio final solo acepta caracteres numéricos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                      TextFolioFin.Focus();
+                      return;
+                  }
+
+                  int FolioFin;
+                  if (!int.TryParse(TextFolioFin.Text, out FolioFin))
+                  {
+                      MessageBox.Show("El folio final debe ser un número válido.", "Error de formato", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                      TextFolioFin.Focus();
+                      return;
+                  }
+
+                  if (FolioIni > FolioFin)
+                  {
+                      MessageBox.Show("El folio inicial no puede ser mayor al final.", "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                      TextFolioIni.Focus();
+                      return;
+                  }
+              }
+
+              if (string.IsNullOrWhiteSpace(TextUbicacion.Text))
+              {
+                  MessageBox.Show("Escriba la ubicación física del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                  return;
+              }
+
+              CapOficios nuevoOficio = new CapOficios
+              {
+                  TipoCaptura = CmbTipo.Text,
+                  Anio = CmbEjercicio.SelectedValue != null ? (int)CmbEjercicio.SelectedValue : (int?)null,
+                  FechaRecepcion = DateRecepcion.Checked ? DateRecepcion.Value.Date : (DateTime?)null,
+                  TipoDocumento = CmbDocumento.Text,
+                  NumOficio = TxtNumOficio.Text.Trim(),
+                  FechaDocumento = DateDocumento.Checked ? DateDocumento.Value.Date : (DateTime?)null,
+                  TipoSeRecibe = CmbSeRecibe.Text,
+                  // Remitente = CmbRemitente.Text.Trim(),
+                  Remitente = CmbRemitente.SelectedValue != null ? (int)CmbRemitente.SelectedValue : (int?)null,
+                  CargoRemitente = cmbCargoRemitente.SelectedValue != null ? (int)CmbRemitente.SelectedValue : (int?)null,
+                  Destinatario = CmbDestinatario.SelectedValue != null ? (int)CmbDestinatario.SelectedValue : (int?)null,
+                  CargoDestinatario = cmbCargoDestinatario.SelectedValue != null ? (int)CmbDestinatario.SelectedValue : (int?)null,
+                  // Destinatario = CmbDestinatario.Text.Trim(),
+                  RequiereTicket = CmbTicket.Text,
+                  Prioridad = CmbPrioridad.Text,
+                  Peticion = TextPeticion.Text.Trim(),
+                  Asunto = TextAsunto.Text.Trim(),
+                  FolioInicio = string.IsNullOrWhiteSpace(TextFolioIni.Text) ? null : TextFolioIni.Text.Trim(),
+                  FolioFin = string.IsNullOrWhiteSpace(TextFolioFin.Text) ? null : TextFolioFin.Text.Trim(),
+                  Clasificacion = CmbClasif.Text.Trim(),
+                  UsuarioCap = _service.ObtenerDominioYUsuario(),
+                  UbicacionFisica = TextUbicacion.Text.Trim(),
+                  Estatus = "ABIERTO",
+                  FechaCap = DateTime.Now,
+                  Activo = 1
+              };
+
+              try
+              {
+
+                  _context.CapOficios.Add(nuevoOficio);
+                  _context.SaveChanges();
+                  if (!string.IsNullOrEmpty(_rutaArchivoTemporal))
+                  {
+                      try
+                      {
+
+                          byte[] bytes = System.IO.File.ReadAllBytes(_rutaArchivoTemporal);
+                          var archivo = new Archivo
+                          {
+                              ArchivoNombre = System.IO.Path.GetFileName(_rutaArchivoTemporal),
+                              ArchivoArchivo = bytes,
+                              ArchivoFecha = DateTime.Now,
+                              OficioId = nuevoOficio.CapOficioId
+                          };
+
+                          _context.Archivo.Add(archivo);
+                          _context.SaveChanges();
+                      }
+                      catch (Exception exArchivo)
+                      {
+
+                          string errorReal = exArchivo.InnerException?.Message ?? exArchivo.Message;
+
+                          MessageBox.Show("El registro se guardó, pero el archivo fue rechazado por la base de datos.\n\nMotivo: " + errorReal,
+                                          "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                          return;
+                      }
+                  }
+
+
+                  // GUARDADO DEL SEGUIMIENTO DEL OFICIO 
+                  var nuevoseguimiento = new TSeguimiento
+                  {
+                      TSeguimientoSeguimiento = "CAPTURA DEL OFICIO",
+                      OficioId = nuevoOficio.CapOficioId,
+                      TSeguimientoFecha = DateTime.Now,
+                      TSeguimientoNombreUsuario = _service.ObtenerDominioYUsuario(),
+                      TSeguimientoUsuarioId = 0,
+                  };
+
+                  try
+                  {
+                      _context.TSeguimiento.Add(nuevoseguimiento);
+                      _context.SaveChanges();
+                  }
+                  catch (Exception exSeg)
+                  {
+                      string errorReal = exSeg.InnerException?.Message ?? exSeg.Message;
+                      MessageBox.Show("El oficio y archivo se guardaron, pero hubo un error al registrar el seguimiento.\n\nMotivo: " + errorReal,
+                                      "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                      return;
+
+                  }
+                  MessageBox.Show("El oficio y su archivo se guardaron correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                  if (CmbTicket.Text.Trim().ToUpper() == "SI")
+                  {
+                      FrmCrearTicket frmTicket = new FrmCrearTicket(_context, _usuarioActual);
+                      frmTicket.IdOficioVinculado = nuevoOficio.CapOficioId;
+                      frmTicket.AsuntoPredefinido = nuevoOficio.Asunto;
+                      // frmTicket.RemitentePredefinido = nuevoOficio.Remitente;
+                      frmTicket.Instruccion = nuevoOficio.Peticion;
+                      frmTicket.ShowDialog();
+                  }
+                  Close();
+                  FrmMenuPrincipal frmMenu = new FrmMenuPrincipal(_context, _usuarioActual);
+
+              }
+              catch (Exception ex)
+              {
+                  MessageBox.Show("Ocurrió un error al guardar: " + ex.InnerException?.Message ?? ex.Message, "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              }
+          }
+        */
+
+
+        /// DEPENDENCIAS DE OFICIOS 
+      /*  private List<string> dependenciasValidas = new List<string>();
+        private List<string> areasValidas = new List<string>();
+        private List<string> subareasValidas = new List<string>();
+
+        private void CargarCatalogosEF()
         {
-            if (string.IsNullOrWhiteSpace(_rutaArchivoTemporal))
-            {
-                MessageBox.Show("Falta adjuntar el oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(CmbTipo.Text))
-            {
-                MessageBox.Show("Seleccione el tipo de captura", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            if (!DateRecepcion.Checked)
-            {
-                MessageBox.Show("Por favor, marca la casilla y selecciona una fecha de recepción.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                DateRecepcion.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(CmbRemitente.Text))
-            {
-                MessageBox.Show("Seleccione el remitente", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                CmbRemitente.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(TxtNumOficio.Text))
-            {
-                MessageBox.Show("Escriba el número de oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                TxtNumOficio.Focus();
-                return;
-            }
-            if (!DateDocumento.Checked)
-            {
-                MessageBox.Show("Por favor, marca la casilla y selecciona una fecha de documento.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                DateDocumento.Focus();
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(CmbPrioridad.Text))
-            {
-                MessageBox.Show("Debe seleccionar la prioridad del oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (CmbTipo.Text == "RECIBIDO")
-            {
-                if (string.IsNullOrWhiteSpace(CmbTicket.Text))
-                {
-                    MessageBox.Show("Requiere Ticket????.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    CmbTicket.Focus();
-                    return;
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(TextPeticion.Text))
-            {
-                MessageBox.Show("Escriba la petición del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(TextAsunto.Text))
-            {
-                MessageBox.Show("Escriba el asunto del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(CmbClasif.Text))
-            {
-                MessageBox.Show("Escriba la clasificación del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(TextFolioIni.Text))
-            {
-                MessageBox.Show("Escriba el Folio del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (!TextFolioIni.Text.Trim().All(char.IsDigit))
-            {
-                MessageBox.Show("El campo de Folio inicial solo acepta caracteres numéricos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                TextFolioIni.Focus();
-                return;
-            }
-
-            int FolioIni;
-            if (!int.TryParse(TextFolioIni.Text, out FolioIni))
-            {
-                MessageBox.Show("Por favor, ingrese un número válido en el folio inicial.", "Error de formato", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                TextFolioIni.Focus();
-                return;
-            }
-
-            if (!string.IsNullOrWhiteSpace(TextFolioFin.Text))
-            {
-                if (!TextFolioFin.Text.Trim().All(char.IsDigit))
-                {
-                    MessageBox.Show("El campo de Folio final solo acepta caracteres numéricos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    TextFolioFin.Focus();
-                    return;
-                }
-
-                int FolioFin;
-                if (!int.TryParse(TextFolioFin.Text, out FolioFin))
-                {
-                    MessageBox.Show("El folio final debe ser un número válido.", "Error de formato", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    TextFolioFin.Focus();
-                    return;
-                }
-
-                if (FolioIni > FolioFin)
-                {
-                    MessageBox.Show("El folio inicial no puede ser mayor al final.", "Error de validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    TextFolioIni.Focus();
-                    return;
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(TextUbicacion.Text))
-            {
-                MessageBox.Show("Escriba la ubicación física del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            CapOficios nuevoOficio = new CapOficios
-            {
-                TipoCaptura = CmbTipo.Text,
-                Anio = CmbEjercicio.SelectedValue != null ? (int)CmbEjercicio.SelectedValue : (int?)null,
-                FechaRecepcion = DateRecepcion.Checked ? DateRecepcion.Value.Date : (DateTime?)null,
-                TipoDocumento = CmbDocumento.Text,
-                NumOficio = TxtNumOficio.Text.Trim(),
-                FechaDocumento = DateDocumento.Checked ? DateDocumento.Value.Date : (DateTime?)null,
-                TipoSeRecibe = CmbSeRecibe.Text,
-                // Remitente = CmbRemitente.Text.Trim(),
-                Remitente = CmbRemitente.SelectedValue != null ? (int)CmbRemitente.SelectedValue : (int?)null,
-                CargoRemitente = cmbCargoRemitente.SelectedValue != null ? (int)CmbRemitente.SelectedValue : (int?)null,
-                Destinatario = CmbDestinatario.SelectedValue != null ? (int)CmbDestinatario.SelectedValue : (int?)null,
-                CargoDestinatario = cmbCargoDestinatario.SelectedValue != null ? (int)CmbDestinatario.SelectedValue : (int?)null,
-                // Destinatario = CmbDestinatario.Text.Trim(),
-                RequiereTicket = CmbTicket.Text,
-                Prioridad = CmbPrioridad.Text,
-                Peticion = TextPeticion.Text.Trim(),
-                Asunto = TextAsunto.Text.Trim(),
-                FolioInicio = string.IsNullOrWhiteSpace(TextFolioIni.Text) ? null : TextFolioIni.Text.Trim(),
-                FolioFin = string.IsNullOrWhiteSpace(TextFolioFin.Text) ? null : TextFolioFin.Text.Trim(),
-                Clasificacion = CmbClasif.Text.Trim(),
-                UsuarioCap = _service.ObtenerDominioYUsuario(),
-                UbicacionFisica = TextUbicacion.Text.Trim(),
-                Estatus = "ABIERTO",
-                FechaCap = DateTime.Now,
-                Activo = 1
-            };
-
             try
             {
+                dependenciasValidas = _context.Dependencias
+                                              .Select(d => d.Sigla.Trim().ToUpper())
+                                              .ToList();
 
-                _context.CapOficios.Add(nuevoOficio);
-                _context.SaveChanges();
-                if (!string.IsNullOrEmpty(_rutaArchivoTemporal))
-                {
-                    try
-                    {
+                areasValidas = _context.Areas
+                                       .Select(a => a.Sigla.Trim().ToUpper())
+                                       .ToList();
 
-                        byte[] bytes = System.IO.File.ReadAllBytes(_rutaArchivoTemporal);
-                        var archivo = new Archivo
-                        {
-                            ArchivoNombre = System.IO.Path.GetFileName(_rutaArchivoTemporal),
-                            ArchivoArchivo = bytes,
-                            ArchivoFecha = DateTime.Now,
-                            OficioId = nuevoOficio.CapOficioId
-                        };
-
-                        _context.Archivo.Add(archivo);
-                        _context.SaveChanges();
-                    }
-                    catch (Exception exArchivo)
-                    {
-
-                        string errorReal = exArchivo.InnerException?.Message ?? exArchivo.Message;
-
-                        MessageBox.Show("El registro se guardó, pero el archivo fue rechazado por la base de datos.\n\nMotivo: " + errorReal,
-                                        "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-                }
-
-
-                // GUARDADO DEL SEGUIMIENTO DEL OFICIO 
-                var nuevoseguimiento = new TSeguimiento
-                {
-                    TSeguimientoSeguimiento = "CAPTURA DEL OFICIO",
-                    OficioId = nuevoOficio.CapOficioId,
-                    TSeguimientoFecha = DateTime.Now,
-                    TSeguimientoNombreUsuario = _service.ObtenerDominioYUsuario(),
-                    TSeguimientoUsuarioId = 0,
-                };
-
-                try
-                {
-                    _context.TSeguimiento.Add(nuevoseguimiento);
-                    _context.SaveChanges();
-                }
-                catch (Exception exSeg)
-                {
-                    string errorReal = exSeg.InnerException?.Message ?? exSeg.Message;
-                    MessageBox.Show("El oficio y archivo se guardaron, pero hubo un error al registrar el seguimiento.\n\nMotivo: " + errorReal,
-                                    "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-
-                }
-                MessageBox.Show("El oficio y su archivo se guardaron correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                if (CmbTicket.Text.Trim().ToUpper() == "SI")
-                {
-                    FrmCrearTicket frmTicket = new FrmCrearTicket(_context, _usuarioActual);
-                    frmTicket.IdOficioVinculado = nuevoOficio.CapOficioId;
-                    frmTicket.AsuntoPredefinido = nuevoOficio.Asunto;
-                    // frmTicket.RemitentePredefinido = nuevoOficio.Remitente;
-                    frmTicket.Instruccion = nuevoOficio.Peticion;
-                    frmTicket.ShowDialog();
-                }
-                Close();
-                FrmMenuPrincipal frmMenu = new FrmMenuPrincipal(_context, _usuarioActual);
-
+                subareasValidas = _context.Subareas
+                                          .Select(s => s.Sigla.Trim().ToUpper())
+                                          .ToList();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ocurrió un error al guardar: " + ex.InnerException?.Message ?? ex.Message, "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error al cargar los catálogos de la BD: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
       */
-        
         // BOTON PARA GUARDAR EL OFICIO O ACTUALIZARLO 
         private void btnGuardar_Click(object sender, EventArgs e)
-        {           
+        {
+            if (string.IsNullOrWhiteSpace(CmbTipo.Text))
+            {
+                MessageBox.Show("Seleccione el tipo de captura", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                CmbTipo.Focus();
+                return;
+            }
+
+            /// Validacion de oficios 
+            if (CmbTipo.Text.Trim().ToUpper() == "RECIBIDO")
+            {
+                string numOficio = TxtNumOficio.Text;
+                if (string.IsNullOrWhiteSpace(numOficio) || numOficio.Contains("]") || numOficio.ToLower().Contains("ñ") || numOficio.Any(char.IsWhiteSpace))
+                {
+                    MessageBox.Show("El texto está vacío o contiene caracteres inválidos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string[] partes = numOficio.Split('/');
+
+                if (partes.Length < 3)
+                {
+                    MessageBox.Show("El formato es demasiado corto. Mínimo: DEPENDENICA/OFICIO/AÑO (ej. SSP/4251/2026).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                string oficio = partes[partes.Length - 2];
+                string anio = partes[partes.Length - 1];
+
+            //  string dependencia = partes[0]; // SSP
+            //  string area = partes[1]; // OM
+           //   string subarea = partes[2]; // DRH
+            //  string oficio = partes[3]; // 7119
+            //  string anio = partes[4]; // 2026             
+             
+                string departamentoExtra = "";
+                if (partes.Length == 6)
+                {
+                    departamentoExtra = partes[3];                    
+                }
+
+                string[] dependenciasValidas = { "SSP", "SEGOB", "SEFIPLAN", "SESCESP","SO", "SRIA" };
+                string[] areasValidas = { "OM", "DGPR", "DGTE", "DA", "SUBPPCRS" };
+                string[] subareasValidas = { "DRH", "DRM", "DRF", "SRH", "DGRS", "DA", "ORF" ,"DTH", "OTI" };
+
+                List<string> siglasNiveles = partes.Take(partes.Length - 2).Select(s => s.ToUpper()).ToList();
+                
+                string dependencia = siglasNiveles.Count > 0 ? siglasNiveles[0] : "";
+                string area = siglasNiveles.Count > 1 ? siglasNiveles[1] : "";
+                string subarea = siglasNiveles.Count > 2 ? siglasNiveles[2] : "";
+                string otrosubarea = siglasNiveles.Count > 2 ? siglasNiveles[3] : "";
+                string otrosubsubarea = siglasNiveles.Count > 2 ? siglasNiveles[4] : "";
+
+                if (!dependenciasValidas.Contains(dependencia))
+                {
+                    MessageBox.Show($"La Dependencia '{dependencia}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (siglasNiveles.Count > 1 && !areasValidas.Contains(area))
+                {
+                    MessageBox.Show($"El Área '{area}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+              
+                if (siglasNiveles.Count > 2 && !subareasValidas.Contains(subarea))
+                {
+                    MessageBox.Show($"La Subárea '{subarea}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (siglasNiveles.Count > 3 && !subareasValidas.Contains(otrosubarea))
+                {
+                    MessageBox.Show($"La Subárea '{otrosubarea}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                if (siglasNiveles.Count > 4 && !subareasValidas.Contains(otrosubsubarea))
+                {
+                    MessageBox.Show($"La Subárea '{otrosubsubarea}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+
+                if (!int.TryParse(oficio, out _) || !int.TryParse(anio, out _))
+                {
+                    MessageBox.Show("El número de oficio y el año deben ser valores numéricos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+            }  /// fin de Validacion de oficios 
+
+
             if (string.IsNullOrWhiteSpace(_rutaArchivoTemporal))
             { 
                 MessageBox.Show("Falta adjuntar el oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1154,12 +1273,7 @@ namespace OficiosTI
                 cmbCargoDestinatario.Focus();
                 return;
             }
-            if (string.IsNullOrWhiteSpace(TxtNumOficio.Text))
-            {
-                MessageBox.Show("Escriba el número de oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); 
-                TxtNumOficio.Focus(); 
-                return; 
-            }
+         
             if (!DateDocumento.Checked)
             {
                 MessageBox.Show("Por favor, marca la casilla y selecciona una fecha de documento.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
