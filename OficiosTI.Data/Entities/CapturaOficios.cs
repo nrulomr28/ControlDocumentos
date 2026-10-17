@@ -34,6 +34,7 @@ namespace OficiosTI.Data.Entities
         public int? OficioRespuestaId { get; set; }
         public string? Estatus { get; set; }
         public string? UsuarioCaptura {  get; set; }
+        public int? IdUsuario {  get; set; }
         public DateTime? FechaCaptura { get; set; }
         public int? Activo { get; set; }
 

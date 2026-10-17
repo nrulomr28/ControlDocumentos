@@ -39,30 +39,35 @@ namespace OficiosTI
             CargarDepedencias();
             CargoDestinatario();
             CargarEstadosO();
+
             DateRecepcion.Checked = false;
             DateDocumento.Checked = false;
             btnQuitarAdjunto.Visible = false;
             btnVerArchivo.Visible = false;
+
+            /// CAMPOS CUANDO SE ACTUALIZA EL OFICIO 
             txtSeguimiento.Visible= false;
             lblhistorial.Visible = false;
             dataGridTickets.Visible = false;
             cmbEstatus.Visible = false;
             lblTickets.Visible = false;
             lblEstado.Visible = false;
+            lblAgregarSeguimiento.Visible = false;
+            txtAgregarSeguimiento.Visible = false;
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);          
         }
 
-       public FrmCapOficios(OficiosContext context, UsuarioContexto usuarioActual, int idOficio, OficioRespuesta OficioResp = null)
+        public FrmCapOficios(OficiosContext context, UsuarioContexto usuarioActual, int idOficio, OficioRespuesta OficioResp = null)
                  : this(context, usuarioActual)
-       {
+        {
             _oficioActual = OficioResp;
             _idOficioActual = idOficio;
             CargarDatosDelOficio(idOficio);
             CargarTicketsR(idOficio);
-       }
+        }
    
   
-        private void CargarTicketsR(int idOficio) ////// TICKETS RELACIONADOS DEL OFICIO 
+    /*    private void CargarTicketsR(int idOficio) ////// TICKETS RELACIONADOS DEL OFICIO 
         {
             try
             {
@@ -74,6 +79,41 @@ namespace OficiosTI
                 }
                 var ticketsRelacionados = (from c in _context.CapturaOficios
                                            join t in _context.Ticket on c.CapturaOficioId equals t.id_of
+                                           join r in _context.OficioRespuesta on t.TicketId equals r.TicketId
+                                           join o in _context.Oficinas on t.OficinasId equals o.OficinasId
+                                           join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId                                         
+                                           where t.id_of == idOficio
+                                           orderby t.TicketId
+                                           select new
+                                           {
+                                               Ticket = t.TicketId,
+                                            // Remitente = t.TicketPersona,
+                                            // Asunto = t.TicketMensaje,
+                                               Oficina = o.OficinasNombre,
+                                               Estado = s.Cat_TicketStatusStatus,
+                                               OficioRespuesta = r.NumeroOficio, 
+                                           }).ToList();
+                dataGridTickets.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridTickets.DataSource = ticketsRelacionados;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar los tickets relacionados: {ex.Message}", "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    */
+        private void CargarTicketsR(int idOficio)
+        {
+            try
+            {
+                if (idOficio <= 0)
+                {
+                    dataGridTickets.DataSource = null;
+                    return;
+                }
+                var ticketsRelacionados = (from t in _context.Ticket                                           
+                                           join r in _context.OficioRespuesta on t.TicketId equals r.TicketId into respuestas
+                                           from r in respuestas.DefaultIfEmpty()                                              
                                            join o in _context.Oficinas on t.OficinasId equals o.OficinasId
                                            join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
                                            where t.id_of == idOficio
@@ -81,10 +121,11 @@ namespace OficiosTI
                                            select new
                                            {
                                                Ticket = t.TicketId,
-                                               Remitente = t.TicketPersona,
-                                               Asunto = t.TicketMensaje,
+                                               // Remitente = t.TicketPersona,
+                                               // Asunto = t.TicketMensaje,
                                                Oficina = o.OficinasNombre,
-                                               Estado = s.Cat_TicketStatusStatus,
+                                               Estado = s.Cat_TicketStatusStatus,                                              
+                                               OficioRespuesta = r != null ? r.NumeroOficio : "Sin respuesta"
                                            }).ToList();
                 dataGridTickets.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dataGridTickets.DataSource = ticketsRelacionados;
@@ -95,8 +136,9 @@ namespace OficiosTI
             }
         }
 
-        // CARGAR DATOS DEL OFICIO POR ID 
 
+
+        // CARGAR DATOS DEL OFICIO POR ID 
         private void CargarDatosDelOficio(int id)
         {
             txtSeguimiento.Visible = true;
@@ -105,9 +147,10 @@ namespace OficiosTI
             lblTickets.Visible = true;
             cmbEstatus.Visible = true;
             lblEstado.Visible = true;
+            lblAgregarSeguimiento.Visible = true;
+            txtAgregarSeguimiento.Visible = true;
 
             var oficio = _context.CapturaOficios.Find(id);
-
             if (oficio != null)
             {                
                 AjustarTamanioPorTipo(oficio.TipoCaptura);
@@ -121,10 +164,8 @@ namespace OficiosTI
                      s.TSeguimientoSeguimiento
                  })
                 .ToList();
-
                 var seguimientoTodo = seguimientoDatos.Select(s =>
                 $"[{s.TSeguimientoFecha:dd/MM/yyyy}] {s.TSeguimientoNombreUsuario}: {s.TSeguimientoSeguimiento}");
-
                 CmbTipo.Text = oficio.TipoCaptura;
                 CmbDocumento.Text = oficio.TipoDocumento;
                 CmbPrioridad.Text = oficio.Prioridad;
@@ -148,7 +189,6 @@ namespace OficiosTI
                 {
                     DateRecepcion.Checked = false;
                 }
-
                 if (oficio.FechaDocumento.HasValue)
                 {
                     DateDocumento.Value = oficio.FechaDocumento.Value;
@@ -158,7 +198,6 @@ namespace OficiosTI
                 {
                     DateDocumento.Checked = false;
                 }
-
                 if (oficio.Remitente != null)
                 {
                     CmbRemitente.SelectedValue = oficio.Remitente;
@@ -175,7 +214,6 @@ namespace OficiosTI
                 {
                     cmbCargoDestinatario.SelectedValue = oficio.CargoDestinatario;
                 }
-
                 var archivoAdjunto = _context.Archivo.FirstOrDefault(a => a.OficioId == id);
                 if (archivoAdjunto != null && !string.IsNullOrWhiteSpace(archivoAdjunto.ArchivoNombre))
                 {
@@ -479,7 +517,6 @@ namespace OficiosTI
             cmbCargoRemitente.DisplayMember = "DependenciaNombre";
             cmbCargoRemitente.ValueMember = "DependenciaId";
             cmbCargoRemitente.SelectedIndex = -1;
-
             cmbCargoRemitente.DropDownStyle = ComboBoxStyle.DropDown;
             cmbCargoRemitente.AutoCompleteMode = AutoCompleteMode.None;
             cmbCargoRemitente.TextUpdate -= cmbCargoRemitente_TextUpdate;
@@ -565,7 +602,6 @@ namespace OficiosTI
 
         // COMBO DESTINATARIOS 
         private List<Destinatario> _todosLosDestinatarios;
-
         private void CargarDestinatarios()
         {
 
@@ -575,11 +611,10 @@ namespace OficiosTI
             CmbDestinatario.DisplayMember = "DestinatarioNombre";
             CmbDestinatario.ValueMember = "DestinatarioId";
             CmbDestinatario.SelectedIndex = -1;
-
             CmbDestinatario.DropDownStyle = ComboBoxStyle.DropDown;
             CmbDestinatario.AutoCompleteMode = AutoCompleteMode.None;
 
-            CmbDestinatario.KeyPress += CmbDestinatario_KeyPress;
+            CmbDestinatario.KeyPress   += CmbDestinatario_KeyPress;
             CmbDestinatario.TextUpdate -= CmbDestinatario_TextUpdate;
             CmbDestinatario.TextUpdate += CmbDestinatario_TextUpdate;
 
@@ -608,7 +643,6 @@ namespace OficiosTI
                                 "Destinatario no válido",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Warning);
-
 
                 // e.Cancel = true; 
 
@@ -653,7 +687,6 @@ namespace OficiosTI
             CmbDestinatario.Text = textoBusqueda;
             CmbDestinatario.SelectionStart = cursorPosition;
             CmbDestinatario.SelectionLength = 0;
-
             CmbDestinatario.TextUpdate += CmbDestinatario_TextUpdate;
         }
 
@@ -705,7 +738,6 @@ namespace OficiosTI
 
                 this.BeginInvoke(new Action(() =>
                 {
-                    // Restauramos con .ToList() por la misma razón del CurrencyManager
                     cmbCargoDestinatario.DataSource = _listaDependencias.ToList();
                     cmbCargoDestinatario.SelectedIndex = -1;
                     cmbCargoDestinatario.Text = string.Empty;
@@ -1148,12 +1180,12 @@ namespace OficiosTI
                 CmbTipo.Focus();
                 return;
             }
-
             /// Validacion de oficios 
             if (CmbTipo.Text.Trim().ToUpper() == "RECIBIDO")
             {
-                string numOficio = TxtNumOficio.Text;
-                if (string.IsNullOrWhiteSpace(numOficio) || numOficio.Contains("]") || numOficio.ToLower().Contains("ñ") || numOficio.Any(char.IsWhiteSpace))
+                string numOficio = TxtNumOficio.Text.Trim().ToUpper();
+               
+                if (string.IsNullOrWhiteSpace(numOficio) || numOficio.Contains("]") || numOficio.Contains("Ñ") || numOficio.Any(char.IsWhiteSpace))
                 {
                     MessageBox.Show("El texto está vacío o contiene caracteres inválidos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -1163,75 +1195,52 @@ namespace OficiosTI
 
                 if (partes.Length < 3)
                 {
-                    MessageBox.Show("El formato es demasiado corto. Mínimo: DEPENDENICA/OFICIO/AÑO (ej. SSP/4251/2026).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El formato es demasiado corto. Mínimo: DEPENDENCIA/OFICIO/AÑO.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                string oficio = partes[partes.Length - 2];
-                string anio = partes[partes.Length - 1];
-
-            //  string dependencia = partes[0]; // SSP
-            //  string area = partes[1]; // OM
-           //   string subarea = partes[2]; // DRH
-            //  string oficio = partes[3]; // 7119
-            //  string anio = partes[4]; // 2026             
-             
-                string departamentoExtra = "";
-                if (partes.Length == 6)
-                {
-                    departamentoExtra = partes[3];                    
-                }
-
-                string[] dependenciasValidas = { "SSP", "SEGOB", "SEFIPLAN", "SESCESP","SO", "SRIA" };
-                string[] areasValidas = { "OM", "DGPR", "DGTE", "DA", "SUBPPCRS" };
-                string[] subareasValidas = { "DRH", "DRM", "DRF", "SRH", "DGRS", "DA", "ORF" ,"DTH", "OTI" };
-
-                List<string> siglasNiveles = partes.Take(partes.Length - 2).Select(s => s.ToUpper()).ToList();
-                
-                string dependencia = siglasNiveles.Count > 0 ? siglasNiveles[0] : "";
-                string area = siglasNiveles.Count > 1 ? siglasNiveles[1] : "";
-                string subarea = siglasNiveles.Count > 2 ? siglasNiveles[2] : "";
-                string otrosubarea = siglasNiveles.Count > 2 ? siglasNiveles[3] : "";
-                string otrosubsubarea = siglasNiveles.Count > 2 ? siglasNiveles[4] : "";
-
+                string dependencia = partes[0];
+                string[] dependenciasValidas = { "SSP", "SEGOB", "SEFIPLAN", "SESCESP", "SO", "SRIA" };
                 if (!dependenciasValidas.Contains(dependencia))
                 {
-                    MessageBox.Show($"La Dependencia '{dependencia}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"La Dependencia '{dependencia}' no es válida.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                if (siglasNiveles.Count > 1 && !areasValidas.Contains(area))
+                
+                // VALIDACIÓN SSP
+                // ------------------*****
+                if (dependencia == "SSP")
                 {
-                    MessageBox.Show($"El Área '{area}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-              
-                if (siglasNiveles.Count > 2 && !subareasValidas.Contains(subarea))
-                {
-                    MessageBox.Show($"La Subárea '{subarea}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                    string oficio = partes[partes.Length - 2];
+                    string anio = partes[partes.Length - 1];
 
-                if (siglasNiveles.Count > 3 && !subareasValidas.Contains(otrosubarea))
-                {
-                    MessageBox.Show($"La Subárea '{otrosubarea}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    if (!int.TryParse(oficio, out _) || !int.TryParse(anio, out _))
+                    {
+                        MessageBox.Show("El número de oficio y el año deben ser numéricos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                   
+                    string[] areasValidas = { "OM", "DGPR", "DGTE", "DA", "SUBPPCRS", "CAI", "DGJ", "UT", "UG", "SO", "SL" };
+                    string[] subareasValidas = { "DGRS", "DRH", "DRF", "DRMYSG","DTI", "DRM", "DRF", "SRH", "DGRS", "DA", "ORF","OTI", "ORM", "DGAI", "DGTE" };
+                    List<string> siglasNiveles = partes.Take(partes.Length - 2).ToList();                    
+                    if (siglasNiveles.Count > 1 && !areasValidas.Contains(siglasNiveles[1]))
+                    {
+                        MessageBox.Show($"El Área '{siglasNiveles[1]}' no es válida.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                                      
+                    for (int i = 2; i < siglasNiveles.Count; i++)
+                    {
+                        if (!subareasValidas.Contains(siglasNiveles[i]))
+                        {
+                            MessageBox.Show($"El departamento '{siglasNiveles[i]}' no es válido.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
                 }
-                if (siglasNiveles.Count > 4 && !subareasValidas.Contains(otrosubsubarea))
-                {
-                    MessageBox.Show($"La Subárea '{otrosubsubarea}' no es válida en el sistema.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-
-                if (!int.TryParse(oficio, out _) || !int.TryParse(anio, out _))
-                {
-                    MessageBox.Show("El número de oficio y el año deben ser valores numéricos.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-            }  /// fin de Validacion de oficios 
-
+                // -----------------******               
+            }
 
             if (string.IsNullOrWhiteSpace(_rutaArchivoTemporal))
             { 
@@ -1272,8 +1281,7 @@ namespace OficiosTI
                 MessageBox.Show("Seleccione el cargo del destinatario", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cmbCargoDestinatario.Focus();
                 return;
-            }
-         
+            }         
             if (!DateDocumento.Checked)
             {
                 MessageBox.Show("Por favor, marca la casilla y selecciona una fecha de documento.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1354,10 +1362,15 @@ namespace OficiosTI
                 MessageBox.Show("Escriba la ubicación física del oficio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return; 
             }
-            try
-            {
-                int idOficioGuardado = 0; 
 
+            try
+            { /// obtener el usuario anterior
+                string usuariodominio = _service.ObtenerDominioYUsuario();
+                int idusuario = _context.Usuarios
+                                                .Where(y => y.UsuarioDominio == usuariodominio)
+                                                .Select(y => y.UsuarioAnterior)
+                                                .FirstOrDefault();
+                int idOficioGuardado = 0; 
                 if (_idOficioActual.HasValue && _idOficioActual.Value > 0)
                 {
                     // actualizar el oficio 
@@ -1391,23 +1404,25 @@ namespace OficiosTI
                         oficioEditar.Clasificacion = CmbClasif.Text.Trim();
                         oficioEditar.UbicacionFisica = TextUbicacion.Text.Trim().ToUpper();
                         oficioEditar.Estatus = cmbEstatus.Text.Trim();
-                        _context.SaveChanges();                     
-                        idOficioGuardado = oficioEditar.CapturaOficioId;  
-                     /* var segMod = new TSeguimiento 
-                        { 
-                            TSeguimientoSeguimiento = "ACTUALIZACIÓN DE OFICIO", 
-                            OficioId = idOficioGuardado, 
-                            TSeguimientoFecha = DateTime.Now, 
-                            TSeguimientoNombreUsuario = _service.ObtenerDominioYUsuario(), 
-                            TSeguimientoUsuarioId = 0 
-                        };
-                        _context.TSeguimiento.Add(segMod);
-                        _context.SaveChanges();             
-                     */
+                        _context.SaveChanges();
+                        if (string.IsNullOrWhiteSpace(txtAgregarSeguimiento.Text) is false)                        
+                        {
+                            idOficioGuardado = oficioEditar.CapturaOficioId;
+                            var segMod = new TSeguimiento
+                            {
+                                TSeguimientoSeguimiento = txtAgregarSeguimiento.Text.Trim().ToUpper(),     /// SE AGREGA EL SEGUIMIENTO DEL OFICIO 
+                                OficioId = idOficioGuardado,
+                                TSeguimientoFecha = DateTime.Now,
+                                TSeguimientoNombreUsuario = _service.ObtenerDominioYUsuario(),
+                                TSeguimientoUsuarioId = idusuario
+                            };
+                            _context.TSeguimiento.Add(segMod);
+                            _context.SaveChanges();
+                        }                       
                     }
                 }
                 else
-                {
+                {  
                     // guardar uno nuevo 
                     CapturaOficios nuevoOficio = new CapturaOficios
                     {  
@@ -1430,6 +1445,7 @@ namespace OficiosTI
                         FolioFin = folioFinNullable?.ToString(),
                         Clasificacion = CmbClasif.Text.Trim().ToUpper(),
                         UsuarioCaptura = _service.ObtenerDominioYUsuario(),
+                        IdUsuario = idusuario,
                         UbicacionFisica = TextUbicacion.Text.Trim().ToUpper(),
                         Estatus = "ABIERTO",
                         FechaCaptura = DateTime.Now,
@@ -1438,12 +1454,7 @@ namespace OficiosTI
                     _context.CapturaOficios.Add(nuevoOficio);
                     _context.SaveChanges();
                     idOficioGuardado = nuevoOficio.CapturaOficioId;
-                    string usuariodominio = _service.ObtenerDominioYUsuario();
-
-                    int idusuario = _context.Usuarios
-                                                    .Where(y => y.UsuarioDominio == usuariodominio)
-                                                    .Select(y => y.UsuarioId)
-                                                    .FirstOrDefault();
+                   
                     // Seguimiento de oficio
                     var nuevoseguimiento = new TSeguimiento 
                     { 
@@ -1489,12 +1500,10 @@ namespace OficiosTI
                         MessageBox.Show("El registro se guardó, pero el archivo fue rechazado por la base de datos.\n\nMotivo: " + errorReal, "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
-                }
-                             
+                }                             
                 MessageBox.Show("El oficio y su archivo se guardaron correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 if (CmbTicket.Text.Trim().Equals("SI", StringComparison.OrdinalIgnoreCase))
-                {
-                    
+                {                    
                     using (FrmCrearTicket frmTicket = new FrmCrearTicket(_context, _usuarioActual))
                     {
                         frmTicket.IdOficioVinculado = idOficioGuardado; 

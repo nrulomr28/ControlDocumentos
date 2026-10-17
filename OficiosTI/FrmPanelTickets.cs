@@ -199,15 +199,15 @@ namespace OficiosTI
             ActualizarIndicadores(tickets);
         }
 
-      private void CargarPorAnalista()
-      {
+        private void CargarPorAnalista()
+        {
             var data = BaseQuery()
             .Where(t => !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId))
             .GroupBy(t => new { t.TicketUUsuario })
             .Select(g => new TicketPorAnalistaDto
             {
                 UsuarioId = g.Key.TicketUUsuario,
-                //Analista = g.Key.UsuarioNombre,
+                //Analista = g.Key.Analista,
                 Total = g.Count(),
                 Urgentes = g.Count(t => t.TicketPrioridad == "Alta")
             })
@@ -215,7 +215,7 @@ namespace OficiosTI
             .ThenByDescending(x => x.Total)
             .ToList();
             gridAnalista.DataSource = data;
-      }
+        }
    
 /*    private void CargarPorAnalista()
       {
@@ -296,7 +296,7 @@ namespace OficiosTI
             }
             else
             {
-                return query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId == 3);
+              return query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId == 3);
             }
 
         /*    return _context.Ticket

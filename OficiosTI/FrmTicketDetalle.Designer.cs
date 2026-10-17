@@ -125,7 +125,7 @@
             // 
             btnGuardaryCerrar.Location = new Point(339, 371);
             btnGuardaryCerrar.Name = "btnGuardaryCerrar";
-            btnGuardaryCerrar.Size = new Size(150, 27);
+            btnGuardaryCerrar.Size = new Size(150, 30);
             btnGuardaryCerrar.TabIndex = 15;
             btnGuardaryCerrar.Text = "Guardar y Cerrar Ticket";
             btnGuardaryCerrar.UseVisualStyleBackColor = true;
@@ -151,7 +151,7 @@
             // 
             // BtnGenerarOficio
             // 
-            BtnGenerarOficio.Location = new Point(572, 374);
+            BtnGenerarOficio.Location = new Point(519, 371);
             BtnGenerarOficio.Name = "BtnGenerarOficio";
             BtnGenerarOficio.Size = new Size(150, 30);
             BtnGenerarOficio.TabIndex = 1;
@@ -160,7 +160,7 @@
             // 
             // BtnGuardarRespuesta
             // 
-            BtnGuardarRespuesta.Location = new Point(167, 369);
+            BtnGuardarRespuesta.Location = new Point(167, 370);
             BtnGuardarRespuesta.Name = "BtnGuardarRespuesta";
             BtnGuardarRespuesta.Size = new Size(150, 30);
             BtnGuardarRespuesta.TabIndex = 0;

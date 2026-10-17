@@ -50,6 +50,8 @@
             lblEnProceso = new Label();
             lblCerrados = new Label();
             lblAbiertos = new Label();
+            label6 = new Label();
+            label7 = new Label();
             ((System.ComponentModel.ISupportInitialize)DataGridOficios).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -59,7 +61,7 @@
             lblBienvenida.AutoSize = true;
             lblBienvenida.Font = new Font("Gotham", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblBienvenida.ForeColor = SystemColors.HotTrack;
-            lblBienvenida.Location = new Point(161, 27);
+            lblBienvenida.Location = new Point(161, 3);
             lblBienvenida.Name = "lblBienvenida";
             lblBienvenida.Size = new Size(62, 23);
             lblBienvenida.TabIndex = 0;
@@ -68,7 +70,7 @@
             // btnCapturarOficio
             // 
             btnCapturarOficio.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnCapturarOficio.Location = new Point(3, 242);
+            btnCapturarOficio.Location = new Point(3, 307);
             btnCapturarOficio.Name = "btnCapturarOficio";
             btnCapturarOficio.Size = new Size(133, 45);
             btnCapturarOficio.TabIndex = 1;
@@ -79,7 +81,7 @@
             // btnPanelAdmin
             // 
             btnPanelAdmin.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnPanelAdmin.Location = new Point(3, 342);
+            btnPanelAdmin.Location = new Point(3, 404);
             btnPanelAdmin.Name = "btnPanelAdmin";
             btnPanelAdmin.Size = new Size(133, 45);
             btnPanelAdmin.TabIndex = 2;
@@ -109,7 +111,7 @@
             // btnbuscar
             // 
             btnbuscar.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnbuscar.Location = new Point(3, 204);
+            btnbuscar.Location = new Point(3, 197);
             btnbuscar.Name = "btnbuscar";
             btnbuscar.Size = new Size(133, 32);
             btnbuscar.TabIndex = 5;
@@ -120,16 +122,17 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(15, 35);
+            label1.Font = new Font("Gotham", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.Location = new Point(40, 17);
             label1.Name = "label1";
-            label1.Size = new Size(96, 15);
+            label1.Size = new Size(55, 15);
             label1.TabIndex = 6;
-            label1.Text = "Ingrese Oficio/";
+            label1.Text = "Ingrese ";
             // 
             // panel1
             // 
             panel1.BackColor = SystemColors.GradientInactiveCaption;
+            panel1.Controls.Add(label7);
             panel1.Controls.Add(btnCrearTicket);
             panel1.Controls.Add(label5);
             panel1.Controls.Add(cmbTipoCaptura);
@@ -157,7 +160,7 @@
             // 
             // btnCrearTicket
             // 
-            btnCrearTicket.Location = new Point(3, 293);
+            btnCrearTicket.Location = new Point(3, 355);
             btnCrearTicket.Name = "btnCrearTicket";
             btnCrearTicket.Size = new Size(133, 47);
             btnCrearTicket.TabIndex = 8;
@@ -206,7 +209,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(16, 50);
+            label3.Location = new Point(16, 34);
             label3.Name = "label3";
             label3.Size = new Size(107, 15);
             label3.TabIndex = 8;
@@ -217,7 +220,7 @@
             label2.AutoSize = true;
             label2.BackColor = Color.FromArgb(255, 128, 0);
             label2.Font = new Font("Gotham", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(7, 565);
+            label2.Location = new Point(7, 658);
             label2.Name = "label2";
             label2.Size = new Size(139, 15);
             label2.TabIndex = 8;
@@ -228,7 +231,7 @@
             lblTicketFaltante.AutoSize = true;
             lblTicketFaltante.BackColor = Color.FromArgb(255, 128, 0);
             lblTicketFaltante.Font = new Font("Gotham", 9.749999F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTicketFaltante.Location = new Point(9, 582);
+            lblTicketFaltante.Location = new Point(9, 675);
             lblTicketFaltante.Name = "lblTicketFaltante";
             lblTicketFaltante.Size = new Size(16, 15);
             lblTicketFaltante.TabIndex = 8;
@@ -239,7 +242,7 @@
             lblEnProcesoTotal.AutoSize = true;
             lblEnProcesoTotal.BackColor = SystemColors.GradientActiveCaption;
             lblEnProcesoTotal.Font = new Font("Gotham", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblEnProcesoTotal.Location = new Point(14, 524);
+            lblEnProcesoTotal.Location = new Point(14, 617);
             lblEnProcesoTotal.Name = "lblEnProcesoTotal";
             lblEnProcesoTotal.Size = new Size(16, 15);
             lblEnProcesoTotal.TabIndex = 11;
@@ -250,7 +253,7 @@
             lblCerradosTotal.AutoSize = true;
             lblCerradosTotal.BackColor = SystemColors.GradientActiveCaption;
             lblCerradosTotal.Font = new Font("Gotham", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblCerradosTotal.Location = new Point(13, 474);
+            lblCerradosTotal.Location = new Point(13, 567);
             lblCerradosTotal.Name = "lblCerradosTotal";
             lblCerradosTotal.Size = new Size(16, 15);
             lblCerradosTotal.TabIndex = 8;
@@ -261,7 +264,7 @@
             lblAbiertosTotal.AutoSize = true;
             lblAbiertosTotal.BackColor = SystemColors.GradientActiveCaption;
             lblAbiertosTotal.Font = new Font("Gotham", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblAbiertosTotal.Location = new Point(14, 424);
+            lblAbiertosTotal.Location = new Point(14, 517);
             lblAbiertosTotal.Name = "lblAbiertosTotal";
             lblAbiertosTotal.Size = new Size(16, 15);
             lblAbiertosTotal.TabIndex = 8;
@@ -270,7 +273,7 @@
             // lblEnProceso
             // 
             lblEnProceso.AutoSize = true;
-            lblEnProceso.Location = new Point(9, 501);
+            lblEnProceso.Location = new Point(9, 594);
             lblEnProceso.Name = "lblEnProceso";
             lblEnProceso.Size = new Size(105, 15);
             lblEnProceso.TabIndex = 10;
@@ -279,7 +282,7 @@
             // lblCerrados
             // 
             lblCerrados.AutoSize = true;
-            lblCerrados.Location = new Point(9, 453);
+            lblCerrados.Location = new Point(9, 546);
             lblCerrados.Name = "lblCerrados";
             lblCerrados.Size = new Size(94, 15);
             lblCerrados.TabIndex = 9;
@@ -288,11 +291,31 @@
             // lblAbiertos
             // 
             lblAbiertos.AutoSize = true;
-            lblAbiertos.Location = new Point(9, 403);
+            lblAbiertos.Location = new Point(9, 496);
             lblAbiertos.Name = "lblAbiertos";
             lblAbiertos.Size = new Size(91, 15);
             lblAbiertos.TabIndex = 8;
             lblAbiertos.Text = "Oficios Abiertos";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Gotham", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label6.Location = new Point(161, 35);
+            label6.Name = "label6";
+            label6.Size = new Size(148, 18);
+            label6.TabIndex = 8;
+            label6.Text = "Bandeja de Oficios";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label7.Location = new Point(13, 51);
+            label7.Name = "label7";
+            label7.Size = new Size(115, 15);
+            label7.TabIndex = 9;
+            label7.Text = "Oficio/No Control";
             // 
             // FrmMenuPrincipal
             // 
@@ -300,6 +323,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             ClientSize = new Size(1485, 746);
+            Controls.Add(label6);
             Controls.Add(panel1);
             Controls.Add(DataGridOficios);
             Controls.Add(lblBienvenida);
@@ -337,5 +361,7 @@
         private Label label5;
         private ComboBox cmbTipoCaptura;
         private Button btnCrearTicket;
+        private Label label6;
+        private Label label7;
     }
 }

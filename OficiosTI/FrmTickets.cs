@@ -32,18 +32,49 @@ namespace OficiosTI
             string org = _service.ObtenerUnidadOrganizativa();
             int idOficina = _service.ObtenerUnidadOrgId(org);
             ObtenerSegmentoDeRed();
+            AplicarPermisosInterfaz(idOficina, org);   //// BOTONES PARA ASIGNAR NUMERO DE OFICIO 
             // permisos a los botones
-            AplicarPermisosInterfaz(idOficina, org);
+            string usuarioDominioLogueado = _service.ObtenerDominioYUsuario();     
+            /// MOSTRAR EL COMBO DE SUPLENTE SOLO AL JEFE O AL SUPLENTE 
+            var usuarioActual = _context.Usuarios
+                               .Where(y => y.UsuarioDominio == usuarioDominioLogueado)
+                               .Select(y => new
+                               {                                  
+                                   y.Jefe,
+                                   y.SuplenteJefe
+                               })
+                               .FirstOrDefault();
+       
+            bool esJefe = false;
+            if (usuarioActual != null)
+            {
+                //  JEFE SI:  titular (1)  o suplente
+                if (esJefe = (usuarioActual.Jefe == 1) || (usuarioActual.SuplenteJefe == 1))
+                {
+                    cmbSuplente.Visible = true;
+                    lblSuplente.Visible = true;
+                    btnSuplente.Visible = true;
+                    lblSuplenteAsignado.Visible = true;
+                }
+                else
+                {
+                    cmbSuplente.Visible = false;
+                    lblSuplente.Visible = false;
+                    btnSuplente.Visible = false;
+                    lblSuplenteAsignado.Visible = false;
+                }
+            }
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
 
-        /*      private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
-               {
-                 ////BOTONES PARA VALIDAR QUIEN ASIGNA LOS OFICIOS ////
-                 string ou = nombreOU?.Trim().ToUpper() ?? "";
-                 if (ou == "DESARROLLO DIGITAL" || ou == "REDES" || ou=="SOPORTE TÉCNICO" || ou=="JEFATURA")
-                 //   if (ou ==  "JEFATURA")
-                   {
+        /*  
+        private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
+        {
+         ////BOTONES PARA VALIDAR QUIEN ASIGNA LOS OFICIOS ////
+         string ou = nombreOU?.Trim().ToUpper() ?? "";
+         if (ou == "DESARROLLO DIGITAL" || ou == "REDES" || ou=="SOPORTE TÉCNICO" || ou=="JEFATURA")
+         //   if (ou ==  "JEFATURA")
+           {
                        btnAsignar.Visible = true;
                        btnSinTicket.Enabled = true;            
                    }
@@ -53,16 +84,16 @@ namespace OficiosTI
                        btnSinTicket.Visible = false;
 
                    }
-               }
-          */
+         }
+        */
 
-        private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
-        {
+        private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)    
+        {   /// permisos del boton para asignar los oficios de los demas departamentos 
             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
             bool tienePermiso = _context.Oficinas
                                        .Any(x => x.OficinasId == miOficinaId && x.Permiso == 1);
-            btnAsignar.Visible = tienePermiso;
-            btnSinTicket.Visible = tienePermiso;
+            btnAsignar.Visible = tienePermiso;    /// numeros de oficio para respuestas con origen
+            btnSinTicket.Visible = tienePermiso;  /// numeros de oficio para respuestas sin origen 
         }
 
         protected override void OnLoad(EventArgs e)
@@ -115,7 +146,6 @@ namespace OficiosTI
              new { Id =  2, Nombre = "URGENTE" },
 
             }.ToList();
-
             ComboPrioridad.DataSource = listaPrioridad;
             ComboPrioridad.DisplayMember = "Nombre";
             ComboPrioridad.ValueMember = "Id";
@@ -259,11 +289,10 @@ namespace OficiosTI
                 cmbSuplente.DataSource = listaCombo;
 
                 var idsuplente = usuariosSuplentes.FirstOrDefault(x => x.SuplenteJefe == 1);
-
                 if (idsuplente != null)
                 {
                     cmbSuplente.SelectedValue = idsuplente.UsuarioAnterior;
-                    lblSuplenteAsignado.Text = $"Suplente: {idsuplente.NombreCompleto}";
+                    lblSuplenteAsignado.Text = $"Suplente: {Environment.NewLine} {idsuplente.NombreCompleto}";
                 }
                 else
                 {
@@ -297,16 +326,13 @@ namespace OficiosTI
                                    y.SuplenteJefe
                                })
                                .FirstOrDefault();
-
             int idUsuarioActual = 0;
             bool esJefe = false;
-
             if (usuarioActual != null)
             {
                 idUsuarioActual = usuarioActual.UsuarioAnterior;
                 //  JEFE SI:  titular (1)  o suplente
                 esJefe = (usuarioActual.Jefe == 1) || (usuarioActual.SuplenteJefe == 1);
-
                 if (idUsuarioActual == 0)
                 {
                     MessageBox.Show($"Usuario encontrado, pero su 'UsuarioAnterior' en la BD es 0.\nRevisa el registro de: {usuarioDominioLogueado}", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -693,7 +719,7 @@ namespace OficiosTI
             }
             else
             {
-                // query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId > 1);
+             // query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId > 1);
                 query = query.Where(t => t.OficinasId == idorg);
             }
             // query = query.Where(t => t.TicketFecha >= fechaLimite);
@@ -715,7 +741,6 @@ namespace OficiosTI
             {
                 query = query.Where(t => t.Cat_TicketStatusId == statusId);
             }
-
             var tickets = query
                 .Select(t => new TicketGridModel
                 {
@@ -837,7 +862,6 @@ namespace OficiosTI
 
             DataGridTickets.Columns["EstadoTicket"].Visible = false;
             DataGridTickets.Columns["EstadoSinOficio"].Visible = false;
-
             DataGridTickets.Columns["TicketId"].HeaderText = "Ticket";
             DataGridTickets.Columns["TicketPersona"].HeaderText = "Persona";
             DataGridTickets.Columns["TicketAsunto"].HeaderText = "Asunto";
@@ -1094,14 +1118,11 @@ namespace OficiosTI
             try
             {
                 int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
-                int idSeleccionado = Convert.ToInt32(cmbSuplente.SelectedValue);
-
-             
+                int idSeleccionado = Convert.ToInt32(cmbSuplente.SelectedValue);             
                 var suplenteActual = _context.Usuarios
                     .FirstOrDefault(x => x.IdOficina == miOficinaId &&
                                          x.Activo == 1 &&
                                          x.SuplenteJefe == 1);
-
                 if (idSeleccionado == 0)
                 {
                     if (suplenteActual != null)
@@ -1137,11 +1158,10 @@ namespace OficiosTI
                 if (nuevoSuplente != null)
                 {
                     nuevoSuplente.SuplenteJefe = 1;
-
                   
                     _context.SaveChanges();
-
-                    lblSuplenteAsignado.Text = $"Suplente: {nuevoSuplente.NombreCompleto}";
+                 
+                    lblSuplenteAsignado.Text = $"Suplente: {Environment.NewLine} {nuevoSuplente.NombreCompleto}";
                     MessageBox.Show("El suplente ha sido asignado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else

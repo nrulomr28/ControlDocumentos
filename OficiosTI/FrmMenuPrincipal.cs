@@ -22,10 +22,12 @@ namespace OficiosTI
             if (_usuarioActual.EsGlobal)
             {
                 btnCapturarOficio.Visible = true;
+                btnCrearTicket.Visible = true;
             }
             else
             {
                 btnCapturarOficio.Visible = false;
+                btnCrearTicket.Visible = false;
             }
             ResaltarOficios();
             InicializarGrid();
@@ -37,20 +39,17 @@ namespace OficiosTI
         }
         private void ActualizarIndicadores()
         {
-
             int total = _context.CapturaOficios
                                 .Count(resp => resp.Activo == 1);
             int cerrados = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "CERRADO");
             int abiertos = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "ABIERTO");
             int proceso = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "EN PROCESO");
-
             lblAbiertosTotal.Text = $"Total: {abiertos}";
             lblCerradosTotal.Text = $"Cerrados: {cerrados}";
             lblEnProcesoTotal.Text = $"Proceso: {proceso}";
         }
         private void DataGridOficios_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-
             Font boldFont = new Font(DataGridOficios.Font, FontStyle.Bold);
             foreach (DataGridViewRow row in DataGridOficios.Rows)
             {
@@ -59,7 +58,6 @@ namespace OficiosTI
                 string estado = row.Cells["Estado"].Value?.ToString();
                 string Ticket = row.Cells["RequiereTicket"].Value?.ToString();
                 row.DefaultCellStyle.BackColor = Color.Honeydew;
-
                 if (!string.IsNullOrWhiteSpace(oficio))
                 {
                     row.Cells["NumOficio"].Style.ForeColor = Color.DarkGreen;
@@ -104,14 +102,13 @@ namespace OficiosTI
 
         private void CargarEstado()
         {
-
             var listaEstado = new[]
                 {
-        new { Id = -1, Nombre = "TODOS" },
-        new { Id =  0, Nombre = "ABIERTO" },
-        new { Id =  1, Nombre = "CERRADO" },
-        new { Id =  2, Nombre = "EN PROCESO" }
-        }.ToList();
+                new { Id = -1, Nombre = "TODOS" },
+                new { Id =  0, Nombre = "ABIERTO" },
+                new { Id =  1, Nombre = "CERRADO" },
+                new { Id =  2, Nombre = "EN PROCESO" }
+                }.ToList();
 
             cmbEstado.DataSource = listaEstado;
             cmbEstado.DisplayMember = "Nombre";
@@ -121,13 +118,11 @@ namespace OficiosTI
 
         private void CargarTipoCaptura()
         {
-
-            var listaCaptura = new[]
-                    {
+        var listaCaptura = new[]
+        {
         new { Id = -1, Nombre = "TODOS" },
         new { Id =  0, Nombre = "RECIBIDO" },
         new { Id =  1, Nombre = "ENVIADO" }
-
         }.ToList();
 
             cmbTipoCaptura.DataSource = listaCaptura;
@@ -145,7 +140,6 @@ namespace OficiosTI
 
             }
         }
-
 
         private void btnPanelAdmin_Click(object sender, EventArgs e)
         {
@@ -288,7 +282,7 @@ namespace OficiosTI
                                   on resp.Destinatario equals desti.DestinatarioId
                                   join ticket in _context.Ticket
                                   on resp.CapturaOficioId equals ticket.id_of into ticketGroup
-                                  where resp.Activo == 1
+                                  where resp.Activo == 1 
                                   orderby resp.CapturaOficioId descending
                                   select new
                                   {
@@ -299,11 +293,11 @@ namespace OficiosTI
                                       TipoDocumento = resp.TipoDocumento,
                                       Asunto = resp.Asunto,
                                       Peticion = resp.Peticion,
-                                      NumeroControl = resp.FolioInicio,
+                                      NumeroControl = resp.FolioInicio, 
                                       Remitente = remi.RemitenteNombre,
                                       Destinatario = desti.DestinatarioNombre,
                                       RequiereTicket = resp.RequiereTicket,
-                                      OficioRespuesta = resp.OficioRespuestaId,
+                                    //  OficioRespuesta = resp.OficioRespuestaId,
                                       ListaTickets = ticketGroup.Select(t => t.TicketId)
                                   }).ToList();
 
@@ -348,7 +342,7 @@ namespace OficiosTI
                         x.Remitente,
                         x.Destinatario,
                         x.RequiereTicket,
-                        x.OficioRespuesta,
+                     //   x.OficioRespuesta,
                         Tickets = textoTickets
                     };
                 }).ToList();
@@ -366,7 +360,6 @@ namespace OficiosTI
 
         private void DataGridOficios_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-
             if (e.RowIndex >= 0 && DataGridOficios.Columns[e.ColumnIndex].Name == "Tickets")
             {
                 if (e.Value != null && e.Value.ToString() == "Pendiente")
@@ -511,7 +504,6 @@ namespace OficiosTI
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show($"Ocurrió un error al intentar abrir el detalle:\n\n{ex.Message}\n\nRevisa que el ID exista.",
                                 "Error General",
                                 MessageBoxButtons.OK,
@@ -537,6 +529,8 @@ namespace OficiosTI
                                   where resp.Activo == 1 &&
                                         (string.IsNullOrEmpty(texto) ||
                                          resp.NumeroOficio.Contains(texto) ||
+                                         resp.FolioInicio.Contains(texto) ||
+                                         resp.FolioInicio.Contains(texto) ||
                                          resp.Asunto.Contains(texto) ||
                                          resp.Peticion.Contains(texto)) &&
 

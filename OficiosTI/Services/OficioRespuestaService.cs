@@ -110,7 +110,6 @@ namespace OficiosTI.Services
             byte[] ipBytes = ipAddress.GetAddressBytes();
             byte[] maskBytes = subnetMask.GetAddressBytes();
             byte[] networkBytes = new byte[ipBytes.Length];
-
             for (int i = 0; i < networkBytes.Length; i++)
             {
                 networkBytes[i] = (byte)(ipBytes[i] & maskBytes[i]);
@@ -158,22 +157,31 @@ namespace OficiosTI.Services
             return oficina?.OficinasId ?? 0;
         }
 
-        /*    public bool EsUsuarioGlobal()
-            {
-                string org = ObtenerUnidadOrganizativa();
-                var globales = new List<string> { "JEFATURA" };
-                //var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
-                return globales.Contains(org?.Trim().ToUpper() ?? "");
-            }
-        */
-
-        public bool EsUsuarioGlobal()
+     /* public bool EsUsuarioGlobal()
         {
-            string org = ObtenerUnidadOrganizativa();
-            return _context.Oficinas
-                           .Any(q => q.UnidadOrganizativa == org && q.UsuarioGlobal == 1);
+          string org = ObtenerUnidadOrganizativa();
+          var globales = new List<string> { "JEFATURA" };
+          //var globales = new List<string> {"DESARROLLO DIGITAL", "JEFATURA"};
+          return globales.Contains(org?.Trim().ToUpper() ?? "");
         }
-       
+    */
+
+
+        public bool EsUsuarioGlobal()    //// se cambio la forma de obtener el usuario global a la tabla de usuarios 
+        {
+            string org = ObtenerDominioYUsuario();
+            return _context.Usuarios
+                   .Any(u => u.UsuarioDominio == org && u.UsuarioGlobal == 1);
+        }
+
+
+        /*     public bool EsUsuarioGlobal()               //// obtenia el usuario por medio de la tabla de oficinas dando permiso a toda la oficina 
+              {
+                  string org = ObtenerUnidadOrganizativa();
+                  return _context.Oficinas
+                                 .Any(q => q.UnidadOrganizativa == org && q.UsuarioGlobal == 1);
+              }
+         */
 
         /*  public int NumeroTicketExiste(string numeroOficio)
               {

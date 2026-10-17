@@ -151,7 +151,7 @@
             PanelFiltros.Dock = DockStyle.Left;
             PanelFiltros.Location = new Point(0, 90);
             PanelFiltros.Name = "PanelFiltros";
-            PanelFiltros.Size = new Size(220, 606);
+            PanelFiltros.Size = new Size(220, 642);
             PanelFiltros.TabIndex = 1;
             // 
             // lblSuplenteAsignado
@@ -289,7 +289,7 @@
             DataGridTickets.Name = "DataGridTickets";
             DataGridTickets.ReadOnly = true;
             DataGridTickets.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            DataGridTickets.Size = new Size(1265, 606);
+            DataGridTickets.Size = new Size(1265, 642);
             DataGridTickets.TabIndex = 0;
             DataGridTickets.CellClick += DataGridTickets_CellClick;
             DataGridTickets.CellDoubleClick += DataGridTickets_CellDoubleClick;
@@ -305,7 +305,7 @@
             PanelAcciones.Controls.Add(BtnAdjuntos);
             PanelAcciones.Controls.Add(BtnGenerarOficio);
             PanelAcciones.Dock = DockStyle.Bottom;
-            PanelAcciones.Location = new Point(0, 696);
+            PanelAcciones.Location = new Point(0, 732);
             PanelAcciones.Name = "PanelAcciones";
             PanelAcciones.Size = new Size(1485, 50);
             PanelAcciones.TabIndex = 2;
@@ -413,7 +413,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1485, 746);
+            ClientSize = new Size(1485, 782);
             Controls.Add(DataGridTickets);
             Controls.Add(PanelFiltros);
             Controls.Add(PanelAcciones);

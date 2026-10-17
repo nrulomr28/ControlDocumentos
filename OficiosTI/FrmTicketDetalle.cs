@@ -55,11 +55,9 @@ namespace OficiosTI
                                                         .Where(y => y.UsuarioDominio == usuariodominio)  /// USUARIO QUE CAPTURA EL TICKET 
                                                         .Select(y => y.UsuarioAnterior)
                                                         .FirstOrDefault();
-
                 var status = _context.Usuarios
                     .Where(x => x.IdOficina == miOficinaId && x.Activo == 1 && x.UsuarioAnterior != idusuario)
                     .ToList();
-
                 cmbAnalistas.DisplayMember = "NombreCompleto";
                 cmbAnalistas.ValueMember = "UsuarioAnterior";
                 cmbAnalistas.DataSource = status;
@@ -118,13 +116,12 @@ namespace OficiosTI
                                            select new
                                            {
                                                Ticket = t.TicketId,
-                                               //  Remitente = t.TicketPersona,
-                                               //    Asunto = t.TicketMensaje,
+                                           //  Remitente = t.TicketPersona,
+                                           //  Asunto = t.TicketMensaje,
                                                Oficina = o.OficinasNombre,
                                                Estado = s.Cat_TicketStatusStatus,
                                                Oficio = r != null ? r.NumeroOficio : "SIN OFICIO",
                                            }).ToList();
-
                 dataGridRelacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dataGridRelacion.DataSource = ticketsRelacionados;
             }
@@ -267,9 +264,7 @@ namespace OficiosTI
                     UsuarioId = idanalista
                 };
 
-                _context.HiloTicket.Add(hilo);
-
-               
+                _context.HiloTicket.Add(hilo);               
                 if (cerrarTicket)
                 {
                    
@@ -284,14 +279,12 @@ namespace OficiosTI
                         };
                         _context.Add(sinOficio);
                     }
-
                  
                     _ticket.Cat_TicketStatusId = 3;
                     _context.Ticket.Update(_ticket);
                 }
 
                 _context.SaveChanges();
-
                 if (cerrarTicket)
                 {
                     MessageBox.Show("Respuesta guardada y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);

@@ -42,7 +42,6 @@ namespace OficiosTI
             {
                 txtCopias.Text = ObtenerCopiasDefault();
             }
-
             //   _destinatarioService = new DestinatarioService(_context);
             //   _destinatariosCache = _destinatarioService.ObtenerCatalogo();
             //   ConfigurarAutoComplete();
@@ -107,15 +106,15 @@ namespace OficiosTI
                     FundamentoLegal = ObtenerFundamentoLegal(cargoExtraido),
                     Cuerpo = txtRespuesta.Text,
                     Copias = txtCopias.Text,
-                    //// OBTENER LA FECHA DEL REGISTRO EN TABLA 
-                    //Fecha = DateTime.Now,                   
+               //// OBTENER LA FECHA DEL REGISTRO EN TABLA 
+                  //Fecha = DateTime.Now,                   
                     Fecha = OfiF.FechaCaptura,
                     DirectorNombre = nombreExtraido,
                     DirectorCargo = cargoExtraido,
                     RespuestaId= OfiF.RespuestaId,
                 };
                 var servicio = new OficioWordInteropService(_context);
-               // var servicio = new OficioWordInteropService();
+             // var servicio = new OficioWordInteropService();
                 string ruta = servicio.Generar(model);
                 Process.Start(new ProcessStartInfo
                 {
@@ -199,11 +198,13 @@ namespace OficiosTI
             }
             int? firmanteSeleccionado = comboBox1.SelectedValue as int?;
             /// OBTENER EL ID DEL OFICIO DE REFERENCIA
+            /// 
+            /// CAMBIAR EL SENTIDO DEL OFICIO A CAPTURAOFICIOS O COMBINARLOS ???
             var Ofinum = _context.Oficio1.FirstOrDefault(y => y.OficioId == _ticket.id_of);
             int idOficioAnterior = Ofinum?.OficioId ?? 0;
             if (esNuevo)
             {
-                _oficioActual = _service.CrearOficio(
+                    _oficioActual = _service.CrearOficio(
                     _ticket.TicketId,
                     txtNumeroOficio.Text,
                     txtOficioReferencia.Text,
@@ -227,7 +228,6 @@ namespace OficiosTI
                 _oficioActual.Copias = txtCopias.Text;
                 _oficioActual.UsuarioId = _service.ObtenerDominioYUsuario();
                 _oficioActual.FirmanteId = firmanteSeleccionado;
-
                 _service.ActualizarOficio(_oficioActual);
             }
 
@@ -283,7 +283,6 @@ namespace OficiosTI
                         //  ticketRelacionado.Cat_TicketStatusId = 3;
                     }
                 */
-
                 _ticket.Cat_TicketStatusId = 3;
                 _service.ActualizarOficio(_oficioActual);
                 _context.SaveChanges();

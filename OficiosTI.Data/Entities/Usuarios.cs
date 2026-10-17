@@ -22,6 +22,7 @@ namespace OficiosTI.Data.Entities
         public string? Tipo { get; set; }
         public int? Jefe { get; set; }
         public int? SuplenteJefe { get; set; }
+        public int?UsuarioGlobal {  get; set; }
 
         [NotMapped]
         public string NombreCompleto => $"{Nombre} {Paterno} {Materno}".Trim();

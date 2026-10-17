@@ -56,12 +56,10 @@ namespace OficiosTI
             CargarCopias();
             //CargarOficios(3);
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
-
             if (string.IsNullOrEmpty(txtCcp.Text))
             {
                 txtCcp.Text = ObtenerCopiasDefault();
             }
-
             if (_oficioActual != null)
             {
                 CargarResp(_oficioActual);

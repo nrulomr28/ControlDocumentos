@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             CmbTipo = new ComboBox();
             label1 = new Label();
             label2 = new Label();
@@ -84,6 +84,8 @@
             txtSeguimiento = new RichTextBox();
             dataGridTickets = new DataGridView();
             lblTickets = new Label();
+            lblAgregarSeguimiento = new Label();
+            txtAgregarSeguimiento = new RichTextBox();
             panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridTickets).BeginInit();
             SuspendLayout();
@@ -243,7 +245,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(517, 310);
+            label12.Location = new Point(522, 232);
             label12.Name = "label12";
             label12.Size = new Size(111, 15);
             label12.TabIndex = 18;
@@ -252,7 +254,7 @@
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(516, 232);
+            label13.Location = new Point(526, 309);
             label13.Name = "label13";
             label13.Size = new Size(74, 15);
             label13.TabIndex = 19;
@@ -261,7 +263,7 @@
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(635, 310);
+            label14.Location = new Point(640, 232);
             label14.Name = "label14";
             label14.Size = new Size(90, 15);
             label14.TabIndex = 20;
@@ -301,14 +303,14 @@
             // 
             // TextFolioIni
             // 
-            TextFolioIni.Location = new Point(522, 328);
+            TextFolioIni.Location = new Point(524, 250);
             TextFolioIni.Name = "TextFolioIni";
             TextFolioIni.Size = new Size(43, 23);
             TextFolioIni.TabIndex = 23;
             // 
             // TextFolioFin
             // 
-            TextFolioFin.Location = new Point(582, 328);
+            TextFolioFin.Location = new Point(585, 250);
             TextFolioFin.Name = "TextFolioFin";
             TextFolioFin.Size = new Size(43, 23);
             TextFolioFin.TabIndex = 24;
@@ -316,7 +318,7 @@
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(566, 336);
+            label15.Location = new Point(571, 258);
             label15.Name = "label15";
             label15.Size = new Size(12, 15);
             label15.TabIndex = 28;
@@ -324,14 +326,14 @@
             // 
             // TextUbicacion
             // 
-            TextUbicacion.Location = new Point(636, 328);
+            TextUbicacion.Location = new Point(641, 250);
             TextUbicacion.Name = "TextUbicacion";
-            TextUbicacion.Size = new Size(371, 23);
+            TextUbicacion.Size = new Size(366, 23);
             TextUbicacion.TabIndex = 25;
             // 
             // button1
             // 
-            button1.Location = new Point(855, 475);
+            button1.Location = new Point(857, 516);
             button1.Name = "button1";
             button1.Size = new Size(147, 38);
             button1.TabIndex = 27;
@@ -346,7 +348,7 @@
             panelHeader.Dock = DockStyle.Top;
             panelHeader.Location = new Point(0, 0);
             panelHeader.Name = "panelHeader";
-            panelHeader.Size = new Size(1014, 31);
+            panelHeader.Size = new Size(1016, 31);
             panelHeader.TabIndex = 32;
             // 
             // lblTitulo
@@ -388,7 +390,7 @@
             // label17
             // 
             label17.AutoSize = true;
-            label17.Location = new Point(518, 354);
+            label17.Location = new Point(523, 276);
             label17.Name = "label17";
             label17.Size = new Size(38, 15);
             label17.TabIndex = 36;
@@ -397,7 +399,7 @@
             // label18
             // 
             label18.AutoSize = true;
-            label18.Location = new Point(582, 354);
+            label18.Location = new Point(587, 276);
             label18.Name = "label18";
             label18.Size = new Size(32, 15);
             label18.TabIndex = 37;
@@ -423,9 +425,9 @@
             // CmbClasif
             // 
             CmbClasif.FormattingEnabled = true;
-            CmbClasif.Location = new Point(519, 250);
+            CmbClasif.Location = new Point(527, 328);
             CmbClasif.Name = "CmbClasif";
-            CmbClasif.Size = new Size(488, 23);
+            CmbClasif.Size = new Size(210, 23);
             CmbClasif.TabIndex = 21;
             // 
             // label20
@@ -469,7 +471,7 @@
             // cmbCargoRemitente
             // 
             cmbCargoRemitente.FormattingEnabled = true;
-            cmbCargoRemitente.Location = new Point(522, 150);
+            cmbCargoRemitente.Location = new Point(522, 151);
             cmbCargoRemitente.Name = "cmbCargoRemitente";
             cmbCargoRemitente.Size = new Size(485, 23);
             cmbCargoRemitente.TabIndex = 17;
@@ -504,7 +506,7 @@
             // lblEstado
             // 
             lblEstado.AutoSize = true;
-            lblEstado.Location = new Point(522, 380);
+            lblEstado.Location = new Point(748, 310);
             lblEstado.Name = "lblEstado";
             lblEstado.Size = new Size(42, 15);
             lblEstado.TabIndex = 48;
@@ -513,9 +515,9 @@
             // cmbEstatus
             // 
             cmbEstatus.FormattingEnabled = true;
-            cmbEstatus.Location = new Point(519, 402);
+            cmbEstatus.Location = new Point(748, 328);
             cmbEstatus.Name = "cmbEstatus";
-            cmbEstatus.Size = new Size(248, 23);
+            cmbEstatus.Size = new Size(210, 23);
             cmbEstatus.TabIndex = 49;
             // 
             // lblhistorial
@@ -537,18 +539,18 @@
             // 
             // dataGridTickets
             // 
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            dataGridTickets.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Gotham", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridTickets.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridTickets.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridTickets.Location = new Point(20, 650);
+            dataGridTickets.Location = new Point(19, 650);
             dataGridTickets.Name = "dataGridTickets";
-            dataGridTickets.Size = new Size(475, 150);
+            dataGridTickets.Size = new Size(483, 150);
             dataGridTickets.TabIndex = 52;
             // 
             // lblTickets
@@ -560,11 +562,30 @@
             lblTickets.TabIndex = 53;
             lblTickets.Text = "Tickets Generados";
             // 
+            // lblAgregarSeguimiento
+            // 
+            lblAgregarSeguimiento.AutoSize = true;
+            lblAgregarSeguimiento.Location = new Point(519, 365);
+            lblAgregarSeguimiento.Name = "lblAgregarSeguimiento";
+            lblAgregarSeguimiento.Size = new Size(173, 15);
+            lblAgregarSeguimiento.TabIndex = 54;
+            lblAgregarSeguimiento.Text = "Agregar Seguimiento del Ticket";
+            // 
+            // txtAgregarSeguimiento
+            // 
+            txtAgregarSeguimiento.Location = new Point(522, 389);
+            txtAgregarSeguimiento.Name = "txtAgregarSeguimiento";
+            txtAgregarSeguimiento.Size = new Size(485, 58);
+            txtAgregarSeguimiento.TabIndex = 55;
+            txtAgregarSeguimiento.Text = "";
+            // 
             // FrmCapOficios
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1014, 548);
+            ClientSize = new Size(1016, 570);
+            Controls.Add(txtAgregarSeguimiento);
+            Controls.Add(lblAgregarSeguimiento);
             Controls.Add(lblTickets);
             Controls.Add(dataGridTickets);
             Controls.Add(txtSeguimiento);
@@ -683,5 +704,7 @@
         private RichTextBox txtSeguimiento;
         private DataGridView dataGridTickets;
         private Label lblTickets;
+        private Label lblAgregarSeguimiento;
+        private RichTextBox txtAgregarSeguimiento;
     }
 }

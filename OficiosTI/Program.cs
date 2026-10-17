@@ -33,14 +33,13 @@ namespace OficiosTI
                 MessageBox.Show($"Error al cargar el perfil de usuario: {ex.Message}", "Error de inicio", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return; // Cierra la aplicación si hay un error crítico
             }
-          
-            
-             Application.Run(new FrmMenuPrincipal(context, contextoUsuario));
+                      
+          //   Application.Run(new FrmMenuPrincipal(context, contextoUsuario));
 
         //  Application.Run(new FrmCrearTicket(context, contextoUsuario));
-        //  USUARIO GLOBAL
+        //  USUARIO GLOBAL  VE LA CAPTURA DE LOS OFICIOS Y EL PANEL DE TICKETS DE TODOS 
 
-        /*  if (contextoUsuario.EsGlobal)
+        if (contextoUsuario.EsGlobal)
                {             
                       Application.Run(new FrmMenuPrincipal(context, contextoUsuario));               
                }
@@ -49,12 +48,12 @@ namespace OficiosTI
                       // Usuario NORMAL SOLO VE SUS TICKETS
                       Application.Run(new FrmTickets(context));
                }
-        */
+      
 
         }
 
        
-        private static UsuarioContexto ValidarUsuarioYConstruirPerfil(DbContextOptions<OficiosContext> options)
+    /*    private static UsuarioContexto ValidarUsuarioYConstruirPerfil(DbContextOptions<OficiosContext> options)
         {
             using (var dbLocal = new OficiosContext(options))
             {
@@ -72,6 +71,38 @@ namespace OficiosTI
                 };
             }
         }
+    */
+
+
+        /// Validar el usuario para ingresar al sistema 
+        private static UsuarioContexto ValidarUsuarioYConstruirPerfil(DbContextOptions<OficiosContext> options)
+        {
+            using (var dbLocal = new OficiosContext(options))
+            {
+                var _oficioService = new OficioRespuestaService(dbLocal);
+              
+                string dominioUsuario = _oficioService.ObtenerDominioYUsuario();
+              
+                var usuarioValido = dbLocal.Usuarios
+                                           .FirstOrDefault(u => u.UsuarioDominio == dominioUsuario && u.Activo == 1);               
+                if (usuarioValido == null)
+                {
+                    throw new UnauthorizedAccessException("Tu usuario de red no está registrado o se encuentra inactivo. Contacta al administrador.");
+                }
+                               
+                string nombreOU = _oficioService.ObtenerUnidadOrganizativa();
+                return new UsuarioContexto
+                {                    
+                    NombreMostrar = usuarioValido.NombreCompleto ?? _oficioService.ObtenerNombreUsuarioRed(),
+                    DominioYUsuario = dominioUsuario,
+                    SegmentoRed = _oficioService.ObtenerSegmentoDeRed(),
+                    UnidadOrganizativa = nombreOU,
+                    OficinaId = _oficioService.ObtenerUnidadOrgId(nombreOU),                    
+                    EsGlobal = usuarioValido.UsuarioGlobal == 1
+                };
+            }
+        }
+
     }
 
    
@@ -85,4 +116,9 @@ namespace OficiosTI
         public int OficinaId { get; set; }
         public bool EsGlobal { get; set; }
     }
+
+
+
+
+   
 }
