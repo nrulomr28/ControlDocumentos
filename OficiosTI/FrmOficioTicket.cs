@@ -77,7 +77,6 @@ namespace OficiosTI
                 OficinasId = x.OficinasId,
                 OficinasNombre = x.OficinasNombre
             }).ToList();
-
             cmbOficinas.DataSource = listaOficinas;
             cmbOficinas.DisplayMember = "OficinasNombre";
             cmbOficinas.ValueMember = "OficinasId";
@@ -252,9 +251,18 @@ namespace OficiosTI
             try
             {
                 int? idOficio = _ticket?.id_of;
-                var registroOficio1 = idOficio.HasValue
+
+
+                /// hace referencia a la tabla de oficio1 donde se capturan los OFICIOS DE DOCUMENTACION 
+             /*  var registroOficio1 = idOficio.HasValue
                     ? _context.Oficio1.FirstOrDefault(x => x.OficioId == idOficio.Value)
                     : null;
+             */
+                  
+                /// TABLA DE CAPTURA DE OFICIOS NUEVA CAPTURAOFICIOS 
+                var registroOficio1 = idOficio.HasValue
+                  ? _context.CapturaOficios.FirstOrDefault(x => x.CapturaOficioId == idOficio.Value)
+                  : null;
                 string bis = "";
                 int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);
                 int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
@@ -272,9 +280,11 @@ namespace OficiosTI
                     FechaOficio = DateTime.Now,
                     FechaCaptura = DateTime.Now,
                     Anio = (short)anioActual,
-                    OficioReferencia = $"{registroOficio1?.OficioNoOficio}",
+                    // OficioReferencia = $"{registroOficio1?.OficioNoOficio}",  /// TABLA DE OFICIO1
+                    OficioReferencia = $"{registroOficio1?.NumeroOficio}",
                     FirmanteId = 0,
-                    OficioId = registroOficio1?.OficioId,
+                  //  OficioId = registroOficio1?.OficioId,                      /// TABA DE OFICIO1
+                    OficioId = registroOficio1?.CapturaOficioId,
                     RespuestaId = nuevoNumeroCreado.OficioId,
                 };
                 _context.OficioRespuesta.Add(registroRespuesta);

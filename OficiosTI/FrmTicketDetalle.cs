@@ -157,13 +157,12 @@ namespace OficiosTI
                 MessageBox.Show("Por favor, agregue una indicación.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             var hilo = new HiloTicket
             {
                 TicketId = _ticket.TicketId,
                 HiloTicketFecha = DateTime.Now,
                 HiloTicketAccion = "ASIGNADO",
-                HiloTicketMensaje = txtInstruccion.Text.Trim(),
+                HiloTicketMensaje = txtInstruccion.Text.Trim().ToUpper(),
                 UsuarioId = idanalista
             };
 
@@ -192,7 +191,6 @@ namespace OficiosTI
             try
             {
                 var archivoBd = _context.Archivo.FirstOrDefault(p => p.OficioId == _ticket.id_of);
-
                 if (archivoBd == null || archivoBd.ArchivoArchivo == null || archivoBd.ArchivoArchivo.Length == 0)
                 {
                     MessageBox.Show("El documento no existe o está vacío.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -238,7 +236,6 @@ namespace OficiosTI
                 MessageBox.Show("Este ticket ya se encuentra cerrado. No se pueden agregar más respuestas.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             if (string.IsNullOrWhiteSpace(txtRespuesta.Text))
             {
                 MessageBox.Show("Por favor, escribe una respuesta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -260,7 +257,7 @@ namespace OficiosTI
                     TicketId = _ticket.TicketId,
                     HiloTicketFecha = DateTime.Now,
                     HiloTicketAccion = cerrarTicket ? "CERRADO" : "RESPUESTA",
-                    HiloTicketMensaje = txtRespuesta.Text.Trim(),
+                    HiloTicketMensaje = txtRespuesta.Text.Trim().ToUpper(),
                     UsuarioId = idanalista
                 };
 

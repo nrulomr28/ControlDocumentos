@@ -43,7 +43,7 @@ namespace OficiosTI
                                 .Count(resp => resp.Activo == 1);
             int cerrados = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "CERRADO");
             int abiertos = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "ABIERTO");
-            int proceso = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "EN PROCESO");
+            int proceso =  _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "EN PROCESO");
             lblAbiertosTotal.Text = $"Total: {abiertos}";
             lblCerradosTotal.Text = $"Cerrados: {cerrados}";
             lblEnProcesoTotal.Text = $"Proceso: {proceso}";
@@ -109,7 +109,6 @@ namespace OficiosTI
                 new { Id =  1, Nombre = "CERRADO" },
                 new { Id =  2, Nombre = "EN PROCESO" }
                 }.ToList();
-
             cmbEstado.DataSource = listaEstado;
             cmbEstado.DisplayMember = "Nombre";
             cmbEstado.ValueMember = "Id";
@@ -118,17 +117,16 @@ namespace OficiosTI
 
         private void CargarTipoCaptura()
         {
-        var listaCaptura = new[]
-        {
-        new { Id = -1, Nombre = "TODOS" },
-        new { Id =  0, Nombre = "RECIBIDO" },
-        new { Id =  1, Nombre = "ENVIADO" }
-        }.ToList();
-
-            cmbTipoCaptura.DataSource = listaCaptura;
-            cmbTipoCaptura.DisplayMember = "Nombre";
-            cmbTipoCaptura.ValueMember = "Id";
-            cmbTipoCaptura.SelectedIndex = 0;
+            var listaCaptura = new[]
+            {
+            new { Id = -1, Nombre = "TODOS" },
+            new { Id =  0, Nombre = "RECIBIDO" },
+            new { Id =  1, Nombre = "ENVIADO" }
+            }.ToList();
+                cmbTipoCaptura.DataSource = listaCaptura;
+                cmbTipoCaptura.DisplayMember = "Nombre";
+                cmbTipoCaptura.ValueMember = "Id";
+                cmbTipoCaptura.SelectedIndex = 0;
         }
 
         private void btnCapturarOficio_Click(object sender, EventArgs e)
@@ -150,11 +148,11 @@ namespace OficiosTI
             }
         }
 
-        private void btnSalir_Click(object sender, EventArgs e)
-        {
+       private void btnSalir_Click(object sender, EventArgs e)
+       {
             Application.Exit();
-        }
-
+       }
+    
         /*   private void InicializarGrid()    /// OFICIOS CAPTURADOS POR DOCUMENTACION 
                 {
                     DataGridOficios.AutoGenerateColumns = true;
@@ -297,7 +295,7 @@ namespace OficiosTI
                                       Remitente = remi.RemitenteNombre,
                                       Destinatario = desti.DestinatarioNombre,
                                       RequiereTicket = resp.RequiereTicket,
-                                    //  OficioRespuesta = resp.OficioRespuestaId,
+                                    //OficioRespuesta = resp.OficioRespuestaId,
                                       ListaTickets = ticketGroup.Select(t => t.TicketId)
                                   }).ToList();
 
@@ -405,7 +403,6 @@ namespace OficiosTI
             }
 
             DataGridOficios.ResumeLayout();
-
             ResaltarOficios();
         }
 
@@ -428,13 +425,14 @@ namespace OficiosTI
             }
         }
 
-        private void SetColumnHeader(string columnName, string headerText)
+      /*  private void SetColumnHeader(string columnName, string headerText)
         {
             if (DataGridOficios.Columns.Contains(columnName))
             {
                 DataGridOficios.Columns[columnName].HeaderText = headerText;
             }
         }
+      */
 
         private void ResaltarOficios()
         {
@@ -454,7 +452,6 @@ namespace OficiosTI
                     row.Cells["NumOficio"].Style.ForeColor = Color.DarkGreen;
                     row.Cells["NumOficio"].Style.Font = boldFont;
                 }
-
                 if (!string.IsNullOrWhiteSpace(estado))
                 {
                     switch (estado.ToUpper())
@@ -504,7 +501,7 @@ namespace OficiosTI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ocurrió un error al intentar abrir el detalle:\n\n{ex.Message}\n\nRevisa que el ID exista.",
+                MessageBox.Show($"Ocurrió un error al intentar abrir el detalle:\n\n{ex.Message}\n\nRevisa el ID.",
                                 "Error General",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
@@ -606,15 +603,17 @@ namespace OficiosTI
         {
             using (FrmCrearTicket frmTicket = new FrmCrearTicket(_context, _usuarioActual))
             {
-              //  frmTicket.IdOficioVinculado = idOficioGuardado;
-              //  frmTicket.AsuntoPredefinido = TextAsunto.Text.Trim();
-              //  frmTicket.Instruccion = TextPeticion.Text.Trim();
                 frmTicket.ShowDialog();
+                //  frmTicket.IdOficioVinculado = idOficioGuardado;
+                //  frmTicket.AsuntoPredefinido = TextAsunto.Text.Trim();
+                //  frmTicket.Instruccion = TextPeticion.Text.Trim();
+
             }
         }
 
-        /*    private void btnbuscar_Click(object sender, EventArgs e)
-            {
+        /* 
+        private void btnbuscar_Click(object sender, EventArgs e)
+        {
                 string texto = txtBuscar.Text.Trim();
                 string estado = cmbEstado.Text;                
                 if (_context != null)
@@ -689,8 +688,8 @@ namespace OficiosTI
                     }
                     ConfigurarGrid();
                 }
-            }
-          */
+      }
+     */
     }
 
 

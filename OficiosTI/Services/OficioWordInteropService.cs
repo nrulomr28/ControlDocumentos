@@ -19,7 +19,6 @@ namespace OficiosTI.Services
         }
         public string Generar(OficioModel model)
         {
-
            int? tipoId = _context.NumOficio
            .Where(n => n.OficioId == model.RespuestaId)
            .Select(n => n.Tipo) 
@@ -27,12 +26,10 @@ namespace OficiosTI.Services
 
             string ruta = Path.Combine(
                 Path.GetTempPath(),
-
-     //   $"oficio_.docx");
-      //  $"oficio_{model.NumeroOficio}.docx");
+                 //   $"oficio_.docx");
+                  //  $"oficio_{model.NumeroOficio}.docx");
 
           $"oficio_{Guid.NewGuid()}.docx");
-
             WordInterop.Application wordApp = null; 
             WordInterop.Document doc = null;
 

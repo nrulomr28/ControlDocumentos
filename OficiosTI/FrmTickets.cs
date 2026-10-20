@@ -92,8 +92,8 @@ namespace OficiosTI
             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
             bool tienePermiso = _context.Oficinas
                                        .Any(x => x.OficinasId == miOficinaId && x.Permiso == 1);
-            btnAsignar.Visible = tienePermiso;    /// numeros de oficio para respuestas con origen
-            btnSinTicket.Visible = tienePermiso;  /// numeros de oficio para respuestas sin origen 
+            btnAsignar.Visible = tienePermiso;    /// numeros de oficio para respuestas con origen  =1
+            btnSinTicket.Visible = tienePermiso;  /// numeros de oficio para respuestas sin origen  =1
         }
 
         protected override void OnLoad(EventArgs e)
@@ -413,15 +413,15 @@ namespace OficiosTI
                               4)
                 .ThenByDescending(t => t.Cat_TicketStatusId)
                 .ToList();
-
             DataGridTickets.DataSource = null;
             DataGridTickets.DataSource = new BindingSource { DataSource = tickets };
             ConfigurarGrid();
             ActualizarIndicadores(tickets);
         }
 
-        /*  private void CargarTickets()    /// ULTIMA VERSION DE TICKETS
-          {
+        /*
+        private void CargarTickets()    /// ULTIMA VERSION DE TICKETS
+        {
 
               string textoBuscar = TextBuscar.Text.Trim();
               string prioridad = ComboPrioridad.Text;
@@ -496,7 +496,7 @@ namespace OficiosTI
               DataGridTickets.DataSource = new BindingSource { DataSource = tickets };
               ConfigurarGrid();
               ActualizarIndicadores(tickets);
-          }
+        }
         */
 
         //private void CargarTickets()
@@ -774,10 +774,8 @@ namespace OficiosTI
                 })
                 .OrderByDescending(t => t.TicketFecha)
                 .ToList();
-
             DataGridTickets.DataSource = null;
             DataGridTickets.DataSource = new BindingSource { DataSource = tickets };
-
             ConfigurarGrid();
         }
 
@@ -826,7 +824,7 @@ namespace OficiosTI
             {
                 if (DataGridTickets.CurrentRow == null)
                 {
-                    MessageBox.Show("Falla 1: No hay ninguna fila seleccionada en el DataGrid.", "Depuración");
+                    MessageBox.Show("No hay ninguna fila seleccionada en el DataGrid.", "Depuración");
                     return;
                 }
                 var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
@@ -859,7 +857,6 @@ namespace OficiosTI
             {
                 col.SortMode = DataGridViewColumnSortMode.Automatic;
             }
-
             DataGridTickets.Columns["EstadoTicket"].Visible = false;
             DataGridTickets.Columns["EstadoSinOficio"].Visible = false;
             DataGridTickets.Columns["TicketId"].HeaderText = "Ticket";
@@ -1019,8 +1016,8 @@ namespace OficiosTI
 
         private void BtnAbrirTicket_Click_1(object sender, EventArgs e)
         {
-            var formOficioSin = new FrmPanelTickets(_context);
-            formOficioSin.ShowDialog();
+          //  var formOficioSin = new FrmPanelTickets(_context);
+          //  formOficioSin.ShowDialog();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -1176,9 +1173,10 @@ namespace OficiosTI
         }
 
 
-        private void FrmTickets_Load(object sender, EventArgs e)
+   /*     private void FrmTickets_Load(object sender, EventArgs e)
         {
 
         }
+   */
     }
 }

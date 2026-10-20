@@ -123,7 +123,6 @@ namespace OficiosTI
         private void ActualizarIndicadores(List<TicketGridModel> tickets)
         {
             int total = tickets.Count;
-
             int respondidos = tickets.Count(t =>
                 !string.IsNullOrEmpty(t.NumeroOficio));
 
@@ -286,9 +285,9 @@ namespace OficiosTI
 
         private IQueryable<Ticket> BaseQuery()
         {
-            int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());   /// POR DOMINIO USUARIO
-            string org = _service.ObtenerUnidadOrganizativa();
-            int idorg = _service.ObtenerUnidadOrgId(org);
+            int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());   /// DOMINIO USUARIO
+            string org = _service.ObtenerUnidadOrganizativa();   /// UNIDAD ORGANIZATIVA 
+       //     int idorg = _service.ObtenerUnidadOrgId(org);
             var query = _context.Ticket.AsQueryable();
             if (_service.EsUsuarioGlobal())
             {

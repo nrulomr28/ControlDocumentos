@@ -402,6 +402,7 @@ namespace OficiosTI
                            .FirstOrDefault(q => q.Cargo == cargoNormalizado);
             return firma.FundamentoLegal.Trim();
         }
+
         /*
             switch (cargoNormalizado)
             {

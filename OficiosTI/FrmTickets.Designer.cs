@@ -422,7 +422,7 @@
             Name = "FrmTickets";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Tickets TI";
-            Load += FrmTickets_Load;
+       //     Load += FrmTickets_Load;
             PanelHeader.ResumeLayout(false);
             PanelHeader.PerformLayout();
             PanelFiltros.ResumeLayout(false);

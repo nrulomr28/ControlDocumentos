@@ -42,6 +42,7 @@ namespace OficiosTI
             {
                 txtCopias.Text = ObtenerCopiasDefault();
             }
+
             //   _destinatarioService = new DestinatarioService(_context);
             //   _destinatariosCache = _destinatarioService.ObtenerCatalogo();
             //   ConfigurarAutoComplete();
@@ -66,7 +67,6 @@ namespace OficiosTI
             lbTicket.Text = $"Ticket #{_ticket.TicketId}";
 
         }
-
 
         private string ObtenerCopiasDefault()
         {
@@ -133,8 +133,6 @@ namespace OficiosTI
             }
         }
 
-       
-
         private void BtnGuardar_Click(object sender, EventArgs e)
         {
             GuardarOficio();
@@ -200,8 +198,10 @@ namespace OficiosTI
             /// OBTENER EL ID DEL OFICIO DE REFERENCIA
             /// 
             /// CAMBIAR EL SENTIDO DEL OFICIO A CAPTURAOFICIOS O COMBINARLOS ???
-            var Ofinum = _context.Oficio1.FirstOrDefault(y => y.OficioId == _ticket.id_of);
-            int idOficioAnterior = Ofinum?.OficioId ?? 0;
+       //     var Ofinum = _context.Oficio1.FirstOrDefault(y => y.OficioId == _ticket.id_of);
+            var Ofinum = _context.CapturaOficios.FirstOrDefault(y => y.CapturaOficioId == _ticket.id_of);
+       //     int idOficioAnterior = Ofinum?.OficioId ?? 0;
+            int idOficioAnterior = Ofinum?.CapturaOficioId ?? 0;
             if (esNuevo)
             {
                     _oficioActual = _service.CrearOficio(
@@ -620,8 +620,8 @@ namespace OficiosTI
                 Normalizar(anterior.NumeroOficio) != Normalizar(actual.NumeroOficio) ||
                 Normalizar(anterior.OficioReferencia) != Normalizar(actual.OficioReferencia) ||
                 Normalizar(anterior.Asunto) != Normalizar(actual.Asunto) ||
-            //  Normalizar(anterior.Destinatario) != Normalizar(actual.Destinatario) 
-            //  Normalizar(anterior.CargoDestinatario) != Normalizar(actual.CargoDestinatario);
+            //  Normalizar(anterior.Destinatario) != Normalizar(actual.Destinatario)  ||
+            //  Normalizar(anterior.CargoDestinatario) != Normalizar(actual.CargoDestinatario) ||
                 Normalizar(anterior.CuerpoRespuesta) != Normalizar(actual.CuerpoRespuesta);
             //  Normalizar(anterior.Copias) != Normalizar(actual.Copias);
         }
@@ -642,7 +642,7 @@ namespace OficiosTI
             txtCargo.Text = _oficioActual.CargoDestinatario ?? string.Empty;
             txtRespuesta.Text = _oficioActual.CuerpoRespuesta ?? string.Empty;
             txtCopias.Text = _oficioActual.Copias ?? string.Empty;
-           // Fecha = _oficioActual.FechaCaptura ?? string.Empty;
+         // Fecha = _oficioActual.FechaCaptura ?? string.Empty;
             if (_oficioActual.FirmanteId != null)
             {
                 comboBox1.SelectedValue = _oficioActual.FirmanteId;
@@ -687,7 +687,6 @@ namespace OficiosTI
         private string ObtenerFundamentoLegal(string cargoFirmante)
         {
             string cargoNormalizado = cargoFirmante.Trim();
-
             var firma = _context.Firmante
                            .FirstOrDefault(q => q.Cargo == cargoNormalizado);
             return firma.FundamentoLegal.Trim();
@@ -762,7 +761,6 @@ namespace OficiosTI
             cmbCopias.ValueMember = "CcpId";
             cmbCopias.SelectedIndex = -1;
         }
-
 
         private void btnAgregar_Click_1(object sender, EventArgs e)
         {

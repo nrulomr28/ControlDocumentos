@@ -149,7 +149,6 @@ namespace OficiosTI
             lblEstado.Visible = true;
             lblAgregarSeguimiento.Visible = true;
             txtAgregarSeguimiento.Visible = true;
-
             var oficio = _context.CapturaOficios.Find(id);
             if (oficio != null)
             {                
@@ -433,7 +432,6 @@ namespace OficiosTI
             CmbRemitente.TextUpdate -= CmbRemitente_TextUpdate;
             CmbRemitente.TextUpdate += CmbRemitente_TextUpdate;
             CmbRemitente.KeyPress += CmbRemitente_KeyPress;
-
             CmbRemitente.Validating -= CmbRemitente_Validating;
             CmbRemitente.Validating += CmbRemitente_Validating;
         }
@@ -456,11 +454,8 @@ namespace OficiosTI
                                 "Remitente no válido",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Warning);
-
                 CmbRemitente.Text = string.Empty;
                 CmbRemitente.SelectedIndex = -1;
-
-
             }
         }
         private void CmbRemitente_KeyPress(object sender, KeyPressEventArgs e)
@@ -1145,10 +1140,10 @@ namespace OficiosTI
 
 
         /// DEPENDENCIAS DE OFICIOS 
-      /*  private List<string> dependenciasValidas = new List<string>();
+      /*
+        private List<string> dependenciasValidas = new List<string>();
         private List<string> areasValidas = new List<string>();
         private List<string> subareasValidas = new List<string>();
-
         private void CargarCatalogosEF()
         {
             try
@@ -1171,6 +1166,7 @@ namespace OficiosTI
             }
         }
       */
+
         // BOTON PARA GUARDAR EL OFICIO O ACTUALIZARLO 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
@@ -1185,9 +1181,10 @@ namespace OficiosTI
             {
                 string numOficio = TxtNumOficio.Text.Trim().ToUpper();
                
-                if (string.IsNullOrWhiteSpace(numOficio) || numOficio.Contains("]") || numOficio.Contains("Ñ") || numOficio.Any(char.IsWhiteSpace))
+                if (string.IsNullOrWhiteSpace(numOficio) || numOficio.Contains("[") || numOficio.Contains("]") || numOficio.Contains("*") 
+                                                         || numOficio.Contains("Ñ") || numOficio.Contains("´") || numOficio.Any(char.IsWhiteSpace))
                 {
-                    MessageBox.Show("El texto está vacío o contiene caracteres inválidos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El Oficio está vacío o contiene caracteres inválidos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -1206,7 +1203,6 @@ namespace OficiosTI
                     MessageBox.Show($"La Dependencia '{dependencia}' no es válida.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
                 
                 // VALIDACIÓN SSP
                 // ------------------*****
@@ -1502,14 +1498,14 @@ namespace OficiosTI
                     }
                 }                             
                 MessageBox.Show("El oficio y su archivo se guardaron correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                if (CmbTicket.Text.Trim().Equals("SI", StringComparison.OrdinalIgnoreCase))
+                if (CmbTicket.Text.Trim().Equals("SI", StringComparison.OrdinalIgnoreCase))    /// SI REQUIERE TICKET SE MUESTRA LA OPCION 
                 {                    
-                    using (FrmCrearTicket frmTicket = new FrmCrearTicket(_context, _usuarioActual))
+                    using (FrmCrearTicket frmCrearTicket = new FrmCrearTicket(_context, _usuarioActual))
                     {
-                        frmTicket.IdOficioVinculado = idOficioGuardado; 
-                        frmTicket.AsuntoPredefinido = TextAsunto.Text.Trim();
-                        frmTicket.Instruccion = TextPeticion.Text.Trim();
-                        frmTicket.ShowDialog();
+                        frmCrearTicket.IdOficioVinculado = idOficioGuardado;
+                        frmCrearTicket.AsuntoPredefinido = TextAsunto.Text.Trim();
+                        frmCrearTicket.Instruccion = TextPeticion.Text.Trim();
+                        frmCrearTicket.ShowDialog();
                     }
                 }
                 this.DialogResult = DialogResult.OK;

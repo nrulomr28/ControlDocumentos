@@ -17,8 +17,8 @@ namespace OficiosTI.Services
     public class OficioRespuestaService
     {
         private readonly OficiosContext _context;
-        private NumOficio _oficioAnterior;
-        // private Oficio1 _oficioAnterior;     ///// OFICIOREFRENCIA    
+    //  private NumOficio _oficioAnterior;
+     // private Oficio1 _oficioAnterior;     ///// OFICIOREFRENCIA    
 
         public OficioRespuestaService(OficiosContext context)
         {
@@ -37,7 +37,6 @@ namespace OficiosTI.Services
                 .Where(x => x.TicketId == ticketId)
                 .OrderByDescending(x => x.HiloTicketFecha)
                 .FirstOrDefault();
-
             if (hilo == null) 
                 return "";
 
@@ -50,7 +49,6 @@ namespace OficiosTI.Services
 
             try
             {
-
                 using (PrincipalContext contexto = new PrincipalContext(ContextType.Domain))
                 {
                     UserPrincipal usuarioAD = UserPrincipal.FindByIdentity(contexto, nombreUsuarioCorto);
@@ -74,7 +72,6 @@ namespace OficiosTI.Services
          //string dominioCompleto = IPGlobalProperties.GetIPGlobalProperties().DomainName;
            string dominio = Environment.UserDomainName;
            string usuario = Environment.UserName;
-
            return $"{dominio}\\{usuario}";
          //   return $"{dominioCompleto}\\{usuario}";
         }
@@ -145,7 +142,6 @@ namespace OficiosTI.Services
             {
                 nombreOU = "Fuera de dominio";
             }
-
             return nombreOU;
         }
       
@@ -304,12 +300,9 @@ namespace OficiosTI.Services
                 Anio = (short)DateTime.Now.Year,
                 OficioId = OficioId,         
                 FirmanteId = firmanteid
-
-            };
-            
+            };            
             _context.OficioRespuesta.Add(oficio);
             _context.SaveChanges();
-
             return oficio;
         }
 
@@ -383,7 +376,6 @@ namespace OficiosTI.Services
         public OficioRespuesta ConvertirTicketEnBorrador(Ticket ticket)
         {
             var firmante = new Firmante();
-
             var hilo = _context.HiloTicket
                 .Where(x => x.TicketId == ticket.TicketId)
                 .OrderByDescending(x => x.HiloTicketFecha)

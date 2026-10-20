@@ -34,44 +34,45 @@ namespace OficiosTI
                 return; // Cierra la aplicación si hay un error crítico
             }
                       
-          //   Application.Run(new FrmMenuPrincipal(context, contextoUsuario));
+                    //  Application.Run(new FrmMenuPrincipal(context, contextoUsuario));
 
-        //  Application.Run(new FrmCrearTicket(context, contextoUsuario));
-        //  USUARIO GLOBAL  VE LA CAPTURA DE LOS OFICIOS Y EL PANEL DE TICKETS DE TODOS 
+                    //  Application.Run(new FrmCrearTicket(context, contextoUsuario));
+                    //  USUARIO GLOBAL  VE LA CAPTURA DE LOS OFICIOS Y EL PANEL DE TICKETS DE TODOS 
 
-        if (contextoUsuario.EsGlobal)
-               {             
+             if (contextoUsuario.EsGlobal)
+             {             
                       Application.Run(new FrmMenuPrincipal(context, contextoUsuario));               
-               }
-            else
-               {
+             }
+             else
+             {
                       // Usuario NORMAL SOLO VE SUS TICKETS
                       Application.Run(new FrmTickets(context));
-               }
+             }
       
 
         }
 
        
-    /*    private static UsuarioContexto ValidarUsuarioYConstruirPerfil(DbContextOptions<OficiosContext> options)
+        /*
+        private static UsuarioContexto ValidarUsuarioYConstruirPerfil(DbContextOptions<OficiosContext> options)
         {
-            using (var dbLocal = new OficiosContext(options))
-            {
-                var _oficioService = new OficioRespuestaService(dbLocal);
-                string nombreOU = _oficioService.ObtenerUnidadOrganizativa();
+                        using (var dbLocal = new OficiosContext(options))
+                        {
+                            var _oficioService = new OficioRespuestaService(dbLocal);
+                            string nombreOU = _oficioService.ObtenerUnidadOrganizativa();
 
-                return new UsuarioContexto
-                {
-                    NombreMostrar = _oficioService.ObtenerNombreUsuarioRed(),
-                    DominioYUsuario = _oficioService.ObtenerDominioYUsuario(),
-                    SegmentoRed = _oficioService.ObtenerSegmentoDeRed(),
-                    UnidadOrganizativa = nombreOU,
-                    OficinaId = _oficioService.ObtenerUnidadOrgId(nombreOU),
-                    EsGlobal = _oficioService.EsUsuarioGlobal()
-                };
-            }
+                            return new UsuarioContexto
+                            {
+                                NombreMostrar = _oficioService.ObtenerNombreUsuarioRed(),
+                                DominioYUsuario = _oficioService.ObtenerDominioYUsuario(),
+                                SegmentoRed = _oficioService.ObtenerSegmentoDeRed(),
+                                UnidadOrganizativa = nombreOU,
+                                OficinaId = _oficioService.ObtenerUnidadOrgId(nombreOU),
+                                EsGlobal = _oficioService.EsUsuarioGlobal()
+                            };
+                        }
         }
-    */
+        */
 
 
         /// Validar el usuario para ingresar al sistema 
