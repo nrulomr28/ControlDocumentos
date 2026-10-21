@@ -106,6 +106,52 @@ namespace OficiosTI
                     return;
                 }
 
+                
+                string origenTicket = _context.HiloTicket
+                    .Where(h => h.TicketId == _ticket.TicketId &&
+                               (h.HiloTicketAccion == "CREADO" || h.HiloTicketAccion == "CREADO*"))
+                    .Select(h => h.HiloTicketAccion)
+                    .FirstOrDefault();
+
+               
+                var ticketsRelacionados = (from t in _context.Ticket
+                                           join o in _context.Oficinas on t.OficinasId equals o.OficinasId
+                                           join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
+                                           join x in _context.OficioRespuesta on t.TicketId equals x.TicketId into respuestas
+                                           from r in respuestas.DefaultIfEmpty()
+                                           where t.id_of == _ticket.id_of
+                                                 && t.TicketId != _ticket.TicketId
+                                                 
+                                                 && _context.HiloTicket.Any(h => h.TicketId == t.TicketId && h.HiloTicketAccion == origenTicket)
+                                           orderby t.TicketId
+                                           select new
+                                           {
+                                               Ticket = t.TicketId,
+                                               Oficina = o.OficinasNombre,
+                                               Estado = s.Cat_TicketStatusStatus,
+                                               Oficio = r != null ? r.NumeroOficio : "SIN OFICIO",
+                                           }).ToList();
+
+                dataGridRelacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dataGridRelacion.DataSource = ticketsRelacionados;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar los tickets relacionados: {ex.Message}", "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+    /*  private void CargarTicketsR()
+        {
+            try
+            {
+                if (_ticket?.id_of == null || _ticket.id_of == 0)
+                {
+                    dataGridRelacion.DataSource = null;
+                    return;
+                }
+
                 var ticketsRelacionados = (from t in _context.Ticket
                                            join o in _context.Oficinas on t.OficinasId equals o.OficinasId
                                            join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
@@ -130,7 +176,7 @@ namespace OficiosTI
                 MessageBox.Show($"Error al cargar los tickets relacionados: {ex.Message}", "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+    */
         private void btnAsignarTicket_Click(object sender, EventArgs e)
         {
             if (_ticket.Cat_TicketStatusId == 3)

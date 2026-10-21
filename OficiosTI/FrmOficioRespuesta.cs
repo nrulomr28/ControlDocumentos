@@ -5,6 +5,7 @@ using OficiosTI.Data.Entities;
 using OficiosTI.Documents;
 using OficiosTI.Models;
 using OficiosTI.Services;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Diagnostics;
 
@@ -42,12 +43,10 @@ namespace OficiosTI
             {
                 txtCopias.Text = ObtenerCopiasDefault();
             }
-
             //   _destinatarioService = new DestinatarioService(_context);
             //   _destinatariosCache = _destinatarioService.ObtenerCatalogo();
             //   ConfigurarAutoComplete();
             //   InicializarFirmantes();
-
             CargarFirmantes();
             CargarCopias();
             if (oficio?.FirmanteId.HasValue == true)
@@ -172,13 +171,13 @@ namespace OficiosTI
                 return;
             }
             bool esNuevo = _oficioActual.OficioRespuestaId == 0;
-
             if ((esNuevo || _oficioActual.NumeroOficio != txtNumeroOficio.Text)
                 && _service.NumeroOficioExiste(txtNumeroOficio.Text))
             {
                 MessageBox.Show("Ese número de oficio ya existe. Por favor, asigne otro folio.", "Folio Duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             OficioRespuesta snapshotAnterior = null;
             if (!esNuevo)
             {
@@ -198,10 +197,35 @@ namespace OficiosTI
             /// OBTENER EL ID DEL OFICIO DE REFERENCIA
             /// 
             /// CAMBIAR EL SENTIDO DEL OFICIO A CAPTURAOFICIOS O COMBINARLOS ???
-       //     var Ofinum = _context.Oficio1.FirstOrDefault(y => y.OficioId == _ticket.id_of);
-            var Ofinum = _context.CapturaOficios.FirstOrDefault(y => y.CapturaOficioId == _ticket.id_of);
-       //     int idOficioAnterior = Ofinum?.OficioId ?? 0;
-            int idOficioAnterior = Ofinum?.CapturaOficioId ?? 0;
+       //   var Ofinum = _context.Oficio1.FirstOrDefault(y => y.OficioId == _ticket.id_of);
+      //    var Ofinum = _context.CapturaOficios.FirstOrDefault(y => y.CapturaOficioId == _ticket.id_of);
+       //   int idOficioAnterior = Ofinum?.OficioId ?? 0;
+       //   int idOficioAnterior = Ofinum?.CapturaOficioId ?? 0;          
+            int idBuscado = _ticket.id_of ?? 0;        
+            string origenTicket = _context.HiloTicket
+                .Where(x => x.TicketId == _ticket.TicketId)
+                .Select(x => x.HiloTicketAccion)
+                .FirstOrDefault();
+
+            var resultado = _context.HiloTicket
+                .Where(x => x.TicketId == _ticket.TicketId)
+                .Select(x => new
+                {                  /// CREADO* SON LOS TICKETS DESDE ESCRITORIO Y OFICIOS NUEVOS  CAPTURAOFICIOS
+                                   /// CREADO  SON LOS TICKETS DESDE WEB Y CON OFICIO1 
+                    OficioReferencia = x.HiloTicketAccion == "CREADO*"
+                        ? _context.CapturaOficios.Where(c => c.CapturaOficioId == idBuscado).Select(c => c.NumeroOficio).FirstOrDefault()
+                        : (x.HiloTicketAccion == "CREADO"
+                            ? _context.Oficio1.Where(o => o.OficioId == idBuscado).Select(o => o.OficioNoOficio).FirstOrDefault()
+                            : null),                   
+                    OficioIdFinal = x.HiloTicketAccion == "CREADO*"
+                        ? _context.CapturaOficios.Where(c => c.CapturaOficioId == idBuscado).Select(c => (int?)c.CapturaOficioId).FirstOrDefault()
+                        : (x.HiloTicketAccion == "CREADO"
+                            ? _context.Oficio1.Where(o => o.OficioId == idBuscado).Select(o => (int?)o.OficioId).FirstOrDefault()
+                            : null)
+                })
+                .FirstOrDefault();
+            string OficioReferencia = resultado?.OficioReferencia;
+            int? idOficioAnterior = resultado?.OficioIdFinal;
             if (esNuevo)
             {
                     _oficioActual = _service.CrearOficio(
@@ -214,7 +238,7 @@ namespace OficiosTI
                     txtRespuesta.Text,
                     txtCopias.Text,
                     firmanteSeleccionado,
-                    idOficioAnterior
+                    idOficioAnterior                   
                 );
             }
             else
@@ -252,17 +276,23 @@ namespace OficiosTI
                Close();
            }
            */
-           //  PROCESO ANTERIOR PARA MODIFICAR TICKETS SIN ALTERAR A LOS DEMAS .....
-
+            //  PROCESO ANTERIOR PARA MODIFICAR TICKETS SIN ALTERAR A LOS DEMAS .....
             bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
             if (huboCambios)
             {
                 string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
 
+                
                 var ticketsAsociados = _context.Ticket
-                .Where(t => t.id_of == idOficioAnterior)
-                .ToList();
+                    .Where(t => t.id_of == idOficioAnterior &&
+                                _context.HiloTicket.Any(h => h.TicketId == t.TicketId && h.HiloTicketAccion == origenTicket))
+                    .ToList();
 
+           //     var ticketsAsociados = _context.Ticket
+           //     .Where(t => t.id_of == idOficioAnterior)
+           //     .ToList();
+
+                //  si el ticket dice creado se relaciona en hiloticket tickets que digan creado sino se relaciona a tickets que tenga creado* 
                 foreach (var ticketRelacionado in ticketsAsociados)
                 {
                     if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
@@ -270,29 +300,29 @@ namespace OficiosTI
                         string accionAsignada = (ticketRelacionado.TicketId == _ticket.TicketId) ? "CERRADO" : "---";
                         _service.RegistrarHiloOficio(ticketRelacionado.TicketId, descripcion, accionAsignada);
                     }
-
-                // ticketRelacionado.Cat_TicketStatusId = 3;    //// SI SE QUIEREN CERRAR TODOS 
+                    // ticketRelacionado.Cat_TicketStatusId = 3;    //// SI SE QUIEREN CERRAR TODOS 
                 }
-                /*    foreach (var ticketRelacionado in ticketsAsociados)
-                    {
+                /*
+                 foreach (var ticketRelacionado in ticketsAsociados)
+                 {
                         if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
                         {
                             _service.RegistrarHiloOficio(ticketRelacionado.TicketId, descripcion);  
                         }
                         // Cambiamos el estatus a "Cerrado" (3) para cada ticket   //// PARA CAMBIAR EL ESTADO EN CERRADO A TODOS 
                         //  ticketRelacionado.Cat_TicketStatusId = 3;
-                    }
+                 }
                 */
                 _ticket.Cat_TicketStatusId = 3;
                 _service.ActualizarOficio(_oficioActual);
                 _context.SaveChanges();
-                MessageBox.Show($"Oficio generado y ticket cerrado correctamente, se guardó la informacion en {ticketsAsociados.Count} tickets", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Oficio generado y ticket cerrado correctamente, se guardó la informacion en {ticketsAsociados.Count} tickets",
+                                 "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Close();
                 return;
             }
             MessageBox.Show("Oficio modificado.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             Close();
-
         }
 
 

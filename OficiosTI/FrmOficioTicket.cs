@@ -252,17 +252,72 @@ namespace OficiosTI
             {
                 int? idOficio = _ticket?.id_of;
 
+          /*      var origenoficio = _context.HiloTicket.Any(x => x.TicketId == _ticket.TicketId);  /// VERIFICAR DE DONDE VIENE EL TICKET CAPOFICIOS/OFICIO1
 
-                /// hace referencia a la tabla de oficio1 donde se capturan los OFICIOS DE DOCUMENTACION 
-             /*  var registroOficio1 = idOficio.HasValue
-                    ? _context.Oficio1.FirstOrDefault(x => x.OficioId == idOficio.Value)
-                    : null;
-             */
-                  
-                /// TABLA DE CAPTURA DE OFICIOS NUEVA CAPTURAOFICIOS 
-                var registroOficio1 = idOficio.HasValue
+                if (origenoficio.HiloTicketAccion)
+                if  HiloTicketAccion == "CREADO*"  /// TABLA CAPTURAOFICIOS 
+                    {
+                   var registroOficio1 = idOficio.HasValue
                   ? _context.CapturaOficios.FirstOrDefault(x => x.CapturaOficioId == idOficio.Value)
                   : null;
+                        OficioReferencia = $"{registroOficio1?.NumeroOficio}",
+                                OficioId = registroOficio1?.CapturaOficioId,
+
+                    }
+
+                if  HiloTicketAccion== "CREADO"   ///TABLA OFICIOS1
+                   {
+
+                */
+                    /*  var registroOficio1 = idOficio.HasValue
+                              ? _context.Oficio1.FirstOrDefault(x => x.OficioId == idOficio.Value)
+                              : null;
+                       */
+                    // OficioReferencia = $"{registroOficio1?.OficioNoOficio}",  /// TABLA DE OFICIO1
+
+                    //  OficioId = registroOficio1?.OficioId,                      /// TABA DE OFICIO1
+
+       //         }
+
+
+                /// hace referencia a la tabla de oficio1 donde se capturan los OFICIOS DE DOCUMENTACION 
+
+                /*  var registroOficio1 = idOficio.HasValue
+                       ? _context.Oficio1.FirstOrDefault(x => x.OficioId == idOficio.Value)
+                       : null;
+                */
+
+
+               
+                int idBuscado = idOficio?? 0;
+
+                var resultado = _context.HiloTicket
+                    .Where(x => x.TicketId == _ticket.TicketId)
+                    .Select(x => new
+                    {
+                        OficioReferencia = x.HiloTicketAccion == "CREADO*"
+                            ? _context.CapturaOficios.Where(c => c.CapturaOficioId == idBuscado).Select(c => c.NumeroOficio).FirstOrDefault()
+                            : (x.HiloTicketAccion == "CREADO"
+                                ? _context.Oficio1.Where(o => o.OficioId == idBuscado).Select(o => o.OficioNoOficio).FirstOrDefault()
+                                : null),
+
+                       
+                        OficioIdFinal = x.HiloTicketAccion == "CREADO*"
+                            ? _context.CapturaOficios.Where(c => c.CapturaOficioId == idBuscado).Select(c => (int?)c.CapturaOficioId).FirstOrDefault()
+                            : (x.HiloTicketAccion == "CREADO"
+                                ? _context.Oficio1.Where(o => o.OficioId == idBuscado).Select(o => (int?)o.OficioId).FirstOrDefault()
+                                : null)
+                    })
+                    .FirstOrDefault();
+
+                // Asignamos las variables verificando que el resultado no sea nulo
+              
+
+                /// TABLA DE CAPTURA DE OFICIOS NUEVA CAPTURAOFICIOS 
+           /*     var registroOficio1 = idOficio.HasValue
+                  ? _context.CapturaOficios.FirstOrDefault(x => x.CapturaOficioId == idOficio.Value)
+                  : null;
+           */
                 string bis = "";
                 int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);
                 int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
@@ -281,10 +336,17 @@ namespace OficiosTI
                     FechaCaptura = DateTime.Now,
                     Anio = (short)anioActual,
                     // OficioReferencia = $"{registroOficio1?.OficioNoOficio}",  /// TABLA DE OFICIO1
-                    OficioReferencia = $"{registroOficio1?.NumeroOficio}",
+               //     OficioReferencia = $"{registroOficio1?.NumeroOficio}",
                     FirmanteId = 0,
                   //  OficioId = registroOficio1?.OficioId,                      /// TABA DE OFICIO1
-                    OficioId = registroOficio1?.CapturaOficioId,
+                  //  OficioId = registroOficio1?.CapturaOficioId,
+
+                    ////  IDS 
+                     OficioReferencia = resultado?.OficioReferencia,
+                     OficioId = resultado?.OficioIdFinal,
+
+
+
                     RespuestaId = nuevoNumeroCreado.OficioId,
                 };
                 _context.OficioRespuesta.Add(registroRespuesta);

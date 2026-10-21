@@ -24,18 +24,15 @@ namespace OficiosTI
             using var context = new OficiosContext(options);            
             UsuarioContexto contextoUsuario;
             try
-            {
-               
+            {               
                 contextoUsuario = ValidarUsuarioYConstruirPerfil(options);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al cargar el perfil de usuario: {ex.Message}", "Error de inicio", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return; // Cierra la aplicación si hay un error crítico
-            }
-                      
+            }                      
                     //  Application.Run(new FrmMenuPrincipal(context, contextoUsuario));
-
                     //  Application.Run(new FrmCrearTicket(context, contextoUsuario));
                     //  USUARIO GLOBAL  VE LA CAPTURA DE LOS OFICIOS Y EL PANEL DE TICKETS DE TODOS 
 
@@ -105,8 +102,7 @@ namespace OficiosTI
         }
 
     }
-
-   
+  
     
     public class UsuarioContexto
     {
@@ -117,9 +113,5 @@ namespace OficiosTI
         public int OficinaId { get; set; }
         public bool EsGlobal { get; set; }
     }
-
-
-
-
    
 }

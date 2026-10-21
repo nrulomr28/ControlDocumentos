@@ -140,8 +140,7 @@ namespace OficiosTI
                         string nombrePersona = !string.IsNullOrWhiteSpace(txtNombre.Text)
                                                ? txtNombre.Text.Trim()
                                                : (Remitente?.RemitenteNombre ?? "");
-                        string usuariodominio =  _service.ObtenerDominioYUsuario();   
-                        
+                        string usuariodominio =  _service.ObtenerDominioYUsuario();                         
                         int idusuario = _context.Usuarios
                                                         .Where(y => y.UsuarioDominio == usuariodominio)  /// USUARIO QUE CAPTURA EL TICKET 
                                                         .Select(y => y.UsuarioAnterior)
@@ -157,7 +156,7 @@ namespace OficiosTI
                             {
                                 TicketPersona = nombrePersona,
                                 TicketTel = txtTel.Text.Trim(),
-                                TicketAsunto = txtAsunto.Text.Trim(),
+                                TicketAsunto = txtAsunto.Text.Trim(), 
                                 TicketMensaje = textInstruccion.Text.Trim(),
                                 TicketPrioridad = cmbPrioridad.Text.Trim(),                               
                                 TicketFecha = DateTime.Now,
@@ -174,7 +173,7 @@ namespace OficiosTI
                             {
                                 TicketId = nuevoticket.TicketId,
                                 HiloTicketFecha = DateTime.Now,
-                                HiloTicketAccion = "CREADO",
+                                HiloTicketAccion = "CREADO*",
                                 HiloTicketMensaje = textInstruccion.Text.Trim(),
                                 UsuarioId = idusuario,   /// quien capturo el ticket 
                             };
@@ -185,8 +184,8 @@ namespace OficiosTI
                             {
                                 TicketId = nuevoticket.TicketId,    /// ASIGNADO AL DEPARTAMENTO 
                                 HiloTicketFecha = DateTime.Now,
-                                HiloTicketAccion = "ASIGNADO",
-                                HiloTicketMensaje = "ASIGNADO AUTOMATICAMENTE",
+                                HiloTicketAccion =  "ASIGNADO",
+                                HiloTicketMensaje = "ASIGNADO AUTOMATICAMENTE*",
                                 UsuarioId = idJefeOficina       //// ID DEL JEFE 
                             };
                             _context.HiloTicket.Add(hilo2);

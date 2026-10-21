@@ -376,6 +376,58 @@ namespace OficiosTI.Services
         public OficioRespuesta ConvertirTicketEnBorrador(Ticket ticket)
         {
             var firmante = new Firmante();
+
+            var hiloUltimo = _context.HiloTicket
+                .Where(x => x.TicketId == ticket.TicketId)
+                .OrderByDescending(x => x.HiloTicketFecha)
+                .FirstOrDefault();
+
+            string origenTicket = _context.HiloTicket
+                .Where(x => x.TicketId == ticket.TicketId &&
+                           (x.HiloTicketAccion == "CREADO" || x.HiloTicketAccion == "CREADO*"))
+                .Select(x => x.HiloTicketAccion)
+                .FirstOrDefault();
+
+            int idBuscado = ticket.id_of ?? 0;
+            string referencia = string.Empty;
+            int? idOficioFinal = null;
+
+          
+            if (origenTicket == "CREADO*")
+            {
+                var registroNuevo = _context.CapturaOficios
+                    .FirstOrDefault(y => y.CapturaOficioId == idBuscado);
+
+                referencia = registroNuevo?.NumeroOficio ?? string.Empty;
+                idOficioFinal = registroNuevo?.CapturaOficioId;
+            }
+            else
+            {
+                
+                var registroViejo = _context.Oficio1
+                    .FirstOrDefault(y => y.OficioId == idBuscado);
+
+                referencia = registroViejo?.OficioNoOficio ?? string.Empty;
+                idOficioFinal = registroViejo?.OficioId;
+            }          
+            return new OficioRespuesta
+            {
+                TicketId = ticket.TicketId,
+                Asunto = ticket.TicketMensaje,
+                Destinatario = ticket.TicketPersona,
+                CuerpoRespuesta = hiloUltimo?.HiloTicketMensaje ?? string.Empty,
+                FechaOficio = DateTime.Now,
+                FechaCaptura = DateTime.Now,
+                Anio = (short)DateTime.Now.Year,
+                OficioReferencia = referencia,
+                FirmanteId = firmante?.FirmanteId,
+                OficioId = idOficioFinal
+            };
+        }
+
+   /*     public OficioRespuesta ConvertirTicketEnBorrador(Ticket ticket)
+        {
+            var firmante = new Firmante();
             var hilo = _context.HiloTicket
                 .Where(x => x.TicketId == ticket.TicketId)
                 .OrderByDescending(x => x.HiloTicketFecha)
@@ -398,6 +450,8 @@ namespace OficiosTI.Services
                 OficioId = registroOficio1?.OficioId
             };
         }
+
+        */
 
       /*  public OficioRespuesta ConvertirTicketEnBorrador(Ticket ticket)
         {
