@@ -49,7 +49,6 @@ namespace OficiosTI
             {
                 txtAsunto.Text = AsuntoPredefinido;
             }
-
             txtNombre.Text = nombreRemitente;
 
             if (!string.IsNullOrEmpty(Instruccion))
@@ -110,8 +109,7 @@ namespace OficiosTI
                 MessageBox.Show("Falta la extensión del usuario", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 textInstruccion.Focus();
                 return;
-            }
-                       
+            }                       
 
             List<int> oficinasSeleccionadas = new List<int>();
             if (chcOficina1.Checked) oficinasSeleccionadas.Add(1); // REDES
@@ -132,8 +130,7 @@ namespace OficiosTI
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
-                    {
-                        
+                    {                        
                         var Ofinum = _context.CapturaOficios.FirstOrDefault(y => y.CapturaOficioId == this.IdOficioVinculado);
                         int idRemitente = Ofinum?.Remitente ?? 0;
                         var Remitente = _context.Remitente.FirstOrDefault(y => y.RemitenteId == idRemitente);
@@ -145,7 +142,6 @@ namespace OficiosTI
                                                         .Where(y => y.UsuarioDominio == usuariodominio)  /// USUARIO QUE CAPTURA EL TICKET 
                                                         .Select(y => y.UsuarioAnterior)
                                                         .FirstOrDefault();
-
                         foreach (int idOficina in oficinasSeleccionadas)
                         {
                             int idJefeOficina = _context.Usuarios
@@ -164,28 +160,27 @@ namespace OficiosTI
                                 OficinasId = idOficina,
                                 id_of = this.IdOficioVinculado,
                                 TicketUUsuario = idJefeOficina,   /// se asigna al jefe 
-                                TicketExt = int.Parse(txtExtension.Text),
+                                TicketExt = txtExtension.Text
+                              //  TicketExt = int.Parse(txtExtension.Text),
                             };
                             _context.Ticket.Add(nuevoticket);
-                            _context.SaveChanges();
-                                                
+                            _context.SaveChanges();                                                
                             var hilo = new HiloTicket
                             {
                                 TicketId = nuevoticket.TicketId,
                                 HiloTicketFecha = DateTime.Now,
-                                HiloTicketAccion = "CREADO*",
+                                HiloTicketAccion = "CREADO",
                                 HiloTicketMensaje = textInstruccion.Text.Trim(),
                                 UsuarioId = idusuario,   /// quien capturo el ticket 
                             };
                             _context.HiloTicket.Add(hilo);
-                            _context.SaveChanges();
-                            
+                            _context.SaveChanges();                            
                             var hilo2 = new HiloTicket
                             {
                                 TicketId = nuevoticket.TicketId,    /// ASIGNADO AL DEPARTAMENTO 
                                 HiloTicketFecha = DateTime.Now,
                                 HiloTicketAccion =  "ASIGNADO",
-                                HiloTicketMensaje = "ASIGNADO AUTOMATICAMENTE*",
+                                HiloTicketMensaje = "ASIGNADO AUTOMATICAMENTE",
                                 UsuarioId = idJefeOficina       //// ID DEL JEFE 
                             };
                             _context.HiloTicket.Add(hilo2);

@@ -11,8 +11,7 @@ namespace OficiosTI
 {
     public partial class FrmCapOficios : Form
     {
-        private OficiosContext _context;
-      
+        private OficiosContext _context;      
         private OficioRespuesta _oficioActual;    /// OFICIO ORIGEN 
         private OficioRespuestaService _service;
         private UsuarioContexto _usuarioActual;
@@ -39,12 +38,10 @@ namespace OficiosTI
             CargarDepedencias();
             CargoDestinatario();
             CargarEstadosO();
-
             DateRecepcion.Checked = false;
             DateDocumento.Checked = false;
             btnQuitarAdjunto.Visible = false;
             btnVerArchivo.Visible = false;
-
             /// CAMPOS CUANDO SE ACTUALIZA EL OFICIO 
             txtSeguimiento.Visible= false;
             lblhistorial.Visible = false;
@@ -125,7 +122,7 @@ namespace OficiosTI
                                                // Asunto = t.TicketMensaje,
                                                Oficina = o.OficinasNombre,
                                                Estado = s.Cat_TicketStatusStatus,                                              
-                                               OficioRespuesta = r != null ? r.NumeroOficio : "Sin respuesta"
+                                               OficioRespuesta = r != null ? r.NumeroOficio : "----"
                                            }).ToList();
                 dataGridTickets.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dataGridTickets.DataSource = ticketsRelacionados;
@@ -369,7 +366,6 @@ namespace OficiosTI
         // --- catálogo tipos de documentos que se reciben ---
         private void CargarSeRecibe()
         {
-
             var listaArchivo = new[]
             {
                 new { Id = 1, Nombre = "ORIGINAL" },
@@ -585,7 +581,6 @@ namespace OficiosTI
                     cmbCargoRemitente.DroppedDown = false;
                 }
             }
-
             cmbCargoRemitente.Text = textoBusquedaD;
             cmbCargoRemitente.SelectionStart = cursorPositionD;
             cmbCargoRemitente.SelectionLength = 0;
@@ -599,9 +594,7 @@ namespace OficiosTI
         private List<Destinatario> _todosLosDestinatarios;
         private void CargarDestinatarios()
         {
-
             _todosLosDestinatarios = _context.Destinatario.ToList();
-
             CmbDestinatario.DataSource = _todosLosDestinatarios;
             CmbDestinatario.DisplayMember = "DestinatarioNombre";
             CmbDestinatario.ValueMember = "DestinatarioId";
@@ -687,11 +680,7 @@ namespace OficiosTI
 
         // COMBO DESTINATARIOS 
 
-
-
-
         // COMBO CARGOS DESTINATARIOS 
-
         private void CargoDestinatario()
         {
             // Usamos .ToList() para que no se vincule con el combo de Remitente
@@ -784,7 +773,6 @@ namespace OficiosTI
 
 
         /// COMBO DE TIPO DE DOCUMENTOS 
-
         private void CargarDocumento()
         {
             var Tipodoc = _context.Cat_TipoDocumento
@@ -834,8 +822,6 @@ namespace OficiosTI
             {
              new { Id =  "RECIBIDO", Nombre = "RECIBIDO" },
              new { Id =  "ENVIADO", Nombre = "ENVIADO" },
-
-
             }.ToList();
 
             CmbTipo.DataSource = listacap;
@@ -1189,7 +1175,6 @@ namespace OficiosTI
                 }
 
                 string[] partes = numOficio.Split('/');
-
                 if (partes.Length < 3)
                 {
                     MessageBox.Show("El formato es demasiado corto. Mínimo: DEPENDENCIA/OFICIO/AÑO.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1449,8 +1434,7 @@ namespace OficiosTI
                     };
                     _context.CapturaOficios.Add(nuevoOficio);
                     _context.SaveChanges();
-                    idOficioGuardado = nuevoOficio.CapturaOficioId;
-                   
+                    idOficioGuardado = nuevoOficio.CapturaOficioId;                   
                     // Seguimiento de oficio
                     var nuevoseguimiento = new TSeguimiento 
                     { 

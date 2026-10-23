@@ -376,12 +376,10 @@ namespace OficiosTI.Services
         public OficioRespuesta ConvertirTicketEnBorrador(Ticket ticket)
         {
             var firmante = new Firmante();
-
             var hiloUltimo = _context.HiloTicket
                 .Where(x => x.TicketId == ticket.TicketId)
                 .OrderByDescending(x => x.HiloTicketFecha)
                 .FirstOrDefault();
-
             string origenTicket = _context.HiloTicket
                 .Where(x => x.TicketId == ticket.TicketId &&
                            (x.HiloTicketAccion == "CREADO" || x.HiloTicketAccion == "CREADO*"))
@@ -511,13 +509,18 @@ namespace OficiosTI.Services
    
         public void RegistrarHiloOficio(int ticketId, string numeroOficio, string accion = "CERRADO")
         {
+            string usuariodominio = ObtenerDominioYUsuario();
+            int idusuario = _context.Usuarios
+                                            .Where(y => y.UsuarioDominio == usuariodominio)
+                                            .Select(y => y.UsuarioAnterior)
+                                            .FirstOrDefault();
             var hilo = new HiloTicket
             {
                 TicketId = ticketId,
                 HiloTicketFecha = DateTime.Now,
                 HiloTicketAccion = accion,
                 HiloTicketMensaje = numeroOficio,
-                UsuarioId = 0
+                UsuarioId = idusuario    /// se obtiene el usuario con idanterior 
             };
             _context.HiloTicket.Add(hilo);
             _context.SaveChanges();

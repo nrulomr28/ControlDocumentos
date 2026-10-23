@@ -340,18 +340,16 @@ namespace OficiosTI
                         x.Remitente,
                         x.Destinatario,
                         x.RequiereTicket,
-                     //   x.OficioRespuesta,
+                     // x.OficioRespuesta,
                         Tickets = textoTickets
                     };
                 }).ToList();
-
                 DataGridOficios.DataSource = historialOficios;
                 if (DataGridOficios.Columns.Contains("CapOficio"))
                 {
                     DataGridOficios.Columns["CapOficio"].Visible = false;
                 }
             }
-
             ConfigurarGrid();
             ActualizarIndicadores();
         }
@@ -425,7 +423,8 @@ namespace OficiosTI
             }
         }
 
-      /*  private void SetColumnHeader(string columnName, string headerText)
+      /*
+        private void SetColumnHeader(string columnName, string headerText)
         {
             if (DataGridOficios.Columns.Contains(columnName))
             {
@@ -444,7 +443,7 @@ namespace OficiosTI
                 if (row.IsNewRow) continue;
                 string oficio = row.Cells["NumOficio"].Value?.ToString();
                 string estado = row.Cells["Estado"].Value?.ToString();
-                string Ticket = row.Cells["RequiereTicket"].Value?.ToString();
+             //   string Ticket = row.Cells["RequiereTicket"].Value?.ToString();
 
                 row.DefaultCellStyle.BackColor = Color.Honeydew;
                 if (!string.IsNullOrWhiteSpace(oficio))
@@ -530,11 +529,9 @@ namespace OficiosTI
                                          resp.FolioInicio.Contains(texto) ||
                                          resp.Asunto.Contains(texto) ||
                                          resp.Peticion.Contains(texto)) &&
-
                                         (string.IsNullOrEmpty(estadoSeleccionado) ||
                                          estadoSeleccionado == "TODOS" ||
                                          resp.Estatus == estadoSeleccionado) &&
-
                                          (string.IsNullOrEmpty(tipoCaptura) ||
                                          tipoCaptura == "TODOS" ||
                                          resp.TipoCaptura == tipoCaptura)

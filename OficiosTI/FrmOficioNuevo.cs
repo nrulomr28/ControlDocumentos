@@ -22,9 +22,7 @@ namespace OficiosTI
     {
         private Ticket _ticket;
         private OficiosContext _context;
-        private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA 
-
-       
+        private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA        
 
         // private NumOficio _oficioconse;
         private OficioRespuestaService _service;
@@ -253,7 +251,6 @@ namespace OficiosTI
             try
             {
                 bool esRegistroNuevo = (_oficioActual == null);
-
                 if (esRegistroNuevo)
                 {
                     _oficioActual = new OficioRespuesta();
@@ -334,12 +331,10 @@ namespace OficiosTI
                 if (!string.IsNullOrEmpty(textoCombo) && textoCombo.Contains("-"))
                 {
                     var partes = textoCombo.Split('-', StringSplitOptions.TrimEntries);
-
                     if (partes.Length >= 2)
                     {
                         nombreExtraido = partes[0]; // NOMBRE DEL TITULAR
                         cargoExtraido = partes[1];  // CARGO DEL TITULAR
-
                     }
                 }
 
@@ -357,7 +352,6 @@ namespace OficiosTI
                     DirectorNombre = nombreExtraido,
                     DirectorCargo = cargoExtraido,
                     RespuestaId = OfiF.OficioId,
-
                 };
                 var servicio = new OficioWordInteropService(_context);
                 string ruta = servicio.Generar(model);

@@ -12,7 +12,7 @@ namespace OficiosTI.Data.Entities
     {
         [Key] public int CapturaOficioId { get; set; }
         public string? TipoCaptura { get; set; }
-    //    public int? OficioNoControl { get; set; }
+    //  public int? OficioNoControl { get; set; }
         public int? Anio {  get; set; }
         public DateTime? FechaRecepcion { get; set; }
         public string? TipoDocumento { get; set; }

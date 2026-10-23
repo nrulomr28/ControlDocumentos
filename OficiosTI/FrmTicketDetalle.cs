@@ -85,7 +85,6 @@ namespace OficiosTI
                                 Mensaje = h.HiloTicketMensaje,
                                 Usuario = usr != null ? (usr.Nombre + " " + usr.Paterno + " " + usr.Materno).Trim() : "--"
                             }).ToList();
-
                 dataGridHilo.DataSource = hilo;
                 dataGridHilo.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
@@ -112,7 +111,6 @@ namespace OficiosTI
                                (h.HiloTicketAccion == "CREADO" || h.HiloTicketAccion == "CREADO*"))
                     .Select(h => h.HiloTicketAccion)
                     .FirstOrDefault();
-
                
                 var ticketsRelacionados = (from t in _context.Ticket
                                            join o in _context.Oficinas on t.OficinasId equals o.OficinasId
@@ -120,8 +118,7 @@ namespace OficiosTI
                                            join x in _context.OficioRespuesta on t.TicketId equals x.TicketId into respuestas
                                            from r in respuestas.DefaultIfEmpty()
                                            where t.id_of == _ticket.id_of
-                                                 && t.TicketId != _ticket.TicketId
-                                                 
+                                                 && t.TicketId != _ticket.TicketId                                                 
                                                  && _context.HiloTicket.Any(h => h.TicketId == t.TicketId && h.HiloTicketAccion == origenTicket)
                                            orderby t.TicketId
                                            select new
@@ -297,7 +294,6 @@ namespace OficiosTI
                     .Where(y => y.UsuarioDominio == usuariodominio)
                     .Select(y => y.UsuarioAnterior)
                     .FirstOrDefault();
-
                 var hilo = new HiloTicket
                 {
                     TicketId = _ticket.TicketId,

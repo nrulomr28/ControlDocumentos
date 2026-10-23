@@ -18,8 +18,7 @@ namespace OficiosTI
     public partial class FrmOficioSin : Form
     {
         private OficiosContext _context;
-       
-      
+            
         /*
         public FrmOficioSin(OficiosContext context)
         {         

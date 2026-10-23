@@ -16,9 +16,9 @@ namespace OficiosTI
          // ==========================================
          // CADENA DE CONEXIÓN
          // ==========================================
-         // const string ConnectionString = "Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True";
-            const string ConnectionString = "Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True";
-            var options = new DbContextOptionsBuilder<OficiosContext>()
+       //  const string ConnectionString = "Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True";
+           const string ConnectionString = "Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True";
+           var options = new DbContextOptionsBuilder<OficiosContext>()
                 .UseSqlServer(ConnectionString)
                 .Options;
             using var context = new OficiosContext(options);            
@@ -35,7 +35,6 @@ namespace OficiosTI
                     //  Application.Run(new FrmMenuPrincipal(context, contextoUsuario));
                     //  Application.Run(new FrmCrearTicket(context, contextoUsuario));
                     //  USUARIO GLOBAL  VE LA CAPTURA DE LOS OFICIOS Y EL PANEL DE TICKETS DE TODOS 
-
              if (contextoUsuario.EsGlobal)
              {             
                       Application.Run(new FrmMenuPrincipal(context, contextoUsuario));               
@@ -70,7 +69,6 @@ namespace OficiosTI
                         }
         }
         */
-
 
         /// Validar el usuario para ingresar al sistema 
         private static UsuarioContexto ValidarUsuarioYConstruirPerfil(DbContextOptions<OficiosContext> options)

@@ -202,7 +202,10 @@ namespace OficiosTI
        //   int idOficioAnterior = Ofinum?.OficioId ?? 0;
        //   int idOficioAnterior = Ofinum?.CapturaOficioId ?? 0;          
             int idBuscado = _ticket.id_of ?? 0;        
-            string origenTicket = _context.HiloTicket
+      
+            
+            
+            /*string origenTicket = _context.HiloTicket
                 .Where(x => x.TicketId == _ticket.TicketId)
                 .Select(x => x.HiloTicketAccion)
                 .FirstOrDefault();
@@ -224,8 +227,38 @@ namespace OficiosTI
                             : null)
                 })
                 .FirstOrDefault();
-            string OficioReferencia = resultado?.OficioReferencia;
-            int? idOficioAnterior = resultado?.OficioIdFinal;
+
+            */
+
+          //  int idBuscado = idOficio ?? 0;
+
+            var accion = _context.HiloTicket
+                .Where(x => x.TicketId == _ticket.TicketId)
+                .Select(x => x.HiloTicketAccion)
+                .FirstOrDefault();
+
+            string oficioReferencia = null;
+            int? oficioIdFinal = null;
+
+            if (accion == "CREADO*")
+            {
+                var captura = _context.CapturaOficios.FirstOrDefault(c => c.CapturaOficioId == idBuscado);
+                oficioReferencia = captura?.NumeroOficio;
+                oficioIdFinal = captura?.CapturaOficioId;
+            }
+            else if (accion == "CREADO")
+            {
+                var oficio = _context.Oficio1.FirstOrDefault(o => o.OficioId == idBuscado);
+                oficioReferencia = oficio?.OficioNoOficio;
+                oficioIdFinal = oficio?.OficioId;
+            }
+
+
+
+         //    string OficioReferencia = resultado?.OficioReferencia;
+            int? idOficioAnterior = oficioIdFinal;
+
+
             if (esNuevo)
             {
                     _oficioActual = _service.CrearOficio(
@@ -280,17 +313,15 @@ namespace OficiosTI
             bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
             if (huboCambios)
             {
-                string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
-
-                
+                string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";                
                 var ticketsAsociados = _context.Ticket
                     .Where(t => t.id_of == idOficioAnterior &&
-                                _context.HiloTicket.Any(h => h.TicketId == t.TicketId && h.HiloTicketAccion == origenTicket))
+                                _context.HiloTicket.Any(h => h.TicketId == t.TicketId && h.HiloTicketAccion == accion))
                     .ToList();
 
-           //     var ticketsAsociados = _context.Ticket
-           //     .Where(t => t.id_of == idOficioAnterior)
-           //     .ToList();
+                   //     var ticketsAsociados = _context.Ticket
+                   //     .Where(t => t.id_of == idOficioAnterior)
+                   //     .ToList();
 
                 //  si el ticket dice creado se relaciona en hiloticket tickets que digan creado sino se relaciona a tickets que tenga creado* 
                 foreach (var ticketRelacionado in ticketsAsociados)

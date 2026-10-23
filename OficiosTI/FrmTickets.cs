@@ -43,8 +43,7 @@ namespace OficiosTI
                                    y.Jefe,
                                    y.SuplenteJefe
                                })
-                               .FirstOrDefault();
-       
+                               .FirstOrDefault();       
             bool esJefe = false;
             if (usuarioActual != null)
             {
@@ -313,7 +312,7 @@ namespace OficiosTI
             string status = ComboStatus.SelectedValue?.ToString() ?? "";
             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
             bool esUsuarioGlobal = _service.EsUsuarioGlobal();
-            DateTime fechaLimite = DateTime.Now.AddMonths(-4);
+            DateTime fechaLimite = DateTime.Now.AddMonths(-2);
             string usuarioDominioLogueado = _service.ObtenerDominioYUsuario();
             // var usuarioActual = _context.Usuarios
             //                               .FirstOrDefault(y => y.UsuarioDominio == usuarioDominioLogueado);
@@ -627,6 +626,7 @@ namespace OficiosTI
             var gridItem = (TicketGridModel)DataGridTickets.Rows[e.RowIndex].DataBoundItem as TicketGridModel;
             if (gridItem == null)
                 return;
+           // int ticketId = int.Parse(gridItem.TicketId);
             var ticket = _context.Ticket.Find(gridItem.TicketId);
             if (ticket == null)
             {
@@ -750,7 +750,6 @@ namespace OficiosTI
                     TicketPrioridad = t.TicketPrioridad,
                     TicketFecha = t.TicketFecha,
                     Cat_TicketStatusId = t.Cat_TicketStatusId,
-
                     // PRIMER TABLA DE ESTADOS
                     EstadoTicket = _context.Cat_TicketStatus
                         .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
@@ -882,7 +881,7 @@ namespace OficiosTI
 
                 var oficio = row.Cells["NumeroOficio"].Value;
                 var estado = row.Cells["Cat_TicketStatusId"].Value;
-                var estnom = row.Cells["Estado"].Value;
+             //   var estnom = row.Cells["Estado"].Value;
 
                 if (oficio != null && !string.IsNullOrWhiteSpace(oficio.ToString()))
                 {

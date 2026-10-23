@@ -24,7 +24,6 @@ namespace OficiosTI
             CargarOficinas();
             CargarTiposD();
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
-
             /* if (_service.EsUsuarioGlobal())
                {
                    AsignarF.Enabled = true;
@@ -213,7 +212,6 @@ namespace OficiosTI
             {
                 // Buscamos el registro del oficio que ya pertenece a este ticket
                 var oficioDelTicket = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId);
-
                 if (oficioDelTicket != null)
                 {
                     var RespueDelTicket = _context.OficioRespuesta.FirstOrDefault(x => x.RespuestaId == oficioDelTicket.OficioId);
@@ -289,8 +287,7 @@ namespace OficiosTI
 
 
                
-                int idBuscado = idOficio?? 0;
-
+             /*   int idBuscado = idOficio?? 0;
                 var resultado = _context.HiloTicket
                     .Where(x => x.TicketId == _ticket.TicketId)
                     .Select(x => new
@@ -310,14 +307,40 @@ namespace OficiosTI
                     })
                     .FirstOrDefault();
 
-                // Asignamos las variables verificando que el resultado no sea nulo
-              
+
+                */
+
+                int idBuscado = idOficio ?? 0;
+
+                var accion = _context.HiloTicket
+                    .Where(x => x.TicketId == _ticket.TicketId)
+                    .Select(x => x.HiloTicketAccion)
+                    .FirstOrDefault();
+
+                string oficioReferencia = null;
+                int? oficioIdFinal = null;
+
+                if (accion == "CREADO*")
+                {
+                    var captura = _context.CapturaOficios.FirstOrDefault(c => c.CapturaOficioId == idBuscado);
+                    oficioReferencia = captura?.NumeroOficio;
+                    oficioIdFinal = captura?.CapturaOficioId;
+                }
+                else if (accion == "CREADO")
+                {
+                    var oficio = _context.Oficio1.FirstOrDefault(o => o.OficioId == idBuscado);
+                    oficioReferencia = oficio?.OficioNoOficio;
+                    oficioIdFinal = oficio?.OficioId;
+                }
+
+            
+
 
                 /// TABLA DE CAPTURA DE OFICIOS NUEVA CAPTURAOFICIOS 
-           /*     var registroOficio1 = idOficio.HasValue
-                  ? _context.CapturaOficios.FirstOrDefault(x => x.CapturaOficioId == idOficio.Value)
-                  : null;
-           */
+                /*     var registroOficio1 = idOficio.HasValue
+                       ? _context.CapturaOficios.FirstOrDefault(x => x.CapturaOficioId == idOficio.Value)
+                       : null;
+                */
                 string bis = "";
                 int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);
                 int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
@@ -342,8 +365,8 @@ namespace OficiosTI
                   //  OficioId = registroOficio1?.CapturaOficioId,
 
                     ////  IDS 
-                     OficioReferencia = resultado?.OficioReferencia,
-                     OficioId = resultado?.OficioIdFinal,
+                     OficioReferencia = oficioReferencia,
+                     OficioId = oficioIdFinal,
 
 
 

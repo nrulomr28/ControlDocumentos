@@ -30,8 +30,7 @@ namespace OficiosTI.Data.Entities
         [ForeignKey("id_of")]
         public int? id_of { get; set; }
         public int TicketUUsuario { get; set; }    /// QUIEN TIENE EL TICKET
-
-        public int ?TicketExt {  get; set; }   /// EXTENSION DEL USUARIO 
+        public string ?TicketExt {  get; set; }   /// EXTENSION DEL USUARIO 
     }
 }
 
