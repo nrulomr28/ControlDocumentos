@@ -2,9 +2,13 @@
 using Microsoft.VisualBasic.ApplicationServices;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
+using OficiosTI.Documents;
 using OficiosTI.Services;
+using QuestPDF.Fluent;
 using System;
+
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,7 +20,6 @@ namespace OficiosTI
         private readonly Ticket _ticket;
         private readonly OficiosContext _context;
         private readonly OficioRespuestaService _service;
-
         public FrmTicketDetalle(Ticket ticket, OficiosContext context)
         {
             InitializeComponent();
@@ -35,7 +38,7 @@ namespace OficiosTI
             CargarTicketsR();
         }
 
-        private void CargarDatosTicket()
+        private void CargarDatosTicket()      /// MOSTRAR LOS DATOS DEL TICKET EN PANTALLA 
         {
             lblTicketId.Text = $"Ticket #{_ticket.TicketId}";
             txtPersona.Text = _ticket.TicketPersona;
@@ -45,7 +48,7 @@ namespace OficiosTI
             txtPrioridad.Text = _ticket.TicketPrioridad;
         }
 
-        private void CargarComboAnalista()
+        private void CargarComboAnalista()    /// COMBO PARA ANALISTAS POR OFICINA 
         {
             try
             {
@@ -69,7 +72,7 @@ namespace OficiosTI
             }
         }
 
-        private void CargarHilo()
+        private void CargarHilo()   //// GRID DEL HILO DEL TICKET 
         {
             try
             {
@@ -95,7 +98,7 @@ namespace OficiosTI
         }
 
 
-        private void CargarTicketsR()
+        private void CargarTicketsR()   /// TICKETS RELACIONADOS POR EL NUMERO DE OFICIO CAPTURADO 
         {
             try
             {
@@ -104,7 +107,6 @@ namespace OficiosTI
                     dataGridRelacion.DataSource = null;
                     return;
                 }
-
                 
                 string origenTicket = _context.HiloTicket
                     .Where(h => h.TicketId == _ticket.TicketId &&
@@ -174,27 +176,23 @@ namespace OficiosTI
             }
         }
     */
-        private void btnAsignarTicket_Click(object sender, EventArgs e)
+        private void btnAsignarTicket_Click(object sender, EventArgs e)  /// ASIGNACION DE TICKETS 
         {
             if (_ticket.Cat_TicketStatusId == 3)
             {
                 MessageBox.Show("Este ticket ya se encuentra cerrado. No se puede asignar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             int? idanalista = null;
-
             if (cmbAnalistas.SelectedValue != null && int.TryParse(cmbAnalistas.SelectedValue.ToString(), out int idParsed))
             {
                 idanalista = idParsed;
             }
-
             if (idanalista == null)
             {
                 MessageBox.Show("Por favor, selecciona un analista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             if (string.IsNullOrWhiteSpace(txtInstruccion.Text))
             {
                 MessageBox.Show("Por favor, agregue una indicación.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -208,7 +206,6 @@ namespace OficiosTI
                 HiloTicketMensaje = txtInstruccion.Text.Trim().ToUpper(),
                 UsuarioId = idanalista
             };
-
             try
             {
                 _context.HiloTicket.Add(hilo);
@@ -228,7 +225,7 @@ namespace OficiosTI
             }
         }
 
-       
+
         private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
             try
@@ -238,11 +235,20 @@ namespace OficiosTI
                 {
                     MessageBox.Show("El documento no existe o está vacío.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
+                }               
+                string rutaCarpeta = Path.Combine(Path.GetTempPath(), "DTIOficios");               
+                if (!Directory.Exists(rutaCarpeta))
+                {
+                    Directory.CreateDirectory(rutaCarpeta);
                 }
-
-                string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";
-                string rutaTemporal = System.IO.Path.Combine(System.IO.Path.GetTempPath(), nombreArchivo);
-                System.IO.File.WriteAllBytes(rutaTemporal, archivoBd.ArchivoArchivo);
+                else
+                {
+                   
+                    LimpiarCarpetaTemporal(rutaCarpeta, diasAntiguedad: 1);
+                }
+                string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";        
+                string rutaTemporal = Path.Combine(rutaCarpeta, nombreArchivo);              
+                File.WriteAllBytes(rutaTemporal, archivoBd.ArchivoArchivo);
                 var psi = new System.Diagnostics.ProcessStartInfo
                 {
                     FileName = rutaTemporal,
@@ -256,23 +262,79 @@ namespace OficiosTI
             }
         }
 
+        private void LimpiarCarpetaTemporal(string rutaCarpeta, int diasAntiguedad)
+        {
+            try
+            {
+                var directorio = new DirectoryInfo(rutaCarpeta);
+                if (!directorio.Exists) return;               
+                var fechaLimite = DateTime.Now.AddDays(-diasAntiguedad);
+                foreach (var archivo in directorio.GetFiles())
+                {
+                 
+                    if (archivo.CreationTime < fechaLimite)
+                    {
+                        try
+                        {
+                            archivo.Delete();
+                        }
+                        catch
+                        {
+                            
+                        }
+                    }
+                }
+            }
+            catch
+            {
+              
+            }
+        }
 
-       
-        private void BtnGuardarRespuesta_Click(object sender, EventArgs e)
+
+
+        /*
+                private void BtnGenerarOficio_Click(object sender, EventArgs e)    ///  BOTON PARA VER EL OFICIO  DE INGRESO PDF
+                {
+                    try
+                    {
+                        var archivoBd = _context.Archivo.FirstOrDefault(p => p.OficioId == _ticket.id_of);
+                        if (archivoBd == null || archivoBd.ArchivoArchivo == null || archivoBd.ArchivoArchivo.Length == 0)
+                        {
+                            MessageBox.Show("El documento no existe o está vacío.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";
+                        string rutaTemporal = System.IO.Path.Combine(System.IO.Path.GetTempPath(), nombreArchivo);
+                        System.IO.File.WriteAllBytes(rutaTemporal, archivoBd.ArchivoArchivo);
+                        var psi = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = rutaTemporal,
+                            UseShellExecute = true
+                        };
+                        System.Diagnostics.Process.Start(psi);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ocurrió un error al abrir el PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+        */
+
+        private void BtnGuardarRespuesta_Click(object sender, EventArgs e)    /// SE UTILIZA SOLO UN PROCESO PARA GENERAR LA RESPUESTA DE TICKET CON O SIN OFICIO 
         {
             bool cerrarYsinOficio = chkCerrarTicket.Checked;
             ProcesarRespuesta(cerrarTicket: cerrarYsinOficio, esSinOficio: cerrarYsinOficio);
         }
 
    
-        private void btnGuardaryCerrar_Click(object sender, EventArgs e)
+        private void btnGuardaryCerrar_Click(object sender, EventArgs e)    /// SE PUEDE CERRAR CON OFICIO O SIN OFICIO 
         {
           
             ProcesarRespuesta(cerrarTicket: true, esSinOficio: false);
         }
-
      
-        private void ProcesarRespuesta(bool cerrarTicket, bool esSinOficio)
+        private void ProcesarRespuesta(bool cerrarTicket, bool esSinOficio)   /// SE UTILIZA SOLO UN BOTON PARA GENERAR LA RESPUESTA DE TICKET CON O SIN OFICIO 
         {
             if (_ticket.Cat_TicketStatusId == 3)
             {
@@ -347,6 +409,7 @@ namespace OficiosTI
             }
         }
 
+    
 
         /*  private void BtnGuardarRespuesta_Click(object sender, EventArgs e)
           {

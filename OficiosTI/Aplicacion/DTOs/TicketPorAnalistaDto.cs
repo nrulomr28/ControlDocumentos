@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OficiosTI.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +11,14 @@ namespace OficiosTI.Aplicacion.DTOs
     {
         public int UsuarioId { get; set; }
         public string? Analista { get; set; }
+        public string? Oficina { get; set; }
         public int Total { get; set; }
         public int Urgentes { get; set; }
-        public int ConAdjunto { get; set; }
+        public int Terminados { get; set; }
+
+      //  public List<Ticket> TicketsDelAnalista { get; set; } = new List<Ticket>();
+
+        public int Tickets {  get; set; }
+
     }
 }

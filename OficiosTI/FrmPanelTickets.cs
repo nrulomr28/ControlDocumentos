@@ -34,28 +34,35 @@ namespace OficiosTI
             SigelicXPTheme.ApplyForm(this);
             SigelicXPTheme.ApplyStartButton(btnAdjuntos);
             CargarPendientes();
+            tabControlMain.TabPages.Remove(tabPendientes);    // ocultar los tab 
+            tabControlMain.TabPages.Remove(tabCerrados);      // ocultar los tab
+            tabControlMain.TabPages.Remove(tabTodos);         // ocultar los tab
 
         }
         private void tabControlMain_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Habilitamos los botones por defecto
+            bool permitirAcciones = true;
             switch (tabControlMain.SelectedIndex)
             {
                 case 0:
-                    CargarPendientes();
+                    CargarPorAnalista();
+                    permitirAcciones = false;
                     break;
-
-                case 1:
+         /*     case 1:
                     CargarCerradosSinOficio();
                     break;
-
                 case 2:
-                    CargarPorAnalista();
+                    CargarPendientes();
                     break;
-
-            //  case 3:
-            //     CargarTodos();
-            //     break;
+                case 3:
+                    CargarTodos();
+                    break;
+        */
             }
+            btnAdjuntos.Enabled = permitirAcciones;
+            btnAbrir.Enabled    = permitirAcciones; 
+            btnGenerar.Enabled  = permitirAcciones; 
         }
 
         private void BtnAdjuntos_Click(object sender, EventArgs e)
@@ -80,12 +87,11 @@ namespace OficiosTI
         private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
             try
-            {
-                if (DataGridTickets.CurrentRow == null)
-                    return;
+            {               
+                 if (gridPendientes.CurrentRow == null)
+                   return;
 
-                var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
-
+                var gridItem = (TicketGridModel)gridPendientes.CurrentRow.DataBoundItem;
                 if (gridItem == null)
                     return;
 
@@ -112,11 +118,33 @@ namespace OficiosTI
 
         private Ticket ObtenerTicketSeleccionado()
         {
-            if (DataGridTickets.CurrentRow == null)
+            DataGridView gridActivo = null;           
+            switch (tabControlMain.SelectedIndex)
+            {
+                case 0:
+                    gridActivo = gridPendientes;
+                    break;
+                case 1:
+                    gridActivo = gridCerrados;
+                    break;
+                case 2:                   
+                    gridActivo = gridAnalista;
+                    break;
+                case 3:
+                    gridActivo = gridTodos;
+                    break;
+            }          
+            if (gridActivo == null || gridActivo.CurrentRow == null)
+            {
+                MessageBox.Show("Por favor, selecciona un ticket de la lista.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return null;
-
-            var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
-
+            }         
+            var gridItem = gridActivo.CurrentRow.DataBoundItem as TicketGridModel;           
+            if (gridItem == null)
+            {
+                MessageBox.Show("No se puede abrir un ticket desde esta vista. Selecciona un ticket individual.", "Acción no permitida", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return null;
+            }          
             return _context.Ticket.Find(gridItem.TicketId);
         }
 
@@ -125,15 +153,14 @@ namespace OficiosTI
             int total = tickets.Count;
             int respondidos = tickets.Count(t =>
                 !string.IsNullOrEmpty(t.NumeroOficio));
-
             int pendientes = total - respondidos;
             LabelTotalTickets.Text = $"Tickets derivados: {total}";
-            LabelRespondidos.Text = $"Respondidos: {respondidos}";
-            LabelPendientes.Text = $"Pendientes: {pendientes}";
+            LabelRespondidos.Text  = $"Respondidos: {respondidos}";
+            LabelPendientes.Text   = $"Pendientes: {pendientes}";
         }
 
 
-        private List<TicketGridModel> Mapear(IQueryable<Ticket> query)
+     /* private List<TicketGridModel> Mapear(IQueryable<Ticket> query)
         {
             return query
                 .Select(t => new TicketGridModel
@@ -151,7 +178,7 @@ namespace OficiosTI
                 .OrderByDescending(t => t.TicketFecha)
                 .ToList();
         }
-
+     */
         private void CargarPendientes()
         {
             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
@@ -199,42 +226,46 @@ namespace OficiosTI
         }
 
         private void CargarPorAnalista()
-        {
-            var data = BaseQuery()
-            .Where(t => !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId))
-            .GroupBy(t => new { t.TicketUUsuario })
-            .Select(g => new TicketPorAnalistaDto
-            {
-                UsuarioId = g.Key.TicketUUsuario,
-                //Analista = g.Key.Analista,
-                Total = g.Count(),
-                Urgentes = g.Count(t => t.TicketPrioridad == "Alta")
-            })
-            .OrderByDescending(x => x.Urgentes)
-            .ThenByDescending(x => x.Total)
-            .ToList();
-            gridAnalista.DataSource = data;
-        }
-   
-/*    private void CargarPorAnalista()
-      {
-            var data = BaseQuery()
-                .Where(t => !_context.OficioRespuesta.Any(o => o.TicketId == t.TicketId))
-                .GroupBy(t => t.TicketUUsuario)
+        {       
+            var datosPlanos = BaseQuery()              
+                .Join(
+                    _context.Usuarios,
+                    t => t.TicketUUsuario,
+                    u => u.UsuarioAnterior,
+                    (t, u) => new { Ticket = t, Usuario = u } 
+                )              
+                .Join(
+                    _context.Oficinas,
+                    tu => tu.Ticket.OficinasId,        
+                    ofi => ofi.OficinasId,             
+                    (tu, ofi) => new
+                    {
+                        UsuarioAnterior = tu.Ticket.TicketUUsuario,
+                        AnalistaNombre = tu.Usuario.NombreCompleto,
+                        Prioridad = tu.Ticket.TicketPrioridad,
+                        Status = tu.Ticket.Cat_TicketStatusId,                     
+                        OficinaNombre = ofi.OficinasNombre
+                    }
+                )
+                .ToList();            
+            var data = datosPlanos               
+                .GroupBy(x => new { x.UsuarioAnterior, x.AnalistaNombre, x.OficinaNombre })
                 .Select(g => new TicketPorAnalistaDto
                 {
-                    UsuarioId = g.Key, 
+                    UsuarioId = g.Key.UsuarioAnterior,
+                    Analista = g.Key.AnalistaNombre,                
+                    Oficina = g.Key.OficinaNombre,
                     Total = g.Count(),
-                    Urgentes = g.Count(t => t.TicketPrioridad == "Alta")
+                    Urgentes = g.Count(x => x.Prioridad == "URGENTE"),
+                    Terminados = g.Count(x => x.Status == 3)
                 })
                 .OrderByDescending(x => x.Urgentes)
                 .ThenByDescending(x => x.Total)
                 .ToList();
-
             gridAnalista.DataSource = data;
-       }
+        }
 
-  */
+
         private void CargarCerradosSinOficio()
         {
             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
@@ -262,7 +293,6 @@ namespace OficiosTI
                         .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
                         .Select(o => o.Cat_TicketStatusStatus)
                         .FirstOrDefault(),
-
                     OficinasNombre = _context.Oficinas
                         .Where(o => o.OficinasId == t.OficinasId)
                         .Select(o => o.OficinasNombre)
@@ -277,7 +307,6 @@ namespace OficiosTI
                  .OrderBy(t => string.IsNullOrEmpty(t.NumeroOficio) ? 0 : 1)
                  .ThenByDescending(t => t.TicketFecha)
                 .ToList();
-
             gridCerrados.DataSource = null;
             var bs = new BindingSource { DataSource = tickets };
             gridCerrados.DataSource = bs;
@@ -285,54 +314,60 @@ namespace OficiosTI
 
         private IQueryable<Ticket> BaseQuery()
         {
-            int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());   /// DOMINIO USUARIO
-            string org = _service.ObtenerUnidadOrganizativa();   /// UNIDAD ORGANIZATIVA 
-       //     int idorg = _service.ObtenerUnidadOrgId(org);
+            int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
             var query = _context.Ticket.AsQueryable();
+
             if (_service.EsUsuarioGlobal())
             {
-              return  query = query.Where(t => t.id_of != null && t.Cat_TicketStatusId == 3);
+             
+                return query.Where(t => t.id_of != null && t.Cat_TicketStatusId >= 1);
             }
             else
             {
-              return query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId == 3);
+
+                return query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId >= 1);
             }
-
-        /*    return _context.Ticket
-                .Where(t => t.OficinasId == 3);    //// 1 REDES, 2 CONTROL Y RESGUARDO, DESARRROLLO
-        */
-
         }
-        /*
-             private void CargarTodos()
-             {
-                 var query = BaseQuery();
 
-                 gridTodos.DataSource = Mapear(query);
-             }
+        private void CargarTodos()
+        {           
+            var tickets = QueryTicketsBase()
+                .OrderByDescending(t => t.TicketFecha)
+                .ToList();
+            gridTodos.DataSource = tickets;
+        }
 
-             private IQueryable<TicketGridModel> QueryTicketsBase()
-             {
-                 var fechaLimite = DateTime.Now.AddMonths(-8);
+        private IQueryable<TicketGridModel> QueryTicketsBase()
+        {
+            var fechaLimite = DateTime.Now.AddMonths(-2);
 
-                 return
-                     from t in BaseQuery()
-                     join o in _context.OficioRespuesta
-                         on t.TicketId equals o.TicketId into oficios
-                     from o in oficios.DefaultIfEmpty()
-                     where t.TicketFecha >= fechaLimite
-                     select new TicketGridModel
-                     {
-                         TicketId = t.TicketId,
-                         TicketPersona = t.TicketPersona,
-                         TicketAsunto = t.TicketAsunto,
-                         TicketPrioridad = t.TicketPrioridad,
-                         TicketFecha = t.TicketFecha,
-                         Cat_TicketStatusId = t.Cat_TicketStatusId,
-                         NumeroOficio = o.NumeroOficio
-                     };
-             }
-         */
+            return
+                from t in BaseQuery()                
+                join o in _context.OficioRespuesta
+                    on t.TicketId equals o.TicketId into oficios
+                from o in oficios.DefaultIfEmpty()
+                join s in _context.Cat_TicketStatus
+                    on t.Cat_TicketStatusId equals s.Cat_TicketStatusId into estados
+                from s in estados.DefaultIfEmpty()
+                join ofi in _context.Oficinas
+                    on t.OficinasId equals ofi.OficinasId into oficinas
+                from ofi in oficinas.DefaultIfEmpty()
+                where t.TicketFecha >= fechaLimite
+                select new TicketGridModel
+                {
+                    TicketId = t.TicketId,
+                    TicketPersona = t.TicketPersona,
+                    TicketAsunto = t.TicketAsunto,
+                    TicketPrioridad = t.TicketPrioridad,
+                    TicketFecha = t.TicketFecha,
+                    Cat_TicketStatusId = t.Cat_TicketStatusId,                
+                    NumeroOficio = o != null ? o.NumeroOficio : null,
+                    EstadoTicket = s != null ? s.Cat_TicketStatusStatus : null,
+                    OficinasNombre = ofi != null ? ofi.OficinasNombre : null
+                };
+        }
+
 
     }
 }
+
