@@ -24,7 +24,7 @@ namespace OficiosTI
             _usuarioActual = usuarioActual;
             _service = new OficioRespuestaService(_context);
             this.Text = $"Captura de Oficios - {_usuarioActual.NombreMostrar} ({_usuarioActual.UnidadOrganizativa})";
-           // CATALOGOS 
+            // CATALOGOS 
             CargarEjercicio();
             CargarReqTicket();
             CargarPrioridad();
@@ -64,7 +64,7 @@ namespace OficiosTI
         }
    
   
-    /*    private void CargarTicketsR(int idOficio) ////// TICKETS RELACIONADOS DEL OFICIO 
+    /*  private void CargarTicketsR(int idOficio) ////// TICKETS RELACIONADOS DEL OFICIO 
         {
             try
             {
@@ -99,7 +99,7 @@ namespace OficiosTI
             }
         }
     */
-        private void CargarTicketsR(int idOficio)
+        private void CargarTicketsR(int idOficio)       /// TICKETS RELACIONADOS DEL OFICIO 
         {
             try
             {
@@ -134,8 +134,7 @@ namespace OficiosTI
         }
 
 
-
-        // CARGAR DATOS DEL OFICIO POR ID 
+        // CARGAR DATOS DEL OFICIO POR ID  PARA EDICION 
         private void CargarDatosDelOficio(int id)
         {
             txtSeguimiento.Visible = true;
@@ -230,8 +229,7 @@ namespace OficiosTI
                 this.Text = $"Detalle de Oficio - Número: {oficio.NumeroOficio}";
             }
         }
-
-       
+               
         private void AjustarTamanioPorTipo(string tipoCaptura)
         {
             switch (tipoCaptura)
@@ -343,7 +341,7 @@ namespace OficiosTI
              // CARGAR DATOS DEL OFICIO POR ID 
         */
         /// BOTON PARA VER EL ARCHIVO CARGADO 
-        private void btnVerArchivo_Click(object sender, EventArgs e)
+        private void btnVerArchivo_Click(object sender, EventArgs e)    /// VER EL ARCHIVO PDF DE INGRESO 
         {
             if (_idOficioActual.HasValue)
             {
@@ -427,12 +425,12 @@ namespace OficiosTI
             CmbRemitente.AutoCompleteMode = AutoCompleteMode.None;
             CmbRemitente.TextUpdate -= CmbRemitente_TextUpdate;
             CmbRemitente.TextUpdate += CmbRemitente_TextUpdate;
-            CmbRemitente.KeyPress += CmbRemitente_KeyPress;
+            CmbRemitente.KeyPress   += CmbRemitente_KeyPress;
             CmbRemitente.Validating -= CmbRemitente_Validating;
             CmbRemitente.Validating += CmbRemitente_Validating;
         }
 
-        private void CmbRemitente_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void CmbRemitente_Validating(object sender, System.ComponentModel.CancelEventArgs e)   /// VALIDACION DEL COMBO DE REMITENTE SE ENCUENTRE EN BD 
         {
             string textoIngresado = CmbRemitente.Text.Trim();
 
@@ -454,7 +452,7 @@ namespace OficiosTI
                 CmbRemitente.SelectedIndex = -1;
             }
         }
-        private void CmbRemitente_KeyPress(object sender, KeyPressEventArgs e)
+        private void CmbRemitente_KeyPress(object sender, KeyPressEventArgs e)   /// CAMBIAR DE MINUSCULAS A MAYUSCULAS 
         {
             e.KeyChar = char.ToUpper(e.KeyChar);
         }
@@ -512,7 +510,7 @@ namespace OficiosTI
             cmbCargoRemitente.AutoCompleteMode = AutoCompleteMode.None;
             cmbCargoRemitente.TextUpdate -= cmbCargoRemitente_TextUpdate;
             cmbCargoRemitente.TextUpdate += cmbCargoRemitente_TextUpdate;
-            cmbCargoRemitente.KeyPress += cmbCargoRemitente_KeyPress;
+            cmbCargoRemitente.KeyPress   += cmbCargoRemitente_KeyPress;
             cmbCargoRemitente.Validating -= cmbCargoRemitente_Validating;
             cmbCargoRemitente.Validating += cmbCargoRemitente_Validating;
         }
@@ -591,7 +589,8 @@ namespace OficiosTI
 
 
         // COMBO DESTINATARIOS 
-        private List<Destinatario> _todosLosDestinatarios;
+        private List<Destinatario> _todosLosDestinatarios; 
+     
         private void CargarDestinatarios()
         {
             _todosLosDestinatarios = _context.Destinatario.ToList();
@@ -601,11 +600,9 @@ namespace OficiosTI
             CmbDestinatario.SelectedIndex = -1;
             CmbDestinatario.DropDownStyle = ComboBoxStyle.DropDown;
             CmbDestinatario.AutoCompleteMode = AutoCompleteMode.None;
-
             CmbDestinatario.KeyPress   += CmbDestinatario_KeyPress;
             CmbDestinatario.TextUpdate -= CmbDestinatario_TextUpdate;
             CmbDestinatario.TextUpdate += CmbDestinatario_TextUpdate;
-
             CmbDestinatario.Validating -= CmbDestinatario_Validating;
             CmbDestinatario.Validating += CmbDestinatario_Validating;
         }
@@ -633,7 +630,6 @@ namespace OficiosTI
                                 MessageBoxIcon.Warning);
 
                 // e.Cancel = true; 
-
 
                 this.BeginInvoke(new Action(() =>
                 {
@@ -682,21 +678,18 @@ namespace OficiosTI
 
         // COMBO CARGOS DESTINATARIOS 
         private void CargoDestinatario()
-        {
-            // Usamos .ToList() para que no se vincule con el combo de Remitente
+        {     
             cmbCargoDestinatario.DataSource = _listaDependencias.ToList();
             cmbCargoDestinatario.DisplayMember = "DependenciaNombre";
             cmbCargoDestinatario.ValueMember = "DependenciaId";
             cmbCargoDestinatario.SelectedIndex = -1;
-
             cmbCargoDestinatario.DropDownStyle = ComboBoxStyle.DropDown;
             cmbCargoDestinatario.AutoCompleteMode = AutoCompleteMode.None;
-
-            // Suscripción segura
+       
             cmbCargoDestinatario.TextUpdate -= cmbCargoDestinatario_TextUpdate;
             cmbCargoDestinatario.TextUpdate += cmbCargoDestinatario_TextUpdate;
-            cmbCargoDestinatario.KeyPress -= cmbCargoDestinatario_KeyPress;
-            cmbCargoDestinatario.KeyPress += cmbCargoDestinatario_KeyPress;
+            cmbCargoDestinatario.KeyPress   -= cmbCargoDestinatario_KeyPress;
+            cmbCargoDestinatario.KeyPress   += cmbCargoDestinatario_KeyPress;
             cmbCargoDestinatario.Validating -= cmbCargoDestinatario_Validating;
             cmbCargoDestinatario.Validating += cmbCargoDestinatario_Validating;
         }
@@ -1165,8 +1158,7 @@ namespace OficiosTI
             /// Validacion de oficios 
             if (CmbTipo.Text.Trim().ToUpper() == "RECIBIDO")
             {
-                string numOficio = TxtNumOficio.Text.Trim().ToUpper();
-               
+                string numOficio = TxtNumOficio.Text.Trim().ToUpper();               
                 if (string.IsNullOrWhiteSpace(numOficio) || numOficio.Contains("[") || numOficio.Contains("]") || numOficio.Contains("*") 
                                                          || numOficio.Contains("Ñ") || numOficio.Contains("´") || numOficio.Any(char.IsWhiteSpace))
                 {
@@ -1522,7 +1514,6 @@ namespace OficiosTI
                 }
             }
         }
-
 
         // BORRAR EL ARCHIVO PDF 
         private void btnQuitarAdjunto_Click(object sender, EventArgs e)

@@ -161,7 +161,7 @@ namespace OficiosTI
                                 id_of = this.IdOficioVinculado,
                                 TicketUUsuario = idJefeOficina,   /// se asigna al jefe 
                                 TicketExt = txtExtension.Text
-                              //  TicketExt = int.Parse(txtExtension.Text),
+                              //TicketExt = int.Parse(txtExtension.Text),
                             };
                             _context.Ticket.Add(nuevoticket);
                             _context.SaveChanges();                                                

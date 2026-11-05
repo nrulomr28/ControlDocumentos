@@ -29,7 +29,6 @@ namespace OficiosTI
                    AsignarF.Enabled = true;
                }
             */
-
             if (_ticket != null)
             {
                 CargarDatosTicket();
@@ -54,7 +53,6 @@ namespace OficiosTI
                 txtNumOf.ReadOnly = false;
                 txtNumOf.Clear();
             }
-
         }
 
         private void CargarOficinas()
@@ -70,7 +68,6 @@ namespace OficiosTI
                 var organizacion = _service.ObtenerUnidadOrganizativa();
                 query = query.Where(x => x.UnidadOrganizativa == organizacion);
             }
-
             var listaOficinas = query.Select(x => new
             {
                 OficinasId = x.OficinasId,
@@ -80,7 +77,7 @@ namespace OficiosTI
             cmbOficinas.DisplayMember = "OficinasNombre";
             cmbOficinas.ValueMember = "OficinasId";
             cmbOficinas.SelectedIndex = -1;
-            // cmbOficinas.Enabled = _service.EsUsuarioGlobal();
+         // cmbOficinas.Enabled = _service.EsUsuarioGlobal();
         }
 
         private void CargarTiposD()
@@ -100,7 +97,6 @@ namespace OficiosTI
         private void CargarDatosTicket()
         {
             TicketTitulo.Text = $"Ticket #{_ticket.TicketId}";
-
         }
 
         private void txtNumOf_KeyPress(object sender, KeyPressEventArgs e)
@@ -110,6 +106,8 @@ namespace OficiosTI
                 e.Handled = true;
             }
         }
+
+
 
         private void AsignarF_Click(object sender, EventArgs e)
         {
@@ -212,6 +210,7 @@ namespace OficiosTI
             {
                 // Buscamos el registro del oficio que ya pertenece a este ticket
                 var oficioDelTicket = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId);
+
                 if (oficioDelTicket != null)
                 {
                     var RespueDelTicket = _context.OficioRespuesta.FirstOrDefault(x => x.RespuestaId == oficioDelTicket.OficioId);
@@ -249,98 +248,9 @@ namespace OficiosTI
             try
             {
                 int? idOficio = _ticket?.id_of;
-
-          /*      var origenoficio = _context.HiloTicket.Any(x => x.TicketId == _ticket.TicketId);  /// VERIFICAR DE DONDE VIENE EL TICKET CAPOFICIOS/OFICIO1
-
-                if (origenoficio.HiloTicketAccion)
-                if  HiloTicketAccion == "CREADO*"  /// TABLA CAPTURAOFICIOS 
-                    {
-                   var registroOficio1 = idOficio.HasValue
-                  ? _context.CapturaOficios.FirstOrDefault(x => x.CapturaOficioId == idOficio.Value)
-                  : null;
-                        OficioReferencia = $"{registroOficio1?.NumeroOficio}",
-                                OficioId = registroOficio1?.CapturaOficioId,
-
-                    }
-
-                if  HiloTicketAccion== "CREADO"   ///TABLA OFICIOS1
-                   {
-
-                */
-                    /*  var registroOficio1 = idOficio.HasValue
-                              ? _context.Oficio1.FirstOrDefault(x => x.OficioId == idOficio.Value)
-                              : null;
-                       */
-                    // OficioReferencia = $"{registroOficio1?.OficioNoOficio}",  /// TABLA DE OFICIO1
-
-                    //  OficioId = registroOficio1?.OficioId,                      /// TABA DE OFICIO1
-
-       //         }
-
-
-                /// hace referencia a la tabla de oficio1 donde se capturan los OFICIOS DE DOCUMENTACION 
-
-                /*  var registroOficio1 = idOficio.HasValue
-                       ? _context.Oficio1.FirstOrDefault(x => x.OficioId == idOficio.Value)
-                       : null;
-                */
-
-
-               
-             /*   int idBuscado = idOficio?? 0;
-                var resultado = _context.HiloTicket
-                    .Where(x => x.TicketId == _ticket.TicketId)
-                    .Select(x => new
-                    {
-                        OficioReferencia = x.HiloTicketAccion == "CREADO*"
-                            ? _context.CapturaOficios.Where(c => c.CapturaOficioId == idBuscado).Select(c => c.NumeroOficio).FirstOrDefault()
-                            : (x.HiloTicketAccion == "CREADO"
-                                ? _context.Oficio1.Where(o => o.OficioId == idBuscado).Select(o => o.OficioNoOficio).FirstOrDefault()
-                                : null),
-
-                       
-                        OficioIdFinal = x.HiloTicketAccion == "CREADO*"
-                            ? _context.CapturaOficios.Where(c => c.CapturaOficioId == idBuscado).Select(c => (int?)c.CapturaOficioId).FirstOrDefault()
-                            : (x.HiloTicketAccion == "CREADO"
-                                ? _context.Oficio1.Where(o => o.OficioId == idBuscado).Select(o => (int?)o.OficioId).FirstOrDefault()
-                                : null)
-                    })
-                    .FirstOrDefault();
-
-
-                */
-
-                int idBuscado = idOficio ?? 0;
-
-                var accion = _context.HiloTicket
-                    .Where(x => x.TicketId == _ticket.TicketId)
-                    .Select(x => x.HiloTicketAccion)
-                    .FirstOrDefault();
-
-                string oficioReferencia = null;
-                int? oficioIdFinal = null;
-
-                if (accion == "CREADO*")
-                {
-                    var captura = _context.CapturaOficios.FirstOrDefault(c => c.CapturaOficioId == idBuscado);
-                    oficioReferencia = captura?.NumeroOficio;
-                    oficioIdFinal = captura?.CapturaOficioId;
-                }
-                else if (accion == "CREADO")
-                {
-                    var oficio = _context.Oficio1.FirstOrDefault(o => o.OficioId == idBuscado);
-                    oficioReferencia = oficio?.OficioNoOficio;
-                    oficioIdFinal = oficio?.OficioId;
-                }
-
-            
-
-
-                /// TABLA DE CAPTURA DE OFICIOS NUEVA CAPTURAOFICIOS 
-                /*     var registroOficio1 = idOficio.HasValue
-                       ? _context.CapturaOficios.FirstOrDefault(x => x.CapturaOficioId == idOficio.Value)
-                       : null;
-                */
+                var registroOficio1 = idOficio.HasValue
+                    ? _context.Oficio1.FirstOrDefault(x => x.OficioId == idOficio.Value)
+                    : null;
                 string bis = "";
                 int oficinasId = Convert.ToInt32(cmbOficinas.SelectedValue);
                 int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
@@ -358,26 +268,15 @@ namespace OficiosTI
                     FechaOficio = DateTime.Now,
                     FechaCaptura = DateTime.Now,
                     Anio = (short)anioActual,
-                    // OficioReferencia = $"{registroOficio1?.OficioNoOficio}",  /// TABLA DE OFICIO1
-               //     OficioReferencia = $"{registroOficio1?.NumeroOficio}",
+                    OficioReferencia = $"{registroOficio1?.OficioNoOficio}",
                     FirmanteId = 0,
-                  //  OficioId = registroOficio1?.OficioId,                      /// TABA DE OFICIO1
-                  //  OficioId = registroOficio1?.CapturaOficioId,
-
-                    ////  IDS 
-                     OficioReferencia = oficioReferencia,
-                     OficioId = oficioIdFinal,
-
-
-
+                    OficioId = registroOficio1?.OficioId,
                     RespuestaId = nuevoNumeroCreado.OficioId,
                 };
                 _context.OficioRespuesta.Add(registroRespuesta);
                 _context.SaveChanges();
                 MessageBox.Show("Guardado con éxito.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Close();
-
-
             }
             catch (Exception ex)
             {
@@ -391,6 +290,14 @@ namespace OficiosTI
                                 "Error Detallado", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
+
+
+
+
+
+    
 
         
     }

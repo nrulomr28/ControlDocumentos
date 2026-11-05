@@ -24,7 +24,6 @@ namespace OficiosTI
         public FrmOficioRespuesta(Ticket ticket, OficiosContext context)
         {
             InitializeComponent();
-
             _ticket = ticket;
             _context = context;
             _service = new OficioRespuestaService(_context);
@@ -57,14 +56,12 @@ namespace OficiosTI
             {
                 comboBox1.SelectedIndex = -1;
             }
-
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
 
         private void CargarDatosTicket()
         {
             lbTicket.Text = $"Ticket #{_ticket.TicketId}";
-
         }
 
         private string ObtenerCopiasDefault()
@@ -72,7 +69,7 @@ namespace OficiosTI
             return "C.C.P. Lic. Andrés Augusto Rosaldo García. - Oficial Mayor de la SSP. - Para su superior conocimiento. – Presente.";
         }
 
-        private void BtnPreview_Click(object sender, EventArgs e)
+        private void BtnPreview_Click(object sender, EventArgs e)    // VISTA PREVIA DEL OFICIO DE RESPUESTA 
         {
             if (!ValidacionesPreview())
             {
@@ -106,14 +103,14 @@ namespace OficiosTI
                     Cuerpo = txtRespuesta.Text,
                     Copias = txtCopias.Text,
                //// OBTENER LA FECHA DEL REGISTRO EN TABLA 
-                  //Fecha = DateTime.Now,                   
+               //   Fecha = DateTime.Now,                   
                     Fecha = OfiF.FechaCaptura,
                     DirectorNombre = nombreExtraido,
                     DirectorCargo = cargoExtraido,
                     RespuestaId= OfiF.RespuestaId,
                 };
-                var servicio = new OficioWordInteropService(_context);
-             // var servicio = new OficioWordInteropService();
+                   var servicio = new OficioWordInteropService(_context);
+                // var servicio = new OficioWordInteropService();                
                 string ruta = servicio.Generar(model);
                 Process.Start(new ProcessStartInfo
                 {
@@ -137,8 +134,7 @@ namespace OficiosTI
             GuardarOficio();
         }
 
-
-        private bool ValidacionesPreview()
+        private bool ValidacionesPreview()  /// VALIDACIONES DE VISTA PREVIA 
         {
             if (string.IsNullOrWhiteSpace(txtNumeroOficio.Text))   ///NUMERO DE OFICIO 
             {
@@ -157,6 +153,9 @@ namespace OficiosTI
             }
             return true;
         }
+
+
+
 
         private void GuardarOficio()
         {
@@ -177,7 +176,6 @@ namespace OficiosTI
                 MessageBox.Show("Ese número de oficio ya existe. Por favor, asigne otro folio.", "Folio Duplicado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             OficioRespuesta snapshotAnterior = null;
             if (!esNuevo)
             {
@@ -195,70 +193,9 @@ namespace OficiosTI
             }
             int? firmanteSeleccionado = comboBox1.SelectedValue as int?;
             /// OBTENER EL ID DEL OFICIO DE REFERENCIA
-            /// 
-            /// CAMBIAR EL SENTIDO DEL OFICIO A CAPTURAOFICIOS O COMBINARLOS ???
-       //   var Ofinum = _context.Oficio1.FirstOrDefault(y => y.OficioId == _ticket.id_of);
-      //    var Ofinum = _context.CapturaOficios.FirstOrDefault(y => y.CapturaOficioId == _ticket.id_of);
-       //   int idOficioAnterior = Ofinum?.OficioId ?? 0;
-       //   int idOficioAnterior = Ofinum?.CapturaOficioId ?? 0;          
-            int idBuscado = _ticket.id_of ?? 0;        
-      
-            
-            
-            /*string origenTicket = _context.HiloTicket
-                .Where(x => x.TicketId == _ticket.TicketId)
-                .Select(x => x.HiloTicketAccion)
-                .FirstOrDefault();
-
-            var resultado = _context.HiloTicket
-                .Where(x => x.TicketId == _ticket.TicketId)
-                .Select(x => new
-                {                  /// CREADO* SON LOS TICKETS DESDE ESCRITORIO Y OFICIOS NUEVOS  CAPTURAOFICIOS
-                                   /// CREADO  SON LOS TICKETS DESDE WEB Y CON OFICIO1 
-                    OficioReferencia = x.HiloTicketAccion == "CREADO*"
-                        ? _context.CapturaOficios.Where(c => c.CapturaOficioId == idBuscado).Select(c => c.NumeroOficio).FirstOrDefault()
-                        : (x.HiloTicketAccion == "CREADO"
-                            ? _context.Oficio1.Where(o => o.OficioId == idBuscado).Select(o => o.OficioNoOficio).FirstOrDefault()
-                            : null),                   
-                    OficioIdFinal = x.HiloTicketAccion == "CREADO*"
-                        ? _context.CapturaOficios.Where(c => c.CapturaOficioId == idBuscado).Select(c => (int?)c.CapturaOficioId).FirstOrDefault()
-                        : (x.HiloTicketAccion == "CREADO"
-                            ? _context.Oficio1.Where(o => o.OficioId == idBuscado).Select(o => (int?)o.OficioId).FirstOrDefault()
-                            : null)
-                })
-                .FirstOrDefault();
-
-            */
-
-          //  int idBuscado = idOficio ?? 0;
-
-            var accion = _context.HiloTicket
-                .Where(x => x.TicketId == _ticket.TicketId)
-                .Select(x => x.HiloTicketAccion)
-                .FirstOrDefault();
-
-            string oficioReferencia = null;
-            int? oficioIdFinal = null;
-
-            if (accion == "CREADO*")
-            {
-                var captura = _context.CapturaOficios.FirstOrDefault(c => c.CapturaOficioId == idBuscado);
-                oficioReferencia = captura?.NumeroOficio;
-                oficioIdFinal = captura?.CapturaOficioId;
-            }
-            else if (accion == "CREADO")
-            {
-                var oficio = _context.Oficio1.FirstOrDefault(o => o.OficioId == idBuscado);
-                oficioReferencia = oficio?.OficioNoOficio;
-                oficioIdFinal = oficio?.OficioId;
-            }
-
-
-
-         //    string OficioReferencia = resultado?.OficioReferencia;
-            int? idOficioAnterior = oficioIdFinal;
-
-
+            ///           
+            var Ofinum = _context.Oficio1.FirstOrDefault(y => y.OficioId == _ticket.id_of);
+            int idOficioAnterior = Ofinum?.OficioId ?? 0;
             if (esNuevo)
             {
                     _oficioActual = _service.CrearOficio(
@@ -271,7 +208,7 @@ namespace OficiosTI
                     txtRespuesta.Text,
                     txtCopias.Text,
                     firmanteSeleccionado,
-                    idOficioAnterior                   
+                    idOficioAnterior
                 );
             }
             else
@@ -310,20 +247,22 @@ namespace OficiosTI
            }
            */
             //  PROCESO ANTERIOR PARA MODIFICAR TICKETS SIN ALTERAR A LOS DEMAS .....
+
             bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
             if (huboCambios)
             {
-                string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";                
-                var ticketsAsociados = _context.Ticket
-                    .Where(t => t.id_of == idOficioAnterior &&
-                                _context.HiloTicket.Any(h => h.TicketId == t.TicketId && h.HiloTicketAccion == accion))
-                    .ToList();
-
-                   //     var ticketsAsociados = _context.Ticket
-                   //     .Where(t => t.id_of == idOficioAnterior)
-                   //     .ToList();
-
-                //  si el ticket dice creado se relaciona en hiloticket tickets que digan creado sino se relaciona a tickets que tenga creado* 
+                string descripcion = $"{txtNumeroOficio.Text} emitido como respuesta al asunto: {txtAsunto.Text}";
+                var ticketsAsociados = new List<Ticket>();
+                if (idOficioAnterior > 0)
+                {
+                    ticketsAsociados = _context.Ticket
+                        .Where(t => t.id_of == idOficioAnterior)
+                        .ToList();
+                }
+                if (!ticketsAsociados.Any(t => t.TicketId == _ticket.TicketId))
+                {
+                    ticketsAsociados.Add(_ticket);
+                }             
                 foreach (var ticketRelacionado in ticketsAsociados)
                 {
                     if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
@@ -333,22 +272,20 @@ namespace OficiosTI
                     }
                     // ticketRelacionado.Cat_TicketStatusId = 3;    //// SI SE QUIEREN CERRAR TODOS 
                 }
-                /*
-                 foreach (var ticketRelacionado in ticketsAsociados)
-                 {
+                /*  foreach (var ticketRelacionado in ticketsAsociados)
+                    {
                         if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
                         {
                             _service.RegistrarHiloOficio(ticketRelacionado.TicketId, descripcion);  
                         }
                         // Cambiamos el estatus a "Cerrado" (3) para cada ticket   //// PARA CAMBIAR EL ESTADO EN CERRADO A TODOS 
                         //  ticketRelacionado.Cat_TicketStatusId = 3;
-                 }
+                    }
                 */
                 _ticket.Cat_TicketStatusId = 3;
                 _service.ActualizarOficio(_oficioActual);
                 _context.SaveChanges();
-                MessageBox.Show($"Oficio generado y ticket cerrado correctamente, se guardó la informacion en {ticketsAsociados.Count} tickets",
-                                 "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Oficio generado y ticket cerrado correctamente, se guardó la informacion en {ticketsAsociados.Count} tickets", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Close();
                 return;
             }
@@ -356,6 +293,15 @@ namespace OficiosTI
             Close();
         }
 
+
+
+
+
+
+
+
+
+       
 
 
         /*
@@ -674,7 +620,7 @@ namespace OficiosTI
             Close();
         }
         */
-        private bool HayCambios(OficioRespuesta anterior, OficioRespuesta actual)
+        private bool HayCambios(OficioRespuesta anterior, OficioRespuesta actual)    //// VERIFICAR SI HAY CAMBIOS EN LA RESPUESTA 
         {
             if (anterior == null) return true;
             return

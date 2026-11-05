@@ -17,8 +17,7 @@ namespace OficiosTI
 {
     public partial class FrmOficioSin : Form
     {
-        private OficiosContext _context;
-            
+        private OficiosContext _context;            
         /*
         public FrmOficioSin(OficiosContext context)
         {         
@@ -44,7 +43,6 @@ namespace OficiosTI
         private void InicializarGrid(int idOficinaDeseada)
         {
             dataGridOficios.AutoGenerateColumns = true;
-
             if (_context != null)
             {
                 var historialOficios = (from resp in _context.OficioRespuesta
@@ -64,14 +62,11 @@ namespace OficiosTI
                                             Fecha = resp.FechaOficio,
                                             Numticket = resp.TicketId
                                         }).ToList();
-
-                 dataGridOficios.DataSource = historialOficios;
-
+                dataGridOficios.DataSource = historialOficios;
                 if (dataGridOficios.Columns.Contains("OficioRespuestaId"))
                 {
                     dataGridOficios.Columns["OficioRespuestaId"].Visible = false;
                 }
-
               //  ConfigurarGrid();
             }
         }
@@ -79,7 +74,6 @@ namespace OficiosTI
     /*  private void btnCrearOficio_Click(object sender, EventArgs e)
         {
             FrmOficioNuevo frmNuevo = new FrmOficioNuevo(_context, null);
-
             if (frmNuevo.ShowDialog() == DialogResult.OK)
             {
                 InicializarGrid(oficina);

@@ -18,7 +18,6 @@ namespace OficiosTI
     {
         private readonly int _ticketId;
         private readonly OficiosContext _context;
-
         public FrmAdjuntos(int ticketId, OficiosContext context)
         {
             InitializeComponent();
@@ -71,19 +70,15 @@ namespace OficiosTI
                 })
                 .OrderByDescending(x => x.FechaCarga)
                 .ToList();
-
             dataGridArchivos.DataSource = lista;
         }
 
         private void BtnSubir_Click(object sender, EventArgs e)
         {
             var ofd = new OpenFileDialog();
-
             if (ofd.ShowDialog() != DialogResult.OK)
                 return;
-
             byte[] bytes = File.ReadAllBytes(ofd.FileName);
-
             var archivo = new TicketArchivo
             {
                 TicketId = _ticketId,
@@ -95,7 +90,6 @@ namespace OficiosTI
             };
             _context.TicketArchivo.Add(archivo);
             _context.SaveChanges();
-
             CargarArchivos();
         }
 
@@ -112,9 +106,7 @@ namespace OficiosTI
                 return;
 
             string tempPath = Path.Combine(Path.GetTempPath(), archivo.NombreArchivo);
-
             File.WriteAllBytes(tempPath, archivo.Archivo);
-
             Process.Start(new ProcessStartInfo
             {
                 FileName = tempPath,
@@ -126,29 +118,21 @@ namespace OficiosTI
         {
             if (dataGridArchivos.CurrentRow == null)
                 return;
-
             int id = (int)dataGridArchivos.CurrentRow.Cells["TicketArchivoId"].Value;
-
             var archivo = _context.TicketArchivo.Find(id);
-
             if (archivo == null)
                 return;
-
             var r = MessageBox.Show("¿Eliminar archivo?", "Confirmar", MessageBoxButtons.YesNo);
-
             if (r == DialogResult.No)
                 return;
-
             _context.TicketArchivo.Remove(archivo);
             _context.SaveChanges();
-
             CargarArchivos();
         }
 
         private string ObtenerMime(string file)
         {
             string ext = Path.GetExtension(file).ToLower();
-
             return ext switch
             {
                 ".pdf" =>  "application/pdf",

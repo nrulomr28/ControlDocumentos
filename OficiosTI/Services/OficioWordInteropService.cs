@@ -29,7 +29,7 @@ namespace OficiosTI.Services
                  //   $"oficio_.docx");
                   //  $"oficio_{model.NumeroOficio}.docx");
 
-          $"oficio_{Guid.NewGuid()}.docx");
+            $"oficio_{Guid.NewGuid()}.docx");
             WordInterop.Application wordApp = null; 
             WordInterop.Document doc = null;
 
@@ -50,7 +50,7 @@ namespace OficiosTI.Services
                 // =========================
 
                string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "logo_ssp.png");
-             //string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
+           //  string headerPath = Path.Combine(AppContext.BaseDirectory, "Assets", "header_oficios.png");
                string absoluteHeaderPath = Path.GetFullPath(headerPath);
                 // Acceder directamente al rango del encabezado de la primera sección y asignarle el texto               
                if (File.Exists(absoluteHeaderPath))
@@ -178,10 +178,8 @@ namespace OficiosTI.Services
                 }
              // sel.TypeText(model.CargoDestinatario);
                 sel.TypeParagraph();
-
                 sel.TypeText("P R E S E N T E");
                 sel.TypeParagraph();
-
                 sel.TypeParagraph();
 
                 // =========================

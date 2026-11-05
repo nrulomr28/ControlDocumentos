@@ -10,7 +10,6 @@ namespace OficiosTI
     {
         private readonly OficiosContext _context;
         private readonly UsuarioContexto _usuarioActual;
-
         public FrmMenuPrincipal(OficiosContext context, UsuarioContexto usuarioActual)
         {
             InitializeComponent();
@@ -104,9 +103,9 @@ namespace OficiosTI
         {
             var listaEstado = new[]
                 {
-                new { Id = -1, Nombre = "TODOS" },
-                new { Id =  0, Nombre = "ABIERTO" },
-                new { Id =  1, Nombre = "CERRADO" },
+                new { Id = -1, Nombre = "TODOS"      },
+                new { Id =  0, Nombre = "ABIERTO"    },
+                new { Id =  1, Nombre = "CERRADO"    },
                 new { Id =  2, Nombre = "EN PROCESO" }
                 }.ToList();
             cmbEstado.DataSource = listaEstado;
@@ -119,9 +118,9 @@ namespace OficiosTI
         {
             var listaCaptura = new[]
             {
-            new { Id = -1, Nombre = "TODOS" },
+            new { Id = -1, Nombre = "TODOS"    },
             new { Id =  0, Nombre = "RECIBIDO" },
-            new { Id =  1, Nombre = "ENVIADO" }
+            new { Id =  1, Nombre = "ENVIADO"  }
             }.ToList();
                 cmbTipoCaptura.DataSource = listaCaptura;
                 cmbTipoCaptura.DisplayMember = "Nombre";
@@ -437,7 +436,6 @@ namespace OficiosTI
         {
 
             Font boldFont = new Font(DataGridOficios.Font, FontStyle.Bold);
-
             foreach (DataGridViewRow row in DataGridOficios.Rows)
             {
                 if (row.IsNewRow) continue;
@@ -474,7 +472,6 @@ namespace OficiosTI
         {
             try
             {
-
                 if (e.RowIndex >= 0)
                 {
                     var valorCelda = DataGridOficios.Rows[e.RowIndex].Cells["CapOficio"].Value;
@@ -512,7 +509,6 @@ namespace OficiosTI
             string texto = txtBuscar.Text.Trim();
             string estadoSeleccionado = cmbEstado.Text.Trim();
             string tipoCaptura = cmbTipoCaptura.Text.Trim();
-
             if (_context != null)
             {
                 var consultaBD = (from resp in _context.CapturaOficios

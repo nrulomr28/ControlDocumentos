@@ -7,16 +7,16 @@ using System.Windows.Forms;
 namespace OficiosTI
 {
     internal static class Program
-    {
+    { 
         [STAThread]
         static void Main()
         {
             ApplicationConfiguration.Initialize();
 
-         // ==========================================
-         // CADENA DE CONEXIÓN
-         // ==========================================
-       //  const string ConnectionString = "Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True";
+        // ==========================================
+        // CADENA DE CONEXIÓN
+        // ==========================================
+   //      const string ConnectionString = "Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True";
            const string ConnectionString = "Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True";
            var options = new DbContextOptionsBuilder<OficiosContext>()
                 .UseSqlServer(ConnectionString)
@@ -37,15 +37,12 @@ namespace OficiosTI
                     //  USUARIO GLOBAL  VE LA CAPTURA DE LOS OFICIOS Y EL PANEL DE TICKETS DE TODOS 
              if (contextoUsuario.EsGlobal)
              {             
-                      Application.Run(new FrmMenuPrincipal(context, contextoUsuario));               
+                Application.Run(new FrmMenuPrincipal(context, contextoUsuario));               
              }
              else
-             {
-                      // Usuario NORMAL SOLO VE SUS TICKETS
-                      Application.Run(new FrmTickets(context));
-             }
-      
-
+             {   // Usuario NORMAL SOLO VE SUS TICKETS
+                Application.Run(new FrmTickets(context));
+             }      
         }
 
        

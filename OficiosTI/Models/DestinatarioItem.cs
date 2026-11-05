@@ -10,7 +10,6 @@ namespace OficiosTI.Models
     {
         public string Nombre { get; set; }
         public string Cargo { get; set; }
-
         public override string ToString()
         {
             return Nombre;

@@ -1015,8 +1015,8 @@ namespace OficiosTI
 
         private void BtnAbrirTicket_Click_1(object sender, EventArgs e)
         {
-          //  var formOficioSin = new FrmPanelTickets(_context);
-          //  formOficioSin.ShowDialog();
+            var formOficioSin = new FrmPanelTickets(_context);
+            formOficioSin.ShowDialog();
         }
 
         private void button1_Click(object sender, EventArgs e)

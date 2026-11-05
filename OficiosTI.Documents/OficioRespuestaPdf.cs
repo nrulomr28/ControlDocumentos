@@ -7,28 +7,22 @@ namespace OficiosTI.Documents;
 public class OficioRespuestaPdf : IDocument
 {
     private readonly OficioModel _model;
-
     public OficioRespuestaPdf(OficioModel model)
     {
         _model = model;
     }
 
     public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
-
     public void Compose(IDocumentContainer container)
     {
         container.Page(page =>
         {
             page.Size(PageSizes.Letter);
-
             page.MarginHorizontal(60);
             page.MarginTop(10);
             page.MarginBottom(10);
-
             page.Header().Element(Header);
-
             page.Content().Element(Content);
-
             page.Footer().Element(Footer);
         });
     }
@@ -36,17 +30,14 @@ public class OficioRespuestaPdf : IDocument
     void Header(IContainer container)
     {
         var header = Path.Combine(AppContext.BaseDirectory, "Assets/logo_ssp.png");
-
         container.Row(row =>
         {
             // imagen institucional
             row.ConstantItem(220)
                 .Height(60)
                 .Image(header, ImageScaling.FitArea);
-
             // espacio entre logo y texto
             row.ConstantItem(20);
-
             // texto de la dirección
             row.RelativeItem()
                 .AlignMiddle()
@@ -120,6 +111,15 @@ public class OficioRespuestaPdf : IDocument
         });
     }
 
+    void Footer(IContainer container)
+    {
+        var footer = Path.Combine(AppContext.BaseDirectory, "Assets/logo_veracruz.png");
+        container
+            .Height(90)
+            .AlignCenter()
+            .Image(footer, ImageScaling.FitArea);
+    }
+
     //void Content(IContainer container)
     //{
     //    container.Column(col =>
@@ -161,13 +161,5 @@ public class OficioRespuestaPdf : IDocument
     //    });
     //}
 
-    void Footer(IContainer container)
-    {
-        var footer = Path.Combine(AppContext.BaseDirectory, "Assets/logo_veracruz.png");
 
-        container
-            .Height(90)
-            .AlignCenter()
-            .Image(footer, ImageScaling.FitArea);
-    }
 }

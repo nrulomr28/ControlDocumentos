@@ -15,10 +15,7 @@ namespace OficiosTI.Aplicacion.DTOs
         public int Total { get; set; }
         public int Urgentes { get; set; }
         public int Terminados { get; set; }
-
-      //  public List<Ticket> TicketsDelAnalista { get; set; } = new List<Ticket>();
-
-        public int Tickets {  get; set; }
-
+        public List<Ticket> Tickets { get; set; } = new List<Ticket>();     
+        public string NumerosDeTickets => string.Join(", ", Tickets.Select(t => t.TicketId));
     }
 }

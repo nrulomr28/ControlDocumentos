@@ -372,8 +372,36 @@ namespace OficiosTI.Services
         }
         */
 
-
         public OficioRespuesta ConvertirTicketEnBorrador(Ticket ticket)
+        {
+            var firmante = new Firmante();
+
+            var hilo = _context.HiloTicket
+                .Where(x => x.TicketId == ticket.TicketId)
+                .OrderByDescending(x => x.HiloTicketFecha)
+                .FirstOrDefault();
+
+            var registroOficio1 = _context.Oficio1
+                .Where(y => y.OficioId == ticket.id_of)
+                .FirstOrDefault();
+            return new OficioRespuesta
+            {
+                TicketId = ticket.TicketId,
+                Asunto = ticket.TicketMensaje,
+                Destinatario = ticket.TicketPersona,
+                CuerpoRespuesta = hilo?.HiloTicketMensaje ?? string.Empty,
+                FechaOficio = DateTime.Now,
+                FechaCaptura = DateTime.Now,
+                Anio = (short)DateTime.Now.Year,
+                OficioReferencia = $"{registroOficio1.OficioNoOficio}",
+                /// OficioReferencia = registroOficio1?.OficioNoControl ?? string.Empty,
+                FirmanteId = firmante?.FirmanteId,
+                OficioId = registroOficio1?.OficioId
+            };
+        }
+      
+        
+        /*public OficioRespuesta ConvertirTicketEnBorrador(Ticket ticket)
         {
             var firmante = new Firmante();
             var hiloUltimo = _context.HiloTicket
@@ -395,16 +423,13 @@ namespace OficiosTI.Services
             {
                 var registroNuevo = _context.CapturaOficios
                     .FirstOrDefault(y => y.CapturaOficioId == idBuscado);
-
                 referencia = registroNuevo?.NumeroOficio ?? string.Empty;
                 idOficioFinal = registroNuevo?.CapturaOficioId;
             }
             else
-            {
-                
+            {                
                 var registroViejo = _context.Oficio1
                     .FirstOrDefault(y => y.OficioId == idBuscado);
-
                 referencia = registroViejo?.OficioNoOficio ?? string.Empty;
                 idOficioFinal = registroViejo?.OficioId;
             }          
@@ -421,9 +446,9 @@ namespace OficiosTI.Services
                 FirmanteId = firmante?.FirmanteId,
                 OficioId = idOficioFinal
             };
-        }
+        }*/
 
-   /*     public OficioRespuesta ConvertirTicketEnBorrador(Ticket ticket)
+      /*     public OficioRespuesta ConvertirTicketEnBorrador(Ticket ticket)
         {
             var firmante = new Firmante();
             var hilo = _context.HiloTicket

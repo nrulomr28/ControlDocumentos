@@ -10,21 +10,15 @@
         private TabControl tabControlMain;
 
         private TabPage tabPendientes;
-        private TabPage tabCerrados;
-        private TabPage tabAnalista;
         private TabPage tabTodos;
 
         private DataGridView gridPendientes;
-        private DataGridView gridCerrados;
-        private DataGridView gridAnalista;
         private DataGridView gridTodos;
 
         private Panel panelAcciones;
         private Button btnAbrir;
         private Button btnAdjuntos;
         private Button btnGenerar;
-
-        private ComboBox comboAnalista;
         private ComboBox comboTodos;
         private DataGridView DataGridTickets;
         private Label LabelPendientes;
@@ -186,11 +180,6 @@
             tabControlMain = new TabControl();
             tabPendientes = new TabPage();
             gridPendientes = new DataGridView();
-            tabCerrados = new TabPage();
-            gridCerrados = new DataGridView();
-            tabAnalista = new TabPage();
-            gridAnalista = new DataGridView();
-            comboAnalista = new ComboBox();
             tabTodos = new TabPage();
             gridTodos = new DataGridView();
             panelAcciones = new Panel();
@@ -201,18 +190,23 @@
             LabelTotalTickets = new Label();
             LabelRespondidos = new Label();
             LabelPendientes = new Label();
+            comboAnalista = new ComboBox();
+            gridAnalista = new DataGridView();
+            tabAnalista = new TabPage();
+            gridCerrados = new DataGridView();
+            tabCerrados = new TabPage();
             panelHeader.SuspendLayout();
             tabControlMain.SuspendLayout();
             tabPendientes.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gridPendientes).BeginInit();
-            tabCerrados.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)gridCerrados).BeginInit();
-            tabAnalista.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)gridAnalista).BeginInit();
             tabTodos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gridTodos).BeginInit();
             panelAcciones.SuspendLayout();
             panelIndicadores.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gridAnalista).BeginInit();
+            tabAnalista.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gridCerrados).BeginInit();
+            tabCerrados.SuspendLayout();
             SuspendLayout();
             // 
             // panelHeader
@@ -265,50 +259,6 @@
             gridPendientes.Name = "gridPendientes";
             gridPendientes.Size = new Size(1092, 487);
             gridPendientes.TabIndex = 0;
-            // 
-            // tabCerrados
-            // 
-            tabCerrados.Controls.Add(gridCerrados);
-            tabCerrados.Location = new Point(4, 24);
-            tabCerrados.Name = "tabCerrados";
-            tabCerrados.Size = new Size(1092, 487);
-            tabCerrados.TabIndex = 1;
-            tabCerrados.Text = "Cerrados sin oficio";
-            // 
-            // gridCerrados
-            // 
-            gridCerrados.Dock = DockStyle.Fill;
-            gridCerrados.Location = new Point(0, 0);
-            gridCerrados.Name = "gridCerrados";
-            gridCerrados.Size = new Size(1092, 487);
-            gridCerrados.TabIndex = 0;
-         // gridCerrados.CellContentClick += gridCerrados_CellContentClick;
-            // 
-            // tabAnalista
-            // 
-            tabAnalista.Controls.Add(gridAnalista);
-            tabAnalista.Controls.Add(comboAnalista);
-            tabAnalista.Location = new Point(4, 24);
-            tabAnalista.Name = "tabAnalista";
-            tabAnalista.Size = new Size(1092, 487);
-            tabAnalista.TabIndex = 2;
-            tabAnalista.Text = "Por analista";
-            // 
-            // gridAnalista
-            // 
-            gridAnalista.Dock = DockStyle.Fill;
-            gridAnalista.Location = new Point(0, 23);
-            gridAnalista.Name = "gridAnalista";
-            gridAnalista.Size = new Size(1092, 464);
-            gridAnalista.TabIndex = 0;
-            // 
-            // comboAnalista
-            // 
-            comboAnalista.Dock = DockStyle.Top;
-            comboAnalista.Location = new Point(0, 0);
-            comboAnalista.Name = "comboAnalista";
-            comboAnalista.Size = new Size(1092, 23);
-            comboAnalista.TabIndex = 1;
             // 
             // tabTodos
             // 
@@ -405,6 +355,49 @@
             LabelPendientes.Size = new Size(0, 15);
             LabelPendientes.TabIndex = 2;
             // 
+            // comboAnalista
+            // 
+            comboAnalista.Dock = DockStyle.Top;
+            comboAnalista.Location = new Point(0, 0);
+            comboAnalista.Name = "comboAnalista";
+            comboAnalista.Size = new Size(1092, 23);
+            comboAnalista.TabIndex = 1;
+            // 
+            // gridAnalista
+            // 
+            gridAnalista.Dock = DockStyle.Fill;
+            gridAnalista.Location = new Point(0, 23);
+            gridAnalista.Name = "gridAnalista";
+            gridAnalista.Size = new Size(1092, 464);
+            gridAnalista.TabIndex = 0;
+            // 
+            // tabAnalista
+            // 
+            tabAnalista.Controls.Add(gridAnalista);
+            tabAnalista.Controls.Add(comboAnalista);
+            tabAnalista.Location = new Point(4, 24);
+            tabAnalista.Name = "tabAnalista";
+            tabAnalista.Size = new Size(1092, 487);
+            tabAnalista.TabIndex = 2;
+            tabAnalista.Text = "Por analista";
+            // 
+            // gridCerrados
+            // 
+            gridCerrados.Dock = DockStyle.Fill;
+            gridCerrados.Location = new Point(0, 0);
+            gridCerrados.Name = "gridCerrados";
+            gridCerrados.Size = new Size(1092, 487);
+            gridCerrados.TabIndex = 0;
+            // 
+            // tabCerrados
+            // 
+            tabCerrados.Controls.Add(gridCerrados);
+            tabCerrados.Location = new Point(4, 24);
+            tabCerrados.Name = "tabCerrados";
+            tabCerrados.Size = new Size(1092, 487);
+            tabCerrados.TabIndex = 1;
+            tabCerrados.Text = "Cerrados sin oficio";
+            // 
             // FrmPanelTickets
             // 
             ClientSize = new Size(1100, 650);
@@ -420,15 +413,15 @@
             tabControlMain.ResumeLayout(false);
             tabPendientes.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gridPendientes).EndInit();
-            tabCerrados.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)gridCerrados).EndInit();
-            tabAnalista.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)gridAnalista).EndInit();
             tabTodos.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)gridTodos).EndInit();
             panelAcciones.ResumeLayout(false);
             panelIndicadores.ResumeLayout(false);
             panelIndicadores.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)gridAnalista).EndInit();
+            tabAnalista.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)gridCerrados).EndInit();
+            tabCerrados.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -441,5 +434,11 @@
             grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             grid.RowHeadersVisible = false;
         }
+
+        private TabPage tabCerrados;
+        private DataGridView gridCerrados;
+        private TabPage tabAnalista;
+        private DataGridView gridAnalista;
+        private ComboBox comboAnalista;
     }
 }

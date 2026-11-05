@@ -60,6 +60,7 @@ namespace OficiosTI
                     break;
         */
             }
+
             btnAdjuntos.Enabled = permitirAcciones;
             btnAbrir.Enabled    = permitirAcciones; 
             btnGenerar.Enabled  = permitirAcciones; 
@@ -226,45 +227,58 @@ namespace OficiosTI
         }
 
         private void CargarPorAnalista()
-        {       
-            var datosPlanos = BaseQuery()              
+        {
+            var datosPlanos = BaseQuery()
                 .Join(
                     _context.Usuarios,
                     t => t.TicketUUsuario,
                     u => u.UsuarioAnterior,
-                    (t, u) => new { Ticket = t, Usuario = u } 
-                )              
+                    (t, u) => new { Ticket = t, Usuario = u }
+                )
                 .Join(
                     _context.Oficinas,
-                    tu => tu.Ticket.OficinasId,        
-                    ofi => ofi.OficinasId,             
+                    tu => tu.Ticket.OficinasId,
+                    ofi => ofi.OficinasId,
                     (tu, ofi) => new
                     {
+                        TicketObjeto = tu.Ticket, 
                         UsuarioAnterior = tu.Ticket.TicketUUsuario,
                         AnalistaNombre = tu.Usuario.NombreCompleto,
                         Prioridad = tu.Ticket.TicketPrioridad,
-                        Status = tu.Ticket.Cat_TicketStatusId,                     
+                        Status = tu.Ticket.Cat_TicketStatusId,
                         OficinaNombre = ofi.OficinasNombre
                     }
                 )
-                .ToList();            
-            var data = datosPlanos               
+                .ToList();
+            var data = datosPlanos
                 .GroupBy(x => new { x.UsuarioAnterior, x.AnalistaNombre, x.OficinaNombre })
                 .Select(g => new TicketPorAnalistaDto
                 {
-                    UsuarioId = g.Key.UsuarioAnterior,
-                    Analista = g.Key.AnalistaNombre,                
+                    UsuarioId = (int)g.Key.UsuarioAnterior,
+                    Analista = g.Key.AnalistaNombre,
                     Oficina = g.Key.OficinaNombre,
                     Total = g.Count(),
                     Urgentes = g.Count(x => x.Prioridad == "URGENTE"),
-                    Terminados = g.Count(x => x.Status == 3)
+                    Terminados = g.Count(x => x.Status == 3),                   
+                    Tickets = g.Select(x => x.TicketObjeto).ToList()
                 })
                 .OrderByDescending(x => x.Urgentes)
                 .ThenByDescending(x => x.Total)
                 .ToList();
             gridAnalista.DataSource = data;
+            // gridAnalista.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            gridAnalista.Columns[0].Width = 80;
+            gridAnalista.Columns[1].Width = 250;
+            gridAnalista.Columns[2].Width = 200;
+            gridAnalista.Columns[3].Width = 50;
+            gridAnalista.Columns[4].Width = 70;
+            gridAnalista.Columns[5].Width = 75;
+            gridAnalista.Columns[6].Width = 300;
+
         }
 
+
+        
 
         private void CargarCerradosSinOficio()
         {

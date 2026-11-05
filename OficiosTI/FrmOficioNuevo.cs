@@ -43,7 +43,6 @@ namespace OficiosTI
            }
         */
 
-
         public FrmOficioNuevo(OficiosContext context, OficioRespuesta OficioResp = null)
         {
             InitializeComponent();
@@ -278,9 +277,7 @@ namespace OficiosTI
                 {
                     _context.OficioRespuesta.Update(_oficioActual);
                 }
-
                 _context.SaveChanges();
-
                 MessageBox.Show("El oficio se ha guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.DialogResult = DialogResult.OK;
@@ -337,7 +334,6 @@ namespace OficiosTI
                         cargoExtraido = partes[1];  // CARGO DEL TITULAR
                     }
                 }
-
                 var model = new OficioModel
                 {
                     NumeroOficio = txtNof.Text,
@@ -471,7 +467,6 @@ namespace OficiosTI
             txtCrgo.Text = _oficioActual.CargoDestinatario ?? string.Empty;
             txtRespC.Text = _oficioActual.CuerpoRespuesta ?? string.Empty;
             txtCcp.Text = _oficioActual.Copias ?? string.Empty;
-
             if (_oficioActual.FirmanteId != null)
             {
                 cmbFirmas.SelectedValue = _oficioActual.FirmanteId;
