@@ -106,14 +106,12 @@ namespace OficiosTI
                 {
                     dataGridRelacion.DataSource = null;
                     return;
-                }
-                
+                }                
                 string origenTicket = _context.HiloTicket
                     .Where(h => h.TicketId == _ticket.TicketId &&
                                (h.HiloTicketAccion == "CREADO" || h.HiloTicketAccion == "CREADO*"))
                     .Select(h => h.HiloTicketAccion)
-                    .FirstOrDefault();
-               
+                    .FirstOrDefault();               
                 var ticketsRelacionados = (from t in _context.Ticket
                                            join o in _context.Oficinas on t.OficinasId equals o.OficinasId
                                            join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
@@ -242,8 +240,7 @@ namespace OficiosTI
                     Directory.CreateDirectory(rutaCarpeta);
                 }
                 else
-                {
-                   
+                {                   
                     LimpiarCarpetaTemporal(rutaCarpeta, diasAntiguedad: 1);
                 }
                 string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";        

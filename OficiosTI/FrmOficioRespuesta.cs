@@ -63,12 +63,10 @@ namespace OficiosTI
         {
             lbTicket.Text = $"Ticket #{_ticket.TicketId}";
         }
-
         private string ObtenerCopiasDefault()
         {
             return "C.C.P. Lic. Andrés Augusto Rosaldo García. - Oficial Mayor de la SSP. - Para su superior conocimiento. – Presente.";
         }
-
         private void BtnPreview_Click(object sender, EventArgs e)    // VISTA PREVIA DEL OFICIO DE RESPUESTA 
         {
             if (!ValidacionesPreview())
@@ -128,7 +126,6 @@ namespace OficiosTI
                 this.Cursor = Cursors.Default;
             }
         }
-
         private void BtnGuardar_Click(object sender, EventArgs e)
         {
             GuardarOficio();
@@ -153,9 +150,6 @@ namespace OficiosTI
             }
             return true;
         }
-
-
-
 
         private void GuardarOficio()
         {
@@ -272,15 +266,16 @@ namespace OficiosTI
                     }
                     // ticketRelacionado.Cat_TicketStatusId = 3;    //// SI SE QUIEREN CERRAR TODOS 
                 }
-                /*  foreach (var ticketRelacionado in ticketsAsociados)
+                /*  
+                foreach (var ticketRelacionado in ticketsAsociados)
+                {
+                    if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
                     {
-                        if (!_service.HiloYaExiste(ticketRelacionado.TicketId, descripcion))
-                        {
-                            _service.RegistrarHiloOficio(ticketRelacionado.TicketId, descripcion);  
-                        }
-                        // Cambiamos el estatus a "Cerrado" (3) para cada ticket   //// PARA CAMBIAR EL ESTADO EN CERRADO A TODOS 
-                        //  ticketRelacionado.Cat_TicketStatusId = 3;
+                       _service.RegistrarHiloOficio(ticketRelacionado.TicketId, descripcion);  
                     }
+                    // Cambiamos el estatus a "Cerrado" (3) para cada ticket   //// PARA CAMBIAR EL ESTADO EN CERRADO A TODOS 
+                    //  ticketRelacionado.Cat_TicketStatusId = 3;
+                }
                 */
                 _ticket.Cat_TicketStatusId = 3;
                 _service.ActualizarOficio(_oficioActual);

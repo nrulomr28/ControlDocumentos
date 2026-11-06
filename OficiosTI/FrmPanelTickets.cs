@@ -89,9 +89,8 @@ namespace OficiosTI
         {
             try
             {               
-                 if (gridPendientes.CurrentRow == null)
+                if (gridPendientes.CurrentRow == null)
                    return;
-
                 var gridItem = (TicketGridModel)gridPendientes.CurrentRow.DataBoundItem;
                 if (gridItem == null)
                     return;
