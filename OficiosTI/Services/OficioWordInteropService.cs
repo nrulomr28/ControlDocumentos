@@ -110,9 +110,7 @@ namespace OficiosTI.Services
                 }
                 sel.TypeText($"{prefijoDocumento} No. {model.NumeroOficio}");
                // sel.TypeText($"Oficio No. {model.NumeroOficio}");
-                sel.TypeParagraph();
-
-       
+                sel.TypeParagraph();       
                 string texto_a = model.Asunto;
                
                 if (!string.IsNullOrEmpty(texto_a))

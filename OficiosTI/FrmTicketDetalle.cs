@@ -36,39 +36,129 @@ namespace OficiosTI
             CargarHilo();
             CargarComboAnalista();
             CargarTicketsR();
+            CargarAsignarOficinas();
         }
 
         private void CargarDatosTicket()      /// MOSTRAR LOS DATOS DEL TICKET EN PANTALLA 
         {
+            var ticket = _ticket.TicketId;
+            var Oficina = (from t in _context.Ticket
+                           where t.TicketId == ticket
+                           join o in _context.Oficinas on t.OficinasId equals o.OficinasId into oficinaAgrupada
+                           from o in oficinaAgrupada.DefaultIfEmpty()
+                           select new
+                           {
+                               NombreOficina = o != null ? o.OficinasNombre : "Sin Oficina",
+
+                           }).FirstOrDefault();
             lblTicketId.Text = $"Ticket #{_ticket.TicketId}";
             txtPersona.Text = _ticket.TicketPersona;
             txtAsunto.Text = _ticket.TicketMensaje;
             txtMensaje.Text = _ticket.TicketAsunto;
             txtExtension.Text = _ticket.TicketExt?.ToString() ?? "";
             txtPrioridad.Text = _ticket.TicketPrioridad;
+            lblOficina.Text = $"Oficina -{Oficina.NombreOficina}";
         }
 
-        private void CargarComboAnalista()    /// COMBO PARA ANALISTAS POR OFICINA 
+        /* private void CargarComboAnalista()    /// COMBO PARA ANALISTAS POR OFICINA 
+           {
+               try
+               {
+                   int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
+                   string usuariodominio = _service.ObtenerDominioYUsuario();
+                   int idusuario = _context.Usuarios
+                                                           .Where(y => y.UsuarioDominio == usuariodominio)  
+                                                           .Select(y => y.UsuarioAnterior)                 //// SE OCUPA EL CAMPO USUARIOANTERIOR 
+                                                           .FirstOrDefault();
+                   var status = _context.Usuarios
+                       .Where(x => x.IdOficina == miOficinaId && x.Activo == 1 && x.UsuarioAnterior != idusuario)
+                       .ToList();
+                   cmbAnalistas.DisplayMember = "NombreCompleto";
+                   cmbAnalistas.ValueMember = "UsuarioAnterior";
+                   cmbAnalistas.DataSource = status;
+                   cmbAnalistas.SelectedIndex = -1;
+               }
+               catch (Exception ex)
+               {
+                   MessageBox.Show($"Error al cargar los analistas: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+               }
+           }
+        */
+
+        private void CargarComboAnalista()
         {
             try
             {
                 int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
                 string usuariodominio = _service.ObtenerDominioYUsuario();
-                int idusuario = _context.Usuarios
-                                                        .Where(y => y.UsuarioDominio == usuariodominio)  /// USUARIO QUE CAPTURA EL TICKET 
-                                                        .Select(y => y.UsuarioAnterior)
-                                                        .FirstOrDefault();
-                var status = _context.Usuarios
-                    .Where(x => x.IdOficina == miOficinaId && x.Activo == 1 && x.UsuarioAnterior != idusuario)
-                    .ToList();
-                cmbAnalistas.DisplayMember = "NombreCompleto";
-                cmbAnalistas.ValueMember = "UsuarioAnterior";
-                cmbAnalistas.DataSource = status;
-                cmbAnalistas.SelectedIndex = -1;
+                bool UsuarioGlobal = _service.EsUsuarioGlobal();
+                List<Usuarios> status = null;
+                if (UsuarioGlobal)
+                {
+                    status = _context.Usuarios
+                        .Where(x => x.Activo == 1)
+                        .OrderBy(x => x.IdOficina)
+                        .ToList();
+                }
+                else
+                {
+                    int idusuario = _context.Usuarios
+                        .Where(y => y.UsuarioDominio == usuariodominio)
+                        .Select(y => y.UsuarioAnterior)
+                        .FirstOrDefault();
+
+                    status = _context.Usuarios
+                        .Where(x => x.IdOficina == miOficinaId && x.Activo == 1 && x.UsuarioAnterior != idusuario)
+                        .ToList();
+                }
+
+
+                if (status == null || status.Count == 0)
+                {
+                    cmbAnalistas.DataSource = null;
+                    MessageBox.Show("No se encontraron analistas activos para esta oficina.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+
+                    cmbAnalistas.DisplayMember = "NombreCompleto";
+                    cmbAnalistas.ValueMember = "UsuarioAnterior";
+                    cmbAnalistas.DataSource = status;
+                    cmbAnalistas.SelectedIndex = -1; // Deja el combo en blanco sin seleccionar el primero
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error al cargar los analistas: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+
+        private void CargarAsignarOficinas()
+        {
+            try
+            {
+                int? idOficinaUsuario = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
+                var oficinasDisponibles = _context.Oficinas
+                    .Where(x => x.OficinasId != idOficinaUsuario && x.OficinasId != 7)
+                    .Select(x => new
+                    {
+                        x.OficinasId,
+                        x.OficinasNombre
+                    })
+                    .ToList();
+                CmbAsignarOficina.DisplayMember = "OficinasNombre";
+                CmbAsignarOficina.ValueMember = "OficinasId";
+                CmbAsignarOficina.DataSource = oficinasDisponibles;
+                CmbAsignarOficina.SelectedIndex = -1;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar la lista de oficinas: {ex.Message}",
+                                "Error de Carga",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
         }
 
@@ -106,19 +196,20 @@ namespace OficiosTI
                 {
                     dataGridRelacion.DataSource = null;
                     return;
-                }                
+                }
                 string origenTicket = _context.HiloTicket
-                    .Where(h => h.TicketId == _ticket.TicketId &&
-                               (h.HiloTicketAccion == "CREADO" || h.HiloTicketAccion == "CREADO*"))
+                    .Where(h => h.TicketId == _ticket.TicketId // &&
+                                                               //       (h.HiloTicketAccion == "CREADO" || h.HiloTicketAccion == "CREADO*")
+                               )
                     .Select(h => h.HiloTicketAccion)
-                    .FirstOrDefault();               
+                    .FirstOrDefault();
                 var ticketsRelacionados = (from t in _context.Ticket
                                            join o in _context.Oficinas on t.OficinasId equals o.OficinasId
                                            join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
                                            join x in _context.OficioRespuesta on t.TicketId equals x.TicketId into respuestas
                                            from r in respuestas.DefaultIfEmpty()
                                            where t.id_of == _ticket.id_of
-                                                 && t.TicketId != _ticket.TicketId                                                 
+                                                 && t.TicketId != _ticket.TicketId
                                                  && _context.HiloTicket.Any(h => h.TicketId == t.TicketId && h.HiloTicketAccion == origenTicket)
                                            orderby t.TicketId
                                            select new
@@ -128,7 +219,6 @@ namespace OficiosTI
                                                Estado = s.Cat_TicketStatusStatus,
                                                Oficio = r != null ? r.NumeroOficio : "SIN OFICIO",
                                            }).ToList();
-
                 dataGridRelacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dataGridRelacion.DataSource = ticketsRelacionados;
             }
@@ -139,41 +229,43 @@ namespace OficiosTI
         }
 
 
-    /*  private void CargarTicketsR()
-        {
-            try
+        /*  private void CargarTicketsR()
             {
-                if (_ticket?.id_of == null || _ticket.id_of == 0)
+                try
                 {
-                    dataGridRelacion.DataSource = null;
-                    return;
-                }
+                    if (_ticket?.id_of == null || _ticket.id_of == 0)
+                    {
+                        dataGridRelacion.DataSource = null;
+                        return;
+                    }
 
-                var ticketsRelacionados = (from t in _context.Ticket
-                                           join o in _context.Oficinas on t.OficinasId equals o.OficinasId
-                                           join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
-                                           join x in _context.OficioRespuesta on t.TicketId equals x.TicketId into respuestas
-                                           from r in respuestas.DefaultIfEmpty()
-                                           where t.id_of == _ticket.id_of && t.TicketId != _ticket.TicketId
-                                           orderby t.TicketId
-                                           select new
-                                           {
-                                               Ticket = t.TicketId,
-                                           //  Remitente = t.TicketPersona,
-                                           //  Asunto = t.TicketMensaje,
-                                               Oficina = o.OficinasNombre,
-                                               Estado = s.Cat_TicketStatusStatus,
-                                               Oficio = r != null ? r.NumeroOficio : "SIN OFICIO",
-                                           }).ToList();
-                dataGridRelacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dataGridRelacion.DataSource = ticketsRelacionados;
+                    var ticketsRelacionados = (from t in _context.Ticket
+                                               join o in _context.Oficinas on t.OficinasId equals o.OficinasId
+                                               join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
+                                               join x in _context.OficioRespuesta on t.TicketId equals x.TicketId into respuestas
+                                               from r in respuestas.DefaultIfEmpty()
+                                               where t.id_of == _ticket.id_of && t.TicketId != _ticket.TicketId
+                                               orderby t.TicketId
+                                               select new
+                                               {
+                                                   Ticket = t.TicketId,
+                                               //  Remitente = t.TicketPersona,
+                                               //  Asunto = t.TicketMensaje,
+                                                   Oficina = o.OficinasNombre,
+                                                   Estado = s.Cat_TicketStatusStatus,
+                                                   Oficio = r != null ? r.NumeroOficio : "SIN OFICIO",
+                                               }).ToList();
+                    dataGridRelacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    dataGridRelacion.DataSource = ticketsRelacionados;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error al cargar los tickets relacionados: {ex.Message}", "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al cargar los tickets relacionados: {ex.Message}", "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-    */
+        */
+
+        /*
         private void btnAsignarTicket_Click(object sender, EventArgs e)  /// ASIGNACION DE TICKETS 
         {
             if (_ticket.Cat_TicketStatusId == 3)
@@ -181,16 +273,20 @@ namespace OficiosTI
                 MessageBox.Show("Este ticket ya se encuentra cerrado. No se puede asignar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            /// validacion del analista 
+
             int? idanalista = null;
             if (cmbAnalistas.SelectedValue != null && int.TryParse(cmbAnalistas.SelectedValue.ToString(), out int idParsed))
             {
                 idanalista = idParsed;
+
             }
             if (idanalista == null)
             {
                 MessageBox.Show("Por favor, selecciona un analista.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-            }
+            }                    
             if (string.IsNullOrWhiteSpace(txtInstruccion.Text))
             {
                 MessageBox.Show("Por favor, agregue una indicación.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -222,7 +318,7 @@ namespace OficiosTI
                 MessageBox.Show($"Ocurrió un error al asignar el ticket: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        */
 
         private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
@@ -233,18 +329,18 @@ namespace OficiosTI
                 {
                     MessageBox.Show("El documento no existe o está vacío.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
-                }               
-                string rutaCarpeta = Path.Combine(Path.GetTempPath(), "DTIOficios");               
+                }
+                string rutaCarpeta = Path.Combine(Path.GetTempPath(), "DTIOficios");
                 if (!Directory.Exists(rutaCarpeta))
                 {
                     Directory.CreateDirectory(rutaCarpeta);
                 }
                 else
-                {                   
+                {
                     LimpiarCarpetaTemporal(rutaCarpeta, diasAntiguedad: 1);
                 }
-                string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";        
-                string rutaTemporal = Path.Combine(rutaCarpeta, nombreArchivo);              
+                string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";
+                string rutaTemporal = Path.Combine(rutaCarpeta, nombreArchivo);
                 File.WriteAllBytes(rutaTemporal, archivoBd.ArchivoArchivo);
                 var psi = new System.Diagnostics.ProcessStartInfo
                 {
@@ -264,11 +360,10 @@ namespace OficiosTI
             try
             {
                 var directorio = new DirectoryInfo(rutaCarpeta);
-                if (!directorio.Exists) return;               
+                if (!directorio.Exists) return;
                 var fechaLimite = DateTime.Now.AddDays(-diasAntiguedad);
                 foreach (var archivo in directorio.GetFiles())
                 {
-                 
                     if (archivo.CreationTime < fechaLimite)
                     {
                         try
@@ -277,14 +372,14 @@ namespace OficiosTI
                         }
                         catch
                         {
-                            
+
                         }
                     }
                 }
             }
             catch
             {
-              
+
             }
         }
 
@@ -324,13 +419,12 @@ namespace OficiosTI
             ProcesarRespuesta(cerrarTicket: cerrarYsinOficio, esSinOficio: cerrarYsinOficio);
         }
 
-   
         private void btnGuardaryCerrar_Click(object sender, EventArgs e)    /// SE PUEDE CERRAR CON OFICIO O SIN OFICIO 
         {
-          
+
             ProcesarRespuesta(cerrarTicket: true, esSinOficio: false);
         }
-     
+
         private void ProcesarRespuesta(bool cerrarTicket, bool esSinOficio)   /// SE UTILIZA SOLO UN BOTON PARA GENERAR LA RESPUESTA DE TICKET CON O SIN OFICIO 
         {
             if (_ticket.Cat_TicketStatusId == 3)
@@ -343,9 +437,7 @@ namespace OficiosTI
                 MessageBox.Show("Por favor, escribe una respuesta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             this.Enabled = false;
-
             try
             {
                 string usuariodominio = _service.ObtenerDominioYUsuario();
@@ -362,10 +454,10 @@ namespace OficiosTI
                     UsuarioId = idanalista
                 };
 
-                _context.HiloTicket.Add(hilo);               
+                _context.HiloTicket.Add(hilo);
                 if (cerrarTicket)
                 {
-                   
+
                     if (esSinOficio)
                     {
                         var sinOficio = new Ticket_SinOficio
@@ -377,7 +469,7 @@ namespace OficiosTI
                         };
                         _context.Add(sinOficio);
                     }
-                 
+
                     _ticket.Cat_TicketStatusId = 3;
                     _context.Ticket.Update(_ticket);
                 }
@@ -406,7 +498,228 @@ namespace OficiosTI
             }
         }
 
-    
+
+
+        // boton para reasginar oficina 
+        /* private void btnAsignarTicketOf_Click(object sender, EventArgs e)
+           {
+               if (_ticket.Cat_TicketStatusId == 3)
+               {
+                   MessageBox.Show("Este ticket ya se encuentra cerrado. No se puede asignar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                   return;
+               }
+               /// validacion de oficina 
+               int? idOficina = null;
+               if (CmbAsignarOficina.SelectedValue != null && int.TryParse(CmbAsignarOficina.SelectedValue.ToString(), out int idOfParsed))
+               {
+                   idOficina = idOfParsed;
+               }
+
+               if (idOficina == null)
+               {
+                   MessageBox.Show("Por favor, selecciona la Oficina.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                   return;
+               }
+
+               buscar en usuarios el jefe de la oficina para asignarlo
+
+                       UsuarioJefe = Usuarios.Jefe == 1  and usuarios.IdOficina== idOficina                      
+
+
+               var hilo = new HiloTicket
+               {
+                   TicketId = _ticket.TicketId,
+                   HiloTicketFecha = DateTime.Now,
+                   HiloTicketAccion = "ASIGNADO",
+                   HiloTicketMensaje = txtInstruccion.Text.Trim().ToUpper(),
+                   UsuarioId = UsuarioJefe
+               };
+               try
+               {
+                   _context.HiloTicket.Add(hilo);
+                   _ticket.TicketUUsuario = UsuarioJefe;   /// asignar al analista
+                   _ticket.Cat_TicketStatusId = 2;              //// cambiar el estado del ticket a en proceso   
+                   _ticket.OficinasId = idOficina.Value;
+                   _context.Ticket.Update(_ticket);
+                   _context.SaveChanges();
+                   txtInstruccion.Clear();
+                   cmbAnalistas.SelectedIndex = -1;
+                   CargarHilo();
+
+                   MessageBox.Show("Ticket asignado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+               }
+               catch (Exception ex)
+               {
+                   MessageBox.Show($"Ocurrió un error al asignar el ticket: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+               }
+
+           }
+        */
+
+
+
+        private void btnAsignarTicketOf_Click(object sender, EventArgs e)
+        {
+            if (_ticket.Cat_TicketStatusId == 3)
+            {
+                MessageBox.Show("Este ticket ya se encuentra cerrado. No se puede asignar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtInstruccion.Text))
+            {
+                MessageBox.Show("Por favor, agregue una indicación.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int? idOficina = null;
+            if (CmbAsignarOficina.SelectedValue != null && int.TryParse(CmbAsignarOficina.SelectedValue.ToString(), out int idOfParsed))
+            {
+                idOficina = idOfParsed;
+            }
+
+            if (idOficina == null)
+            {
+                MessageBox.Show("Por favor, selecciona la Oficina.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            /// validar el jefe de la oficina 
+            var jefeOficina = _context.Usuarios
+                .FirstOrDefault(u => u.Jefe == 1 && u.IdOficina == idOficina.Value);
+            if (jefeOficina == null)
+            {
+                MessageBox.Show("No se encontró un jefe registrado para la oficina seleccionada.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var hilo = new HiloTicket
+            {
+                TicketId = _ticket.TicketId,
+                HiloTicketFecha = DateTime.Now,
+                HiloTicketAccion = "ASIGNADO",
+                HiloTicketMensaje = $"REASIGNADO - {txtInstruccion.Text.Trim().ToUpper()}",
+                UsuarioId = jefeOficina.UsuarioAnterior   /// usuario anterior 
+            };
+
+            try
+            {
+                _context.HiloTicket.Add(hilo);
+                _ticket.TicketUUsuario = jefeOficina.UsuarioAnterior;     /// USUARIO ANTERIOR 
+                _ticket.Cat_TicketStatusId = 2;
+                _ticket.OficinasId = idOficina.Value;
+                _context.Ticket.Update(_ticket);
+                _context.SaveChanges();
+                txtInstruccion.Clear();
+                CmbAsignarOficina.SelectedIndex = -1;
+                CargarHilo();
+
+                MessageBox.Show($"Ticket asignado correctamente al jefe - {jefeOficina.NombreCompleto}", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al asignar el ticket: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void btnAsignarTicket_Click(object sender, EventArgs e)
+        {
+            if (_ticket.Cat_TicketStatusId == 3)
+            {
+                MessageBox.Show("Este ticket ya se encuentra cerrado. No se puede asignar.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            int? idAnalista = null;
+            if (cmbAnalistas.SelectedValue != null && int.TryParse(cmbAnalistas.SelectedValue.ToString(), out int idParsedAnalista))
+            {
+                idAnalista = idParsedAnalista;
+            }
+            int? idOficina = null;
+            if (CmbAsignarOficina.SelectedValue != null && int.TryParse(CmbAsignarOficina.SelectedValue.ToString(), out int idParsedOficina))
+            {
+                idOficina = idParsedOficina;
+            }
+            if (idAnalista == null && idOficina == null)
+            {
+                MessageBox.Show("Por favor, selecciona un Analista o una Oficina.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (idAnalista != null && idOficina != null)
+            {
+                MessageBox.Show("Por favor, selecciona SOLO un Analista O una Oficina, no ambos.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbAnalistas.SelectedIndex = -1;
+                CmbAsignarOficina.SelectedIndex = -1;
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtInstruccion.Text))
+            {
+                MessageBox.Show("Por favor, agregue una indicación.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            int usuarioDestinoId;
+            string NombreusuarioDestino;
+            string mensajeHilo;
+            if (idOficina != null)
+            {
+                var jefeOficina = (from u in _context.Usuarios
+                                   where u.Jefe == 1 && u.IdOficina == idOficina.Value
+                                   join o in _context.Oficinas on u.IdOficina equals o.OficinasId into oficinaAgrupada
+                                   from o in oficinaAgrupada.DefaultIfEmpty()
+                                   select new
+                                   {
+                                       Usuario = u,
+                                       NombreOficina = o != null ? o.OficinasNombre : "Sin Oficina",
+                                       UsuarioAnterior = u.UsuarioAnterior,
+                                       NombreCompleto = u.NombreCompleto
+                                   }).FirstOrDefault();
+                //     var jefeOficina = _context.Usuarios
+                //         .FirstOrDefault(u => u.Jefe == 1 && u.IdOficina == idOficina.Value);
+                if (jefeOficina == null)
+                {
+                    MessageBox.Show("No se encontró un jefe registrado para la oficina seleccionada.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                usuarioDestinoId = jefeOficina.UsuarioAnterior;
+                mensajeHilo = $"REASIGNADO - {txtInstruccion.Text.Trim().ToUpper()}";
+                _ticket.OficinasId = idOficina.Value;
+                // NombreusuarioDestino = $"a la oficina de - {jefeOficina.NombreOficina} - {jefeOficina.NombreCompleto}";
+                NombreusuarioDestino = $"a la oficina de - {jefeOficina.NombreOficina}";
+            }
+            else
+            {
+                var nombreUsuario = _context.Usuarios
+                    .FirstOrDefault(u => u.UsuarioAnterior == idAnalista.Value);
+                usuarioDestinoId = idAnalista.Value;
+                mensajeHilo = txtInstruccion.Text.Trim().ToUpper();
+                NombreusuarioDestino = $"al usuario - {nombreUsuario.NombreCompleto}";
+            }
+            var hilo = new HiloTicket
+            {
+                TicketId = _ticket.TicketId,
+                HiloTicketFecha = DateTime.Now,
+                HiloTicketAccion = "ASIGNADO",
+                HiloTicketMensaje = mensajeHilo,
+                UsuarioId = usuarioDestinoId
+            };
+            try
+            {
+                _context.HiloTicket.Add(hilo);
+                _ticket.TicketUUsuario = usuarioDestinoId;
+                _ticket.Cat_TicketStatusId = 2;
+                _context.Ticket.Update(_ticket);
+                _context.SaveChanges();
+                txtInstruccion.Clear();
+                cmbAnalistas.SelectedIndex = -1;
+                CmbAsignarOficina.SelectedIndex = -1;
+                CargarHilo();
+                MessageBox.Show($"Ticket asignado correctamente {NombreusuarioDestino}", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // MessageBox.Show("Ticket asignado correctamente.{jefeOficina.NombreCompleto}", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al asignar el ticket: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
         /*  private void BtnGuardarRespuesta_Click(object sender, EventArgs e)
           {
@@ -531,5 +844,6 @@ namespace OficiosTI
               }
           }
         */
+
     }
 }

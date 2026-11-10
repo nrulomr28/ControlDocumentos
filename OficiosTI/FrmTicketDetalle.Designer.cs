@@ -35,8 +35,12 @@
         private void InitializeComponent()
         {
             PanelHeader = new Panel();
+            lblOficina = new Label();
             lblTicketId = new Label();
             PanelDatos = new Panel();
+            btnAsignarTicketOf = new Button();
+            CmbAsignarOficina = new ComboBox();
+            lblAsignarOficina = new Label();
             btnGuardaryCerrar = new Button();
             chkCerrarTicket = new CheckBox();
             txtRespuesta = new TextBox();
@@ -73,12 +77,24 @@
             // PanelHeader
             // 
             PanelHeader.BackColor = Color.FromArgb(31, 58, 95);
+            PanelHeader.Controls.Add(lblOficina);
             PanelHeader.Controls.Add(lblTicketId);
             PanelHeader.Dock = DockStyle.Top;
             PanelHeader.Location = new Point(0, 0);
             PanelHeader.Name = "PanelHeader";
             PanelHeader.Size = new Size(817, 50);
             PanelHeader.TabIndex = 4;
+            // 
+            // lblOficina
+            // 
+            lblOficina.AutoSize = true;
+            lblOficina.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblOficina.ForeColor = Color.White;
+            lblOficina.Location = new Point(258, 14);
+            lblOficina.Name = "lblOficina";
+            lblOficina.Size = new Size(65, 21);
+            lblOficina.TabIndex = 1;
+            lblOficina.Text = "Oficina";
             // 
             // lblTicketId
             // 
@@ -94,6 +110,9 @@
             // PanelDatos
             // 
             PanelDatos.BackColor = Color.WhiteSmoke;
+            PanelDatos.Controls.Add(btnAsignarTicketOf);
+            PanelDatos.Controls.Add(CmbAsignarOficina);
+            PanelDatos.Controls.Add(lblAsignarOficina);
             PanelDatos.Controls.Add(btnGuardaryCerrar);
             PanelDatos.Controls.Add(chkCerrarTicket);
             PanelDatos.Controls.Add(txtRespuesta);
@@ -120,6 +139,34 @@
             PanelDatos.Name = "PanelDatos";
             PanelDatos.Size = new Size(817, 425);
             PanelDatos.TabIndex = 1;
+            // 
+            // btnAsignarTicketOf
+            // 
+            btnAsignarTicketOf.Location = new Point(702, 243);
+            btnAsignarTicketOf.Name = "btnAsignarTicketOf";
+            btnAsignarTicketOf.Size = new Size(96, 23);
+            btnAsignarTicketOf.TabIndex = 18;
+            btnAsignarTicketOf.Text = "AsignarOficina";
+            btnAsignarTicketOf.UseVisualStyleBackColor = true;
+            btnAsignarTicketOf.Click += btnAsignarTicketOf_Click;
+            // 
+            // CmbAsignarOficina
+            // 
+            CmbAsignarOficina.BackColor = SystemColors.Control;
+            CmbAsignarOficina.FormattingEnabled = true;
+            CmbAsignarOficina.Location = new Point(17, 240);
+            CmbAsignarOficina.Name = "CmbAsignarOficina";
+            CmbAsignarOficina.Size = new Size(240, 23);
+            CmbAsignarOficina.TabIndex = 17;
+            // 
+            // lblAsignarOficina
+            // 
+            lblAsignarOficina.AutoSize = true;
+            lblAsignarOficina.Location = new Point(15, 213);
+            lblAsignarOficina.Name = "lblAsignarOficina";
+            lblAsignarOficina.Size = new Size(111, 15);
+            lblAsignarOficina.TabIndex = 16;
+            lblAsignarOficina.Text = "Reasignar a Oficina ";
             // 
             // btnGuardaryCerrar
             // 
@@ -187,7 +234,7 @@
             // 
             // btnAsignarTicket
             // 
-            btnAsignarTicket.Location = new Point(702, 214);
+            btnAsignarTicket.Location = new Point(700, 175);
             btnAsignarTicket.Name = "btnAsignarTicket";
             btnAsignarTicket.Size = new Size(98, 23);
             btnAsignarTicket.TabIndex = 13;
@@ -217,9 +264,9 @@
             label4.AutoSize = true;
             label4.Location = new Point(15, 150);
             label4.Name = "label4";
-            label4.Size = new Size(62, 15);
+            label4.Size = new Size(105, 15);
             label4.TabIndex = 10;
-            label4.Text = "Asignar a: ";
+            label4.Text = "Asignar a analista: ";
             // 
             // label3
             // 
@@ -388,5 +435,9 @@
         private Button btnAsignarTicket;
         private Label label5;
         private Button btnGuardaryCerrar;
+        private ComboBox CmbAsignarOficina;
+        private Label lblAsignarOficina;
+        private Button btnAsignarTicketOf;
+        private Label lblOficina;
     }
 }

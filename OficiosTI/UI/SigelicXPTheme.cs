@@ -74,13 +74,10 @@ namespace OficiosTI.UI
             grid.BackgroundColor = Color.White;
             grid.BorderStyle = BorderStyle.Fixed3D;
             grid.GridColor = Border;
-
             grid.EnableHeadersVisualStyles = false;
-
             grid.ColumnHeadersDefaultCellStyle.BackColor = Primary;
             grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             grid.ColumnHeadersDefaultCellStyle.Font = new Font("Gotham", 8.25F, FontStyle.Bold);
-
             grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(49, 106, 197);
             grid.DefaultCellStyle.SelectionForeColor = Color.White;
         }

@@ -51,7 +51,7 @@ namespace OficiosTI
             _oficioActual = OficioResp;
             CargarFirma();
             CargarCopias();
-            //CargarOficios(3);
+          //CargarOficios(3);
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
             if (string.IsNullOrEmpty(txtCcp.Text))
             {
@@ -226,7 +226,6 @@ namespace OficiosTI
                 MessageBox.Show("Debe capturar el cargo.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             if (string.IsNullOrWhiteSpace(txtRespC.Text))
             {
                 MessageBox.Show("Debe capturar la Respuesta del Oficio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -263,7 +262,6 @@ namespace OficiosTI
                 _oficioActual.CuerpoRespuesta = txtRespC.Text.Trim();
                 _oficioActual.Copias = txtCcp.Text.Trim();
                 _oficioActual.UsuarioId = _service.ObtenerDominioYUsuario();
-
                 if (cmbFirmas.SelectedValue != null)
                 {
                     _oficioActual.FirmanteId = (int)cmbFirmas.SelectedValue;
@@ -279,7 +277,6 @@ namespace OficiosTI
                 }
                 _context.SaveChanges();
                 MessageBox.Show("El oficio se ha guardado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
@@ -323,8 +320,7 @@ namespace OficiosTI
                 string nombreExtraido = textoCombo;
                 string cargoExtraido = "Sin Cargo";
                 //  var OfiF = _context.OficioRespuesta.FirstOrDefault(y => y.TicketId == _ticket.TicketId);
-                var OfiF = _context.NumOficio.FirstOrDefault(y => y.OficioId == _oficioActual.RespuestaId);
-              
+                var OfiF = _context.NumOficio.FirstOrDefault(y => y.OficioId == _oficioActual.RespuestaId);              
                 if (!string.IsNullOrEmpty(textoCombo) && textoCombo.Contains("-"))
                 {
                     var partes = textoCombo.Split('-', StringSplitOptions.TrimEntries);
@@ -344,26 +340,25 @@ namespace OficiosTI
                     FundamentoLegal = ObtenerFundamentoLegal(cargoExtraido),
                     Cuerpo = txtRespC.Text,
                     Copias = txtCcp.Text,
-                   // Fecha = OfiF.FechaCaptura,
+                    Fecha = DateTime.Now,
                     DirectorNombre = nombreExtraido,
                     DirectorCargo = cargoExtraido,
                     RespuestaId = OfiF.OficioId,
                 };
                 var servicio = new OficioWordInteropService(_context);
                 string ruta = servicio.Generar(model);
-
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = ruta,
                     UseShellExecute = true
                 });
             }
-            /*   catch (Exception ex)
+            /*  catch (Exception ex)
                {
                    MessageBox.Show($"Ocurrió un error al previsualizar el oficio:\n\n{ex.Message}",
                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-               }*/
-
+               }
+            */
             catch (Exception ex)
             {
                 Exception errorReal = ex;
@@ -382,7 +377,6 @@ namespace OficiosTI
             {
                 this.Cursor = Cursors.Default;
             }
-
         }
 
         private string ObtenerFundamentoLegal(string cargoFirmante)

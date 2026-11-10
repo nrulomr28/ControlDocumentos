@@ -63,10 +63,12 @@ namespace OficiosTI
         {
             lbTicket.Text = $"Ticket #{_ticket.TicketId}";
         }
+
         private string ObtenerCopiasDefault()
         {
             return "C.C.P. Lic. Andrés Augusto Rosaldo García. - Oficial Mayor de la SSP. - Para su superior conocimiento. – Presente.";
         }
+
         private void BtnPreview_Click(object sender, EventArgs e)    // VISTA PREVIA DEL OFICIO DE RESPUESTA 
         {
             if (!ValidacionesPreview())
@@ -109,7 +111,7 @@ namespace OficiosTI
                 };
                    var servicio = new OficioWordInteropService(_context);
                 // var servicio = new OficioWordInteropService();                
-                string ruta = servicio.Generar(model);
+                   string ruta = servicio.Generar(model);
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = ruta,
@@ -288,19 +290,7 @@ namespace OficiosTI
             Close();
         }
 
-
-
-
-
-
-
-
-
-       
-
-
         /*
-
         private void GuardarOficio()
         {
             if (string.IsNullOrWhiteSpace(txtNumeroOficio.Text))
@@ -633,7 +623,6 @@ namespace OficiosTI
             return (valor ?? string.Empty).Trim();
         }
 
-
         private void CargarOficio(OficioRespuesta oficio)
         {
             _oficioActual = oficio ?? new OficioRespuesta();
@@ -781,7 +770,6 @@ namespace OficiosTI
             {
                 txtCopias.AppendText(Environment.NewLine);
             }
-
             txtCopias.AppendText("C.C.P. " + itemSeleccionado + "- Para su conocimiento.- Presente");
             cmbCopias.SelectedIndex = -1;
         }

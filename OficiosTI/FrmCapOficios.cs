@@ -24,7 +24,7 @@ namespace OficiosTI
             _usuarioActual = usuarioActual;
             _service = new OficioRespuestaService(_context);
             this.Text = $"Captura de Oficios - {_usuarioActual.NombreMostrar} ({_usuarioActual.UnidadOrganizativa})";
-            // CATALOGOS 
+         // CATALOGOS 
             CargarEjercicio();
             CargarReqTicket();
             CargarPrioridad();
@@ -42,7 +42,7 @@ namespace OficiosTI
             DateDocumento.Checked = false;
             btnQuitarAdjunto.Visible = false;
             btnVerArchivo.Visible = false;
-            /// CAMPOS CUANDO SE ACTUALIZA EL OFICIO 
+        /// CAMPOS CUANDO SE ACTUALIZA EL OFICIO 
             txtSeguimiento.Visible= false;
             lblhistorial.Visible = false;
             dataGridTickets.Visible = false;
@@ -349,9 +349,7 @@ namespace OficiosTI
                 if (archivoAdjunto != null && archivoAdjunto.ArchivoArchivo != null)
                 {                 
                     string rutaTemporal = Path.Combine(Path.GetTempPath(), archivoAdjunto.ArchivoNombre);
-
                     File.WriteAllBytes(rutaTemporal, archivoAdjunto.ArchivoArchivo);
-
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
                     {
                         FileName = rutaTemporal,
@@ -369,7 +367,6 @@ namespace OficiosTI
                 new { Id = 1, Nombre = "ORIGINAL" },
                 new { Id = 2, Nombre = "COPIAS"   },
                 new { Id = 3, Nombre = "SOBRE"    }
-
             }.ToList();
             CmbSeRecibe.DataSource = listaArchivo;
             CmbSeRecibe.DisplayMember = "Nombre";

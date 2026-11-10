@@ -36,10 +36,10 @@ namespace OficiosTI
             DataGridOficios.CellDoubleClick += DataGridOficios_CellDoubleClick;
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
+
         private void ActualizarIndicadores()
         {
-            int total = _context.CapturaOficios
-                                .Count(resp => resp.Activo == 1);
+            int total =    _context.CapturaOficios.Count(resp => resp.Activo == 1);
             int cerrados = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "CERRADO");
             int abiertos = _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "ABIERTO");
             int proceso =  _context.CapturaOficios.Count(resp => resp.Activo == 1 && resp.Estatus == "EN PROCESO");
@@ -47,6 +47,7 @@ namespace OficiosTI
             lblCerradosTotal.Text = $"Cerrados: {cerrados}";
             lblEnProcesoTotal.Text = $"Proceso: {proceso}";
         }
+
         private void DataGridOficios_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             Font boldFont = new Font(DataGridOficios.Font, FontStyle.Bold);
@@ -122,10 +123,10 @@ namespace OficiosTI
             new { Id =  0, Nombre = "RECIBIDO" },
             new { Id =  1, Nombre = "ENVIADO"  }
             }.ToList();
-                cmbTipoCaptura.DataSource = listaCaptura;
-                cmbTipoCaptura.DisplayMember = "Nombre";
-                cmbTipoCaptura.ValueMember = "Id";
-                cmbTipoCaptura.SelectedIndex = 0;
+            cmbTipoCaptura.DataSource = listaCaptura;
+            cmbTipoCaptura.DisplayMember = "Nombre";
+            cmbTipoCaptura.ValueMember = "Id";
+            cmbTipoCaptura.SelectedIndex = 0;
         }
 
         private void btnCapturarOficio_Click(object sender, EventArgs e)
@@ -147,11 +148,11 @@ namespace OficiosTI
             }
         }
 
-       private void btnSalir_Click(object sender, EventArgs e)
-       {
+        private void btnSalir_Click(object sender, EventArgs e)
+        {
             Application.Exit();
-       }
-    
+        }
+
         /*   private void InicializarGrid()    /// OFICIOS CAPTURADOS POR DOCUMENTACION 
                 {
                     DataGridOficios.AutoGenerateColumns = true;
@@ -279,7 +280,7 @@ namespace OficiosTI
                                   on resp.Destinatario equals desti.DestinatarioId
                                   join ticket in _context.Ticket
                                   on resp.CapturaOficioId equals ticket.id_of into ticketGroup
-                                  where resp.Activo == 1 
+                                  where resp.Activo == 1
                                   orderby resp.CapturaOficioId descending
                                   select new
                                   {
@@ -290,11 +291,11 @@ namespace OficiosTI
                                       TipoDocumento = resp.TipoDocumento,
                                       Asunto = resp.Asunto,
                                       Peticion = resp.Peticion,
-                                      NumeroControl = resp.FolioInicio, 
+                                      NumeroControl = resp.FolioInicio,
                                       Remitente = remi.RemitenteNombre,
                                       Destinatario = desti.DestinatarioNombre,
                                       RequiereTicket = resp.RequiereTicket,
-                                    //OficioRespuesta = resp.OficioRespuestaId,
+                                      //OficioRespuesta = resp.OficioRespuestaId,
                                       ListaTickets = ticketGroup.Select(t => t.TicketId)
                                   }).ToList();
 
@@ -339,7 +340,7 @@ namespace OficiosTI
                         x.Remitente,
                         x.Destinatario,
                         x.RequiereTicket,
-                     // x.OficioRespuesta,
+                        // x.OficioRespuesta,
                         Tickets = textoTickets
                     };
                 }).ToList();
@@ -422,15 +423,15 @@ namespace OficiosTI
             }
         }
 
-      /*
-        private void SetColumnHeader(string columnName, string headerText)
-        {
-            if (DataGridOficios.Columns.Contains(columnName))
-            {
-                DataGridOficios.Columns[columnName].HeaderText = headerText;
-            }
-        }
-      */
+        /*
+          private void SetColumnHeader(string columnName, string headerText)
+          {
+              if (DataGridOficios.Columns.Contains(columnName))
+              {
+                  DataGridOficios.Columns[columnName].HeaderText = headerText;
+              }
+          }
+        */
 
         private void ResaltarOficios()
         {
@@ -441,7 +442,7 @@ namespace OficiosTI
                 if (row.IsNewRow) continue;
                 string oficio = row.Cells["NumOficio"].Value?.ToString();
                 string estado = row.Cells["Estado"].Value?.ToString();
-             //   string Ticket = row.Cells["RequiereTicket"].Value?.ToString();
+                //   string Ticket = row.Cells["RequiereTicket"].Value?.ToString();
 
                 row.DefaultCellStyle.BackColor = Color.Honeydew;
                 if (!string.IsNullOrWhiteSpace(oficio))
@@ -689,4 +690,4 @@ namespace OficiosTI
 
 
 }
- 
+
