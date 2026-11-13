@@ -4,8 +4,6 @@ using OficiosTI.Data;
 using OficiosTI.Data.Entities;
 using OficiosTI.Services;
 using OficiosTI.UI;
-using System.DirectoryServices;
-using System.DirectoryServices.ActiveDirectory;
 
 namespace OficiosTI
 {
@@ -17,74 +15,86 @@ namespace OficiosTI
         {
             _context = context;
             _service = new OficioRespuestaService(_context);
+
             InitializeComponent();
-            InicializarGrid();
-            CargarTickets();
+
+            // Suscripción de eventos (barato, sin BD)
             DataGridTickets.DataBindingComplete += DataGridTickets_DataBindingComplete;
             DataGridTickets.CellClick += DataGridTickets_CellClick;
             DataGridTickets.CellFormatting += DataGridTickets_CellFormatting;
-            CargarUser();
-            CargarDominio();
-            ObtenerOrganizacion();
-            CargarStatus();
-            CargarPrioridad();
-            CargarComboSuplente();
-            string org = _service.ObtenerUnidadOrganizativa();
-            int idOficina = _service.ObtenerUnidadOrgId(org);
-            ObtenerSegmentoDeRed();
-            AplicarPermisosInterfaz(idOficina, org);   //// BOTONES PARA ASIGNAR NUMERO DE OFICIO 
-            // permisos a los botones
-            string usuarioDominioLogueado = _service.ObtenerDominioYUsuario();     
-            /// MOSTRAR EL COMBO DE SUPLENTE SOLO AL JEFE O AL SUPLENTE 
-            var usuarioActual = _context.Usuarios
-                               .Where(y => y.UsuarioDominio == usuarioDominioLogueado)
-                               .Select(y => new
-                               {                                  
-                                   y.Jefe,
-                                   y.SuplenteJefe
-                               })
-                               .FirstOrDefault();       
-            bool esJefe = false;
-            if (usuarioActual != null)
-            {
-                //  JEFE SI:  titular (1)  o suplente
-                if (esJefe = (usuarioActual.Jefe == 1) || (usuarioActual.SuplenteJefe == 1))
-                {
-                    cmbSuplente.Visible = true;
-                    lblSuplente.Visible = true;
-                    btnSuplente.Visible = true;
-                    lblSuplenteAsignado.Visible = true;
-                }
-                else
-                {
-                    cmbSuplente.Visible = false;
-                    lblSuplente.Visible = false;
-                    btnSuplente.Visible = false;
-                    lblSuplenteAsignado.Visible = false;
-                }
-            }
-            this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
 
-        /*  
-        private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)
+        private async void FrmTickets_Load(object sender, EventArgs e)
         {
-         ////BOTONES PARA VALIDAR QUIEN ASIGNA LOS OFICIOS ////
-         string ou = nombreOU?.Trim().ToUpper() ?? "";
-         if (ou == "DESARROLLO DIGITAL" || ou == "REDES" || ou=="SOPORTE TÉCNICO" || ou=="JEFATURA")
-         //   if (ou ==  "JEFATURA")
-           {
-                       btnAsignar.Visible = true;
-                       btnSinTicket.Enabled = true;            
-                   }
-                   else
-                   {       
-                       btnAsignar.Visible = false;
-                       btnSinTicket.Visible = false;
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+                UseWaitCursor = true;
 
-                   }
-         }
-        */
+                // 1) Estructura visual primero (rápido, sin BD)
+                InicializarGrid();
+                this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
+
+                // 2) Combos y catálogos
+                CargarUser();
+                CargarDominio();
+                CargarStatus();
+                //CargarPrioridad();
+                CargarComboSuplente();
+
+                // 3) Datos dependientes de sesión / organización
+                ObtenerOrganizacion();
+                ObtenerSegmentoDeRed();
+
+                string org = _service.ObtenerUnidadOrganizativa();
+                int idDepartamento = _service.ObtenerUnidadOrgId(org);
+
+                // 4) Permisos (depende de org)
+                AplicarPermisosInterfaz(idDepartamento, org);
+
+                // 5) Visibilidad de suplente (depende de usuario logueado)
+                ConfigurarVisibilidadSuplente();
+
+                // 6) Datos pesados al final
+                CargarTickets();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Ocurrió un error al inicializar el formulario:\n\n" + ex.Message,
+                    "Error de inicialización",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                UseWaitCursor = false;
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void ConfigurarVisibilidadSuplente()
+        {
+            string usuarioDominioLogueado = _service.ObtenerDominioYUsuario();
+
+            var usuarioActual = _context.Usuarios
+                .Where(y => y.UsuarioDominio == usuarioDominioLogueado)
+                .Select(y => new
+                {
+                    y.Jefe,
+                    y.SuplenteJefe
+                })
+                .FirstOrDefault();
+
+            bool esJefeOSuplente =
+                usuarioActual != null &&
+                (usuarioActual.Jefe == 1 || usuarioActual.SuplenteJefe == 1);
+
+            cmbSuplente.Visible = esJefeOSuplente;
+            lblSuplente.Visible = esJefeOSuplente;
+            btnSuplente.Visible = esJefeOSuplente;
+            lblSuplenteAsignado.Visible = esJefeOSuplente;
+        }      
 
         private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)    
         {   /// permisos del boton para asignar los oficios de los demas departamentos 
@@ -109,7 +119,7 @@ namespace OficiosTI
 
         private void CargarDominio()
         {
-            lbDominio.Text = $"USUARIO Y DOMINIO: {_service.ObtenerDominioYUsuario()}";
+            lbDominio.Text = $"USUARIO: {_service.ObtenerDominioYUsuario()}";
         }
 
         private void ObtenerSegmentoDeRed()
@@ -135,118 +145,8 @@ namespace OficiosTI
             ComboStatus.DisplayMember = "Cat_TicketStatusStatus";
             ComboStatus.ValueMember = "Cat_TicketStatusId";
             ComboStatus.SelectedIndex = -1;
-        }
-        private void CargarPrioridad()
-        {
-            var listaPrioridad = new[]
-            {
-             new { Id =  0, Nombre = "TODOS"   },
-             new { Id =  1, Nombre = "NORMAL"  },
-             new { Id =  2, Nombre = "URGENTE" },
+        }        
 
-            }.ToList();
-            ComboPrioridad.DataSource = listaPrioridad;
-            ComboPrioridad.DisplayMember = "Nombre";
-            ComboPrioridad.ValueMember = "Id";
-            ComboPrioridad.SelectedIndex = 0;
-        }
-
-        /*private void CargarTickets()
-          {
-
-            int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
-            var query = _context.Ticket.AsQueryable();
-                 if (_service.EsUsuarioGlobal())
-                 {
-
-                     query = query.Where(t => t.id_of != null);
-                 }
-                 else
-                 {
-
-                     query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null);
-                 }
-
-                 DataGridTickets.DataSource = query.ToList();
-          }
-          */
-
-        /// MODIFICAR PARA CARGA DE TICKETS
-        /* private void CargarTickets()
-         {
-             string textoBuscar = TextBuscar.Text.Trim();
-             string prioridad = ComboPrioridad.Text;
-             string status = ComboStatus.SelectedValue?.ToString() ?? "";
-             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
-             bool esUsuarioGlobal = _service.EsUsuarioGlobal();
-             DateTime fechaLimite = DateTime.Now.AddMonths(-2);
-             var query = _context.Ticket.AsQueryable();
-             if (esUsuarioGlobal)
-             {
-                 query = query.Where(t => t.id_of != null && t.Cat_TicketStatusId > 1);
-             }
-             else
-             {
-                 query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId > 1);
-             }
-             query = query.Where(t => t.TicketFecha >= fechaLimite);
-
-             if (!string.IsNullOrWhiteSpace(textoBuscar))
-             {
-                 query = query.Where(t => t.TicketPersona.Contains(textoBuscar) ||
-                                          t.TicketAsunto.Contains(textoBuscar));
-             }
-             if (!string.IsNullOrWhiteSpace(prioridad) &&
-                 !prioridad.Equals("TODOS", StringComparison.OrdinalIgnoreCase))
-             {
-                 query = query.Where(t => t.TicketPrioridad == prioridad);
-             }
-
-             if (!string.IsNullOrWhiteSpace(status) && int.TryParse(status, out int statusId))
-             {
-                 query = query.Where(t => t.Cat_TicketStatusId == statusId);
-             }  
-             var tickets = query
-                 .Select(t => new TicketGridModel
-                 {
-                     TicketId = t.TicketId,
-                     TicketPersona = t.TicketPersona,
-                     TicketAsunto = t.TicketAsunto,
-                     TicketPrioridad = t.TicketPrioridad,
-                     TicketFecha = t.TicketFecha,
-                     Cat_TicketStatusId = t.Cat_TicketStatusId,   
-                     /// PRIMER TABLA DE ESTADOS 
-                     EstadoTicket = _context.Cat_TicketStatus
-                         .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)    
-                         .Select(o => o.Cat_TicketStatusStatus)
-                         .FirstOrDefault(),
-                     /// SEGUNDA TABLA DE ESTADOS
-                     EstadoTicketO = _context.Cat_EstadoTicket
-                     .Where(c => c.Cat_TicketStatusId == t.Cat_TicketStatusId)
-                     .Select(c => c.Cat_TicketStatusStatus)
-                     .FirstOrDefault(),
-                     OficinasNombre = _context.Oficinas
-                         .Where(o => o.OficinasId == t.OficinasId)
-                         .Select(o => o.OficinasNombre)
-                         .FirstOrDefault(),
-                     NumeroOficio = _context.OficioRespuesta
-                         .Where(o => o.TicketId == t.TicketId)
-                         .Select(o => o.NumeroOficio)
-                         .FirstOrDefault()
-                 })
-                 // Ordenamiento personalizado
-                 .OrderBy(t => string.IsNullOrEmpty(t.NumeroOficio) ? 1 :
-                               (t.Cat_TicketStatusId == 3) ? 3 :
-                               (t.Cat_TicketStatusId == 2) ? 2 :
-                               4)
-                 .ThenByDescending(t => t.Cat_TicketStatusId)
-                 .ToList();
-             DataGridTickets.DataSource = null;
-             DataGridTickets.DataSource = new BindingSource { DataSource = tickets };
-             ConfigurarGrid();
-             ActualizarIndicadores(tickets);
-         }
-        */
 
         public class ItemComboUsuario
         {
@@ -255,7 +155,6 @@ namespace OficiosTI
             public int UsuarioAnterior { get; set; }
             public int? Jefe { get; set; }         
         }
-
         private void CargarComboSuplente()
         {
             try
@@ -304,11 +203,10 @@ namespace OficiosTI
                 MessageBox.Show($"Error al cargar los analistas: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-   
         private void CargarTickets()
         {
             string textoBuscar = TextBuscar.Text.Trim();
-            string prioridad = ComboPrioridad.Text;
+            
             string status = ComboStatus.SelectedValue?.ToString() ?? "";
             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
             bool esUsuarioGlobal = _service.EsUsuarioGlobal();
@@ -334,7 +232,7 @@ namespace OficiosTI
                 esJefe = (usuarioActual.Jefe == 1) || (usuarioActual.SuplenteJefe == 1);
                 if (idUsuarioActual == 0)
                 {
-                    MessageBox.Show($"Usuario encontrado, pero su 'UsuarioAnterior' en la BD es 0.\nRevisa el registro de: {usuarioDominioLogueado}", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show($"Usuario encontrado, pero 'UsuarioAnterior' en la BD es 0.\nRevisa el registro de: {usuarioDominioLogueado}", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
             else
@@ -350,7 +248,7 @@ namespace OficiosTI
             }
             else if (esJefe)
             {
-                //  JEFE O SUPLENTE: Ve todo lo de su oficina
+                //  El jefe o el suplente ve todo lo de su Departamento
                 query = query.Where(t => t.OficinasId == miOficinaId);
             }
             else
@@ -366,11 +264,7 @@ namespace OficiosTI
             {
                 query = query.Where(t => t.TicketPersona.Contains(textoBuscar) ||
                                          t.TicketAsunto.Contains(textoBuscar));
-            }
-            if (!string.IsNullOrWhiteSpace(prioridad) && !prioridad.Equals("TODOS", StringComparison.OrdinalIgnoreCase))
-            {
-                query = query.Where(t => t.TicketPrioridad == prioridad);
-            }
+            }            
 
             if (!string.IsNullOrWhiteSpace(status) && int.TryParse(status, out int statusId))
             {
@@ -391,7 +285,7 @@ namespace OficiosTI
                         .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
                         .Select(o => o.Cat_TicketStatusStatus)
                         .FirstOrDefault(),
-                    OficinasNombre = _context.Oficinas
+                    DepartamentoNombre = _context.Oficinas
                         .Where(o => o.OficinasId == t.OficinasId)
                         .Select(o => o.OficinasNombre)
                         .FirstOrDefault(),
@@ -406,10 +300,12 @@ namespace OficiosTI
                         .FirstOrDefault()
                 })
                 // Ordenamiento personalizado
-                .OrderBy(t => string.IsNullOrEmpty(t.NumeroOficio) ? 1 :    // PRIMERO CERRADOS SIN OFICIO,  
-                              (t.Cat_TicketStatusId == 3) ? 3 :             // LUEGO EN PROCESO
-                              (t.Cat_TicketStatusId == 2) ? 2 :             // Y AL FINAL CERRADOS CON OFICIO 
-                              4)
+                .OrderBy(t =>
+                    (t.Cat_TicketStatusId == 1) ? 1 :                          // PRIMERO ABIERTOS
+                    (t.Cat_TicketStatusId == 2) ? 2 :                          // LUEGO EN PROCESO
+                    (t.Cat_TicketStatusId == 3 && string.IsNullOrEmpty(t.NumeroOficio)) ? 3 : // CERRADOS SIN OFICIO
+                    (t.Cat_TicketStatusId == 3) ? 4 :                          // CERRADOS CON OFICIO
+                    5)                                                          // OTROS AL FINAL
                 .ThenByDescending(t => t.Cat_TicketStatusId)
                 .ToList();
             DataGridTickets.DataSource = null;
@@ -417,225 +313,70 @@ namespace OficiosTI
             ConfigurarGrid();
             ActualizarIndicadores(tickets);
         }
-
-        /*
-        private void CargarTickets()    /// ULTIMA VERSION DE TICKETS
-        {
-
-              string textoBuscar = TextBuscar.Text.Trim();
-              string prioridad = ComboPrioridad.Text;
-              string status = ComboStatus.SelectedValue?.ToString() ?? "";
-              int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
-              bool esUsuarioGlobal = _service.EsUsuarioGlobal();
-              DateTime fechaLimite = DateTime.Now.AddMonths(-2);
-              var query = _context.Ticket.AsQueryable();
-
-              if (esUsuarioGlobal)
-              {
-                  query = query.Where(t => t.id_of != null && t.Cat_TicketStatusId >= 1); /// USUARIO GLOBAL VE TODOS LOS TICKETS PARA CERRARLOS SI SE EQUIVOCAN
-              }
-              else
-              {
-                  query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId > 1);
-              }
-                  query = query.Where(t => t.TicketFecha >= fechaLimite);
-
-              if (!string.IsNullOrWhiteSpace(textoBuscar))
-              {
-                  query = query.Where(t => t.TicketPersona.Contains(textoBuscar) ||
-                                           t.TicketAsunto.Contains(textoBuscar));
-              }
-              if (!string.IsNullOrWhiteSpace(prioridad) && !prioridad.Equals("TODOS", StringComparison.OrdinalIgnoreCase))
-              {
-                  query = query.Where(t => t.TicketPrioridad == prioridad);
-              }
-
-              if (!string.IsNullOrWhiteSpace(status) && int.TryParse(status, out int statusId))
-              {
-                  query = query.Where(t => t.Cat_TicketStatusId == statusId);
-              }
-
-              var tickets = query
-                  .Select(t => new TicketGridModel
-                  {
-                      TicketId = t.TicketId,
-                      TicketPersona = t.TicketPersona,
-                      TicketAsunto = t.TicketAsunto,
-                      TicketPrioridad = t.TicketPrioridad,
-                      TicketFecha = t.TicketFecha,
-                      Cat_TicketStatusId = t.Cat_TicketStatusId,
-                      /// PRIMER TABLA DE ESTADOS 
-                      EstadoTicket = _context.Cat_TicketStatus
-                          .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
-                          .Select(o => o.Cat_TicketStatusStatus)
-                          .FirstOrDefault(),                 
-                      OficinasNombre = _context.Oficinas
-                          .Where(o => o.OficinasId == t.OficinasId)
-                          .Select(o => o.OficinasNombre)
-                          .FirstOrDefault(),
-                      NumeroOficio = _context.OficioRespuesta
-                          .Where(o => o.TicketId == t.TicketId)
-                          .Select(o => o.NumeroOficio)
-                          .FirstOrDefault(),
-                      /// TABLA DE TICKETS SIN OFICIOS 
-                      EstadoSinOficio = _context.Ticket_SinOficio   
-                          .Where(s => s.TicketId == t.TicketId)
-                          .Select(s => s.Cat_TicketStatusStatus)
-                          .FirstOrDefault()                  
-                  })
-                  // Ordenamiento personalizado
-                  .OrderBy(t => string.IsNullOrEmpty(t.NumeroOficio) ? 1 :
-                                (t.Cat_TicketStatusId == 3) ? 3 :
-                                (t.Cat_TicketStatusId == 2) ? 2 :
-                                4)
-                  .ThenByDescending(t => t.Cat_TicketStatusId)
-                  .ToList();
-
-              DataGridTickets.DataSource = null;
-              DataGridTickets.DataSource = new BindingSource { DataSource = tickets };
-              ConfigurarGrid();
-              ActualizarIndicadores(tickets);
-        }
-        */
-
-        //private void CargarTickets()
-        //{
-        //    string textoBuscar = TextBuscar.Text.Trim();
-        //    string prioridad = ComboPrioridad.Text;
-        // // string status = ComboStatus.Text;
-        //    string status = ComboStatus.SelectedValue?.ToString() ?? "";
-        //    int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
-        //    string org = _service.ObtenerUnidadOrganizativa();
-        //    int idorg = _service.ObtenerUnidadOrgId(org);
-        //    //// OBTENER EL ID DEL DEPARTAMENTO 
-        ///*  var oficinaEncontrada = _context.Oficinas
-        //       .FirstOrDefault(q => q.OficinasNombre == org);*/
-        //    var query = _context.Ticket.AsQueryable();
-        ////  var query = _context.Ticket
-        //    if (_service.EsUsuarioGlobal())    //// MUESTRA TODOS O SOLO LOS DEL DEPARTAMENTO
-        //    {
-        //        query = query.Where(t => t.id_of != null && t.Cat_TicketStatusId>1);
-        //    }
-        //    else
-        //    {
-        //        query = query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId > 1);
-        //    }
-        //   //  .Where(t => t.OficinasId == idorg && t.id_of != null);   /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
-        //   /// BUSCAR POR PERSONA 
-        //    if (!string.IsNullOrWhiteSpace(textoBuscar))
-        //    {
-        //        query = query.Where(t =>
-        //            t.TicketPersona.Contains(textoBuscar) ||
-        //            t.TicketAsunto.Contains(textoBuscar));
-        //    }
-        //   // if (!string.IsNullOrWhiteSpace(prioridad) && prioridad != "Todos")
-        ///*     if (!string.IsNullOrWhiteSpace(prioridad))
-        //     {
-        //        query = query.Where(t => t.TicketPrioridad == prioridad);
-        //     }
-        //*/
-        //    if (!string.IsNullOrWhiteSpace(prioridad) && prioridad != "TODOS")
-        //    {
-        //        query = query.Where(t => t.TicketPrioridad == prioridad);
-        //    }
-
-        //    if (!string.IsNullOrWhiteSpace(status))
-        //    {
-        //        if (int.TryParse(status, out int statusId))
-        //        {
-        //            query = query.Where(t => t.Cat_TicketStatusId == statusId);
-        //        }
-        //    }
-        //  /*  if (!string.IsNullOrWhiteSpace(status) && status != "Todos")
-        //     {
-        //        int statusId = int.Parse(status);
-        //        query = query.Where(t => t.Cat_TicketStatusId == statusId);
-        //     }
-        //  */
-        //    var tickets = query
-        //    .Select(t => new TicketGridModel
-        //    {
-        //        TicketId = t.TicketId,
-        //        TicketPersona = t.TicketPersona,
-        //        TicketAsunto = t.TicketAsunto,
-        //        TicketPrioridad = t.TicketPrioridad,
-        //        TicketFecha = t.TicketFecha,
-        //        Cat_TicketStatusId = t.Cat_TicketStatusId,    // EstadoTicket = _context.Cat_EstadoTicket 
-        //        EstadoTicket = _context.Cat_TicketStatus
-        //        .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
-        //        .Select(o => o.Cat_TicketStatusStatus)
-        //        .FirstOrDefault(),
-        //        OficinasNombre = _context.Oficinas
-        //         .Where(o => o.OficinasId == t.OficinasId)
-        //         .Select(o => o.OficinasNombre)
-        //         .FirstOrDefault(),
-        //        NumeroOficio = _context.OficioRespuesta
-        //             .Where(o => o.TicketId == t.TicketId)
-        //             .Select(o => o.NumeroOficio)
-        //             .FirstOrDefault()
-        //    })
-        //    .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
-        //    // --- NUEVO ORDENAMIENTO ---
-        //    .OrderBy(t => (t.NumeroOficio == null || t.NumeroOficio == "") ? 1 : // 1° Sin oficio
-        //                  (t.Cat_TicketStatusId == 3) ? 3 :                      // 2° Estado 2 
-        //                  (t.Cat_TicketStatusId == 2) ? 2 :                      // 3° Estado 3 (con oficio)
-        //                  4)                                                     // 
-        //    .ThenByDescending(t => t.Cat_TicketStatusId)                         // 
-        //    .ToList();
-        // /*   var tickets = query
-        //       .Select(t => new TicketGridModel
-        //       {
-        //           TicketId = t.TicketId,
-        //           TicketPersona = t.TicketPersona,
-        //           TicketAsunto = t.TicketAsunto,
-        //           TicketPrioridad = t.TicketPrioridad,
-        //           TicketFecha = t.TicketFecha,
-        //           Cat_TicketStatusId = t.Cat_TicketStatusId,
-        //           EstadoTicket = _context.Cat_TicketStatus
-        //            .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
-        //            .Select(o => o.Cat_TicketStatusStatus)
-        //            .FirstOrDefault(),
-        //           OficinasNombre = _context.Oficinas
-        //            .Where(o => o.OficinasId == t.OficinasId)
-        //            .Select(o => o.OficinasNombre)
-        //            .FirstOrDefault(),
-        //           NumeroOficio = _context.OficioRespuesta
-        //                .Where(o => o.TicketId == t.TicketId)
-        //                .Select(o => o.NumeroOficio)
-        //                .FirstOrDefault()
-        //       })
-        //          .Where(t => t.TicketFecha >= DateTime.Now.AddMonths(-2))
-        //   //     .OrderBy(o => o.NumeroOficio)
-        //      //  .OrderBy(t => t.Cat_TicketStatusId) 
-        //          .OrderByDescending(t => t.Cat_TicketStatusId)
-        //                   .ThenBy(o => o.NumeroOficio)                      
-        //                   .ThenByDescending(t => t.TicketFecha)             
-        //        .ToList();*/
-        //    DataGridTickets.DataSource = null;
-        //    var bs = new BindingSource();
-        //    bs.DataSource = tickets;
-        //    DataGridTickets.DataSource = bs;
-        //    ConfigurarGrid();
-        //    ActualizarIndicadores(tickets);
-        //}
-
         private void DataGridTickets_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0)
+            // 1. Validar que el evento sea válido (no encabezados)
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;
-            var gridItem = (TicketGridModel)DataGridTickets.Rows[e.RowIndex].DataBoundItem as TicketGridModel;
-            if (gridItem == null)
+
+            // 2. Validar que el grid no sea null (defensivo)
+            if (DataGridTickets?.Rows == null || e.RowIndex >= DataGridTickets.Rows.Count)
                 return;
-           // int ticketId = int.Parse(gridItem.TicketId);
-            var ticket = _context.Ticket.Find(gridItem.TicketId);
-            if (ticket == null)
+
+            try
             {
-                MessageBox.Show("No se encontró el ticket.");
-                return;
+                // 3. Obtener el bound item de forma segura
+                var row = DataGridTickets.Rows[e.RowIndex];
+                if (row?.DataBoundItem is not TicketGridModel gridItem)
+                    return;
+
+                // 4. Validar el Id antes de usarlo
+                if (gridItem.TicketId <= 0)
+                {
+                    MessageBox.Show("El ticket seleccionado no tiene un identificador válido.",
+                        "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 5. Validar contexto (por si el form se está cerrando / disposing)
+                if (_context == null)
+                {
+                    MessageBox.Show("El contexto de datos no está disponible.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // 6. Buscar el ticket
+                var ticket = _context.Ticket.Find(gridItem.TicketId);
+                if (ticket == null)
+                {
+                    MessageBox.Show("No se encontró el ticket. Es posible que haya sido eliminado.",
+                        "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    // Opcional: refrescar el grid para reflejar el estado real
+                    // CargarTickets();
+                    return;
+                }
+
+                // 7. Evitar múltiples aperturas simultáneas (anti doble-click)
+                using var frm = new FrmTicketDetalle(ticket, _context);
+                frm.ShowDialog(this);
             }
-            var frm = new FrmTicketDetalle(ticket, _context);
-            frm.ShowDialog();
-            CargarTickets();
+            catch (ObjectDisposedException)
+            {
+                // El contexto o el form ya fueron liberados
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show($"No se pudo abrir el ticket: {ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error inesperado al abrir el ticket:\n{ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Aquí podrías loguear: Logger.Error(ex);
+            }
         }
 
         private void BtnAbrirTicket_Click(object sender, EventArgs e)
@@ -647,67 +388,9 @@ namespace OficiosTI
             CargarTickets();
         }
 
-        //private void BtnBuscar_Click(object sender, EventArgs e)
-        //{
-        //    string texto = TextBuscar.Text.Trim();
-        //    string prioridad = ComboPrioridad.Text;
-        //    string status = ComboStatus.SelectedValue?.ToString() ?? "";
-        // // int status = int.Parse(ComboStatus.ValueMember);
-        // // string status = ComboStatus.Text;
-        //    string org = _service.ObtenerUnidadOrganizativa();
-        //    int idorg = _service.ObtenerUnidadOrgId(org);
-        //    //var oficinaEncontrada = _context.Oficinas
-        //    //  .FirstOrDefault(q => q.OficinasNombre == org);
-        //    var query = _context.Ticket
-        //        .Where(t => t.OficinasId == idorg);    /// 1 REDES, 2 CONTROL Y RESGUARDO, 3 DESARROLLO
-        //    if (!string.IsNullOrWhiteSpace(texto))     ////  SE CAMBIO POR LA UNIDAD ORGANIZATIVA 
-        //    {
-        //        query = query.Where(t =>
-        //            t.TicketPersona.Contains(texto) ||
-        //            t.TicketAsunto.Contains(texto) ||
-        //            t.TicketId.ToString().Contains(texto));
-        //    }
-
-        //    /// BUSCAR POR PRIORIDAD URGENTE O NORMAL 
-        //    if (!string.IsNullOrWhiteSpace(prioridad) && prioridad != "TODOS")
-        //    {
-        //        query = query.Where(t => t.TicketPrioridad == prioridad);
-        //    }
-
-        //    //// BUSCAR POR ESTADO 
-        //    if (!string.IsNullOrWhiteSpace(status) )
-        //    {
-        //        if (int.TryParse(status, out int statusId))
-        //        {
-        //            query = query.Where(t => t.Cat_TicketStatusId == statusId);
-        //        }
-        //    }
-        //    var tickets = query
-        //        .Select(t => new TicketGridModel
-        //        {
-        //            TicketId = t.TicketId,
-        //            TicketPersona = t.TicketPersona,
-        //            TicketAsunto = t.TicketAsunto,
-        //            TicketPrioridad = t.TicketPrioridad,
-        //            TicketFecha = t.TicketFecha,
-        //            Cat_TicketStatusId = t.Cat_TicketStatusId,
-        //            NumeroOficio = _context.OficioRespuesta
-        //                .Where(o => o.TicketId == t.TicketId)
-        //                .Select(o => o.NumeroOficio)
-        //                .FirstOrDefault()
-        //        })
-        //        .OrderByDescending(t => t.TicketFecha)
-        //        .ToList();
-        //    var bs = new BindingSource();
-        //    bs.DataSource = tickets;
-        //    DataGridTickets.DataSource = bs;
-        //    ConfigurarGrid();
-        //}
-
         private void BtnBuscar_Click(object sender, EventArgs e)   ////  BUSCAR POR GLOBAL O USUARIO NORMAL 
         {
-            string texto = TextBuscar.Text.Trim();
-            string prioridad = ComboPrioridad.Text;
+            string texto = TextBuscar.Text.Trim();            
             string status = ComboStatus.SelectedValue?.ToString() ?? "";
             string org = _service.ObtenerUnidadOrganizativa();
             int idorg = _service.ObtenerUnidadOrgId(org);
@@ -732,11 +415,6 @@ namespace OficiosTI
                     t.TicketId.ToString().Contains(texto));
             }
 
-            if (!string.IsNullOrWhiteSpace(prioridad) &&
-                !prioridad.Equals("TODOS", StringComparison.OrdinalIgnoreCase))
-            {
-                query = query.Where(t => t.TicketPrioridad == prioridad);
-            }
             if (!string.IsNullOrWhiteSpace(status) && int.TryParse(status, out int statusId))
             {
                 query = query.Where(t => t.Cat_TicketStatusId == statusId);
@@ -755,7 +433,7 @@ namespace OficiosTI
                         .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
                         .Select(o => o.Cat_TicketStatusStatus)
                         .FirstOrDefault(),
-                    OficinasNombre = _context.Oficinas
+                    DepartamentoNombre = _context.Oficinas
                         .Where(o => o.OficinasId == t.OficinasId)
                         .Select(o => o.OficinasNombre)
                         .FirstOrDefault(),
@@ -777,45 +455,6 @@ namespace OficiosTI
             DataGridTickets.DataSource = new BindingSource { DataSource = tickets };
             ConfigurarGrid();
         }
-
-
-        //private void BtnGenerarOficio_Click(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        if (DataGridTickets.CurrentRow == null)
-        //            return;
-
-        //        var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
-
-        //        if (gridItem == null)
-        //            return;
-
-        //        if (!string.IsNullOrEmpty(gridItem.NumeroOficio))
-        //        {
-        //            var r = MessageBox.Show(
-        //                "Este ticket ya tiene oficio. ¿Desea editarlo?",
-        //                "Oficio existente",
-        //                MessageBoxButtons.YesNo);
-
-        //            if (r == DialogResult.No)
-        //                return;
-        //        }
-
-        //        var ticket = ObtenerTicketSeleccionado();
-
-        //        if (ticket == null)
-        //            return;
-
-        //        new FrmOficioRespuesta(ticket, _context).ShowDialog();
-
-        //        CargarTickets();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.ToString());
-        //    }
-        //}
 
         private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
@@ -843,13 +482,12 @@ namespace OficiosTI
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"ERROR GRAVE:\n\n{ex.Message}\n\nDetalles técnicos:\n{ex.StackTrace}",
-                    "Error detectado",
+                MessageBox.Show($"Error crítico:\n\n{ex.Message}\n\nDetalles técnicos:\n{ex.StackTrace}",
+                    "Error grave",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
-
         private void ConfigurarGrid()
         {
             foreach (DataGridViewColumn col in DataGridTickets.Columns)
@@ -859,12 +497,12 @@ namespace OficiosTI
             DataGridTickets.Columns["EstadoTicket"].Visible = false;
             DataGridTickets.Columns["EstadoSinOficio"].Visible = false;
             DataGridTickets.Columns["TicketId"].HeaderText = "Ticket";
-            DataGridTickets.Columns["TicketPersona"].HeaderText = "Persona";
+            DataGridTickets.Columns["TicketPersona"].HeaderText = "Envía";
             DataGridTickets.Columns["TicketAsunto"].HeaderText = "Asunto";
             DataGridTickets.Columns["TicketPrioridad"].HeaderText = "Prioridad";
             DataGridTickets.Columns["TicketFecha"].HeaderText = "Fecha";
             DataGridTickets.Columns["NumeroOficio"].HeaderText = "Oficio";
-            DataGridTickets.Columns["OficinasNombre"].HeaderText = "Oficina";
+            DataGridTickets.Columns["DepartamentoNombre"].HeaderText = "Departamento";
             ResaltarOficios();
             //  AgregarColumnaOficio();    
             var col0 = DataGridTickets.Columns[0];
@@ -872,7 +510,6 @@ namespace OficiosTI
             col0.SortMode = DataGridViewColumnSortMode.NotSortable;
             //  col0.DefaultCellStyle.SelectionBackColor = DataGridTickets.DefaultCellStyle.BackColor;
         }
-
         private void ResaltarOficios()
         {
             foreach (DataGridViewRow row in DataGridTickets.Rows)
@@ -909,7 +546,6 @@ namespace OficiosTI
                 }
             }
         }
-
         private Ticket ObtenerTicketSeleccionado()
         {
             if (DataGridTickets.CurrentRow == null)
@@ -917,25 +553,10 @@ namespace OficiosTI
             var gridItem = (TicketGridModel)DataGridTickets.CurrentRow.DataBoundItem;
             return _context.Ticket.Find(gridItem.TicketId);
         }
-
         private void DataGridTickets_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             ResaltarOficios();
-        }
-
-        /*  private void AgregarColumnaOficio()
-           {
-               if (DataGridTickets.Columns["AbrirOficio"] != null)
-                   return;
-               var col = new DataGridViewButtonColumn();
-               col.Name = "AbrirOficio";
-               col.HeaderText = "Documento";
-               col.Text = "📄";
-               col.UseColumnTextForButtonValue = true;
-               col.Width = 60;
-               DataGridTickets.Columns.Add(col);
-           }
-        */
+        }        
         private void DataGridTickets_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
@@ -968,7 +589,6 @@ namespace OficiosTI
             frm.ShowDialog();
             CargarTickets();
         }
-
         private void DataGridTickets_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (DataGridTickets.Columns[e.ColumnIndex].Name == "AbrirOficio")
@@ -984,13 +604,10 @@ namespace OficiosTI
         }
         private void BtnLimpiar_Click(object sender, EventArgs e)
         {
-            TextBuscar.Text = "";
-            ComboPrioridad.SelectedIndex = -1;
+            TextBuscar.Text = "";            
             ComboStatus.SelectedIndex = -1;
             CargarTickets();
         }
-
-
         private void ActualizarIndicadores(List<TicketGridModel> tickets)
         {
             int total = tickets.Count;
@@ -1045,64 +662,6 @@ namespace OficiosTI
             formAsignar.ShowDialog();
         }
 
-        
-     /*   private void btnSuplente_Click(object sender, EventArgs e)
-        {
-           
-            if (cmbSuplente.SelectedValue == null)
-            {
-                MessageBox.Show("Por favor, seleccione un usuario de la lista.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            try
-            {
-                int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
-
-                int idNuevoSuplente = Convert.ToInt32(cmbSuplente.SelectedValue);
-
-                var suplenteActual = _context.Usuarios
-                    .FirstOrDefault(x => x.IdOficina == miOficinaId &&
-                                         x.Activo == 1 &&
-                                         x.SuplenteJefe == 1);
-
-                if (suplenteActual != null)
-                {
-                    if (suplenteActual.UsuarioAnterior == idNuevoSuplente)
-                    {
-                        MessageBox.Show("Este usuario ya es el suplente actual.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        return;
-                    }                                      
-                    suplenteActual.SuplenteJefe = 0;
-                }
-
-                var nuevoSuplente = _context.Usuarios
-                    .FirstOrDefault(x => x.IdOficina == miOficinaId &&
-                                         x.Activo == 1 &&
-                                         x.UsuarioAnterior == idNuevoSuplente);
-
-                if (nuevoSuplente != null)
-                {
-                    nuevoSuplente.SuplenteJefe = 1;
-
-                  
-                    _context.SaveChanges();
-
-                    MessageBox.Show("El suplente ha sido asignado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                    lblSuplenteAsignado.Text = $"Suplente: {nuevoSuplente.NombreCompleto}";
-                }
-                else
-                {
-                    MessageBox.Show("No se encontró el usuario seleccionado en la base de datos.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ocurrió un error al asignar el suplente: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-     */
         private void btnSuplente_Click(object sender, EventArgs e)
         {
             if (cmbSuplente.SelectedValue == null)
@@ -1171,11 +730,5 @@ namespace OficiosTI
             }
         }
 
-
-   /*     private void FrmTickets_Load(object sender, EventArgs e)
-        {
-
-        }
-   */
     }
 }

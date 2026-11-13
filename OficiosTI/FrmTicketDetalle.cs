@@ -1,17 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic.ApplicationServices;
 using OficiosTI.Data;
 using OficiosTI.Data.Entities;
-using OficiosTI.Documents;
+
 using OficiosTI.Services;
-using QuestPDF.Fluent;
-using System;
 
 using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace OficiosTI
 {
@@ -42,8 +35,8 @@ namespace OficiosTI
         {
             lblTicketId.Text = $"Ticket #{_ticket.TicketId}";
             txtPersona.Text = _ticket.TicketPersona;
-            txtAsunto.Text = _ticket.TicketMensaje;
-            txtMensaje.Text = _ticket.TicketAsunto;
+            txtAsunto.Text = _ticket.TicketAsunto;
+            txtMensaje.Text = _ticket.TicketMensaje;
             txtExtension.Text = _ticket.TicketExt?.ToString() ?? "";
             txtPrioridad.Text = _ticket.TicketPrioridad;
         }
@@ -97,8 +90,7 @@ namespace OficiosTI
             }
         }
 
-
-        private void CargarTicketsR()   /// TICKETS RELACIONADOS POR EL NUMERO DE OFICIO CAPTURADO 
+        private void CargarTicketsR()   /// TICKETS RELACIONADOS POR EL NÚMERO DE OFICIO CAPTURADO 
         {
             try
             {
@@ -107,20 +99,20 @@ namespace OficiosTI
                     dataGridRelacion.DataSource = null;
                     return;
                 }
-                
+
                 string origenTicket = _context.HiloTicket
                     .Where(h => h.TicketId == _ticket.TicketId &&
                                (h.HiloTicketAccion == "CREADO" || h.HiloTicketAccion == "CREADO*"))
                     .Select(h => h.HiloTicketAccion)
                     .FirstOrDefault();
-               
+
                 var ticketsRelacionados = (from t in _context.Ticket
                                            join o in _context.Oficinas on t.OficinasId equals o.OficinasId
                                            join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
                                            join x in _context.OficioRespuesta on t.TicketId equals x.TicketId into respuestas
                                            from r in respuestas.DefaultIfEmpty()
                                            where t.id_of == _ticket.id_of
-                                                 && t.TicketId != _ticket.TicketId                                                 
+                                                 && t.TicketId != _ticket.TicketId
                                                  && _context.HiloTicket.Any(h => h.TicketId == t.TicketId && h.HiloTicketAccion == origenTicket)
                                            orderby t.TicketId
                                            select new
@@ -138,44 +130,7 @@ namespace OficiosTI
             {
                 MessageBox.Show($"Error al cargar los tickets relacionados: {ex.Message}", "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-
-    /*  private void CargarTicketsR()
-        {
-            try
-            {
-                if (_ticket?.id_of == null || _ticket.id_of == 0)
-                {
-                    dataGridRelacion.DataSource = null;
-                    return;
-                }
-
-                var ticketsRelacionados = (from t in _context.Ticket
-                                           join o in _context.Oficinas on t.OficinasId equals o.OficinasId
-                                           join s in _context.Cat_TicketStatus on t.Cat_TicketStatusId equals s.Cat_TicketStatusId
-                                           join x in _context.OficioRespuesta on t.TicketId equals x.TicketId into respuestas
-                                           from r in respuestas.DefaultIfEmpty()
-                                           where t.id_of == _ticket.id_of && t.TicketId != _ticket.TicketId
-                                           orderby t.TicketId
-                                           select new
-                                           {
-                                               Ticket = t.TicketId,
-                                           //  Remitente = t.TicketPersona,
-                                           //  Asunto = t.TicketMensaje,
-                                               Oficina = o.OficinasNombre,
-                                               Estado = s.Cat_TicketStatusStatus,
-                                               Oficio = r != null ? r.NumeroOficio : "SIN OFICIO",
-                                           }).ToList();
-                dataGridRelacion.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dataGridRelacion.DataSource = ticketsRelacionados;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al cargar los tickets relacionados: {ex.Message}", "Error de Base de Datos", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-    */
+        }        
         private void btnAsignarTicket_Click(object sender, EventArgs e)  /// ASIGNACION DE TICKETS 
         {
             if (_ticket.Cat_TicketStatusId == 3)
@@ -224,8 +179,6 @@ namespace OficiosTI
                 MessageBox.Show($"Ocurrió un error al asignar el ticket: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
         private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
             try
@@ -233,21 +186,21 @@ namespace OficiosTI
                 var archivoBd = _context.Archivo.FirstOrDefault(p => p.OficioId == _ticket.id_of);
                 if (archivoBd == null || archivoBd.ArchivoArchivo == null || archivoBd.ArchivoArchivo.Length == 0)
                 {
-                    MessageBox.Show("El documento no existe o está vacío.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("El documento no existe o está dañado.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
-                }               
-                string rutaCarpeta = Path.Combine(Path.GetTempPath(), "DTIOficios");               
+                }
+                string rutaCarpeta = Path.Combine(Path.GetTempPath(), "DTIOficios");
                 if (!Directory.Exists(rutaCarpeta))
                 {
                     Directory.CreateDirectory(rutaCarpeta);
                 }
                 else
                 {
-                   
-                    LimpiarCarpetaTemporal(rutaCarpeta, diasAntiguedad: 1);
+
+                    LimpiarCarpetaTemporal(rutaCarpeta);
                 }
-                string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";        
-                string rutaTemporal = Path.Combine(rutaCarpeta, nombreArchivo);              
+                string nombreArchivo = $"Oficio_{archivoBd.ArchivoId}.pdf";
+                string rutaTemporal = Path.Combine(rutaCarpeta, nombreArchivo);
                 File.WriteAllBytes(rutaTemporal, archivoBd.ArchivoArchivo);
                 var psi = new System.Diagnostics.ProcessStartInfo
                 {
@@ -261,37 +214,34 @@ namespace OficiosTI
                 MessageBox.Show($"Ocurrió un error al abrir el PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-
-        private void LimpiarCarpetaTemporal(string rutaCarpeta, int diasAntiguedad)
+        private void LimpiarCarpetaTemporal(string rutaCarpeta)
         {
             try
             {
                 var directorio = new DirectoryInfo(rutaCarpeta);
-                if (!directorio.Exists) return;               
-                var fechaLimite = DateTime.Now.AddDays(-diasAntiguedad);
+                if (!directorio.Exists) return;
+                //var fechaLimite = DateTime.Now.AddDays(-diasAntiguedad);
                 foreach (var archivo in directorio.GetFiles())
                 {
-                 
-                    if (archivo.CreationTime < fechaLimite)
+
+                    //if (archivo.CreationTime < fechaLimite)
+                    //{
+                    try
                     {
-                        try
-                        {
-                            archivo.Delete();
-                        }
-                        catch
-                        {
-                            
-                        }
+                        archivo.Delete();
                     }
+                    catch
+                    {
+                        MessageBox.Show("No se pudo eliminar el archivo temporal.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    //}
                 }
             }
             catch
             {
-              
+
             }
         }
-
-
 
         /*
                 private void BtnGenerarOficio_Click(object sender, EventArgs e)    ///  BOTON PARA VER EL OFICIO  DE INGRESO PDF
@@ -327,13 +277,13 @@ namespace OficiosTI
             ProcesarRespuesta(cerrarTicket: cerrarYsinOficio, esSinOficio: cerrarYsinOficio);
         }
 
-   
+
         private void btnGuardaryCerrar_Click(object sender, EventArgs e)    /// SE PUEDE CERRAR CON OFICIO O SIN OFICIO 
         {
-          
+
             ProcesarRespuesta(cerrarTicket: true, esSinOficio: false);
         }
-     
+
         private void ProcesarRespuesta(bool cerrarTicket, bool esSinOficio)   /// SE UTILIZA SOLO UN BOTON PARA GENERAR LA RESPUESTA DE TICKET CON O SIN OFICIO 
         {
             if (_ticket.Cat_TicketStatusId == 3)
@@ -365,10 +315,10 @@ namespace OficiosTI
                     UsuarioId = idanalista
                 };
 
-                _context.HiloTicket.Add(hilo);               
+                _context.HiloTicket.Add(hilo);
                 if (cerrarTicket)
                 {
-                   
+
                     if (esSinOficio)
                     {
                         var sinOficio = new Ticket_SinOficio
@@ -380,7 +330,7 @@ namespace OficiosTI
                         };
                         _context.Add(sinOficio);
                     }
-                 
+
                     _ticket.Cat_TicketStatusId = 3;
                     _context.Ticket.Update(_ticket);
                 }
@@ -409,7 +359,12 @@ namespace OficiosTI
             }
         }
 
-    
+        private void FrmTicketDetalle_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            LimpiarCarpetaTemporal(Path.Combine(Path.GetTempPath(), "DTIOficios"));
+        }
+
+
 
         /*  private void BtnGuardarRespuesta_Click(object sender, EventArgs e)
           {

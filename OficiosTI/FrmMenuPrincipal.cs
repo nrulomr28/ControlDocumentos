@@ -98,8 +98,6 @@ namespace OficiosTI
                 }
             }
         }
-
-
         private void CargarEstado()
         {
             var listaEstado = new[]
@@ -114,7 +112,6 @@ namespace OficiosTI
             cmbEstado.ValueMember = "Id";
             cmbEstado.SelectedIndex = 0;
         }
-
         private void CargarTipoCaptura()
         {
             var listaCaptura = new[]
@@ -128,7 +125,6 @@ namespace OficiosTI
                 cmbTipoCaptura.ValueMember = "Id";
                 cmbTipoCaptura.SelectedIndex = 0;
         }
-
         private void btnCapturarOficio_Click(object sender, EventArgs e)
         {
             using (FrmCapOficios frmCaptura = new FrmCapOficios(_context, _usuarioActual))
@@ -138,7 +134,6 @@ namespace OficiosTI
 
             }
         }
-
         private void btnPanelAdmin_Click(object sender, EventArgs e)
         {
             using (FrmTickets frmPanel = new FrmTickets(_context))
@@ -147,11 +142,10 @@ namespace OficiosTI
 
             }
         }
-
-       private void btnSalir_Click(object sender, EventArgs e)
-       {
+        private void btnSalir_Click(object sender, EventArgs e)
+        {
             Application.Exit();
-       }
+        }
     
         /*   private void InicializarGrid()    /// OFICIOS CAPTURADOS POR DOCUMENTACION 
                 {

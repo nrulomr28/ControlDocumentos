@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace OficiosTI.Data.Entities
 {
     public class TicketGridModel
@@ -35,7 +30,7 @@ namespace OficiosTI.Data.Entities
 
         public string NumeroOficio { get; set; }
 
-        public string OficinasNombre { get; set; }
+        public string DepartamentoNombre { get; set; }
 
     }
 }

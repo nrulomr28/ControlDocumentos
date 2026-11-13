@@ -198,14 +198,14 @@ namespace OficiosTI
                     TicketId = t.TicketId,
                     TicketPersona = t.TicketPersona,
                     TicketAsunto = t.TicketAsunto,
-                    TicketPrioridad = t.TicketPrioridad,
+                    //TicketPrioridad = t.TicketPrioridad,
                     TicketFecha = t.TicketFecha,
-                    Cat_TicketStatusId = t.Cat_TicketStatusId,
+                    //Cat_TicketStatusId = t.Cat_TicketStatusId,
                     EstadoTicket = _context.Cat_TicketStatus
                         .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
                         .Select(o => o.Cat_TicketStatusStatus)
                         .FirstOrDefault(),
-                    OficinasNombre = _context.Oficinas
+                    DepartamentoNombre = _context.Oficinas
                         .Where(o => o.OficinasId == t.OficinasId)
                         .Select(o => o.OficinasNombre)
                         .FirstOrDefault(),
@@ -215,11 +215,11 @@ namespace OficiosTI
                         .FirstOrDefault()
                 })
                 .Where(t => t.TicketFecha >= fechaLimite)
-                .OrderBy(t => string.IsNullOrEmpty(t.NumeroOficio) ? 1 :
-                              (t.Cat_TicketStatusId == 2) ? 2 :
-                              (t.Cat_TicketStatusId == 3) ? 3 :
-                              4)
-                .ThenByDescending(t => t.Cat_TicketStatusId)
+                //.OrderBy(t => string.IsNullOrEmpty(t.NumeroOficio) ? 1 :
+                //              (t.Cat_TicketStatusId == 2) ? 2 :
+                //              (t.Cat_TicketStatusId == 3) ? 3 :
+                //              4)
+                //.ThenByDescending(t => t.Cat_TicketStatusId)
                 .ToList();
             gridPendientes.DataSource = tickets;
             ActualizarIndicadores(tickets);
@@ -286,14 +286,14 @@ namespace OficiosTI
                     TicketId = t.TicketId,
                     TicketPersona = t.TicketPersona,
                     TicketAsunto = t.TicketAsunto,
-                    TicketPrioridad = t.TicketPrioridad,
+                    //TicketPrioridad = t.TicketPrioridad,
                     TicketFecha = t.TicketFecha,
-                    Cat_TicketStatusId = t.Cat_TicketStatusId,
+                    //Cat_TicketStatusId = t.Cat_TicketStatusId,
                     EstadoTicket = _context.Cat_TicketStatus
                         .Where(o => o.Cat_TicketStatusId == t.Cat_TicketStatusId)
                         .Select(o => o.Cat_TicketStatusStatus)
                         .FirstOrDefault(),
-                    OficinasNombre = _context.Oficinas
+                    DepartamentoNombre = _context.Oficinas
                         .Where(o => o.OficinasId == t.OficinasId)
                         .Select(o => o.OficinasNombre)
                         .FirstOrDefault(),
@@ -363,7 +363,7 @@ namespace OficiosTI
                     Cat_TicketStatusId = t.Cat_TicketStatusId,                
                     NumeroOficio = o != null ? o.NumeroOficio : null,
                     EstadoTicket = s != null ? s.Cat_TicketStatusStatus : null,
-                    OficinasNombre = ofi != null ? ofi.OficinasNombre : null
+                    DepartamentoNombre = ofi != null ? ofi.OficinasNombre : null
                 };
         }
 

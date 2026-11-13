@@ -9,9 +9,7 @@
 
         private Panel PanelFiltros;
         private Label LabelBuscar;
-        private TextBox TextBuscar;
-        private Label LabelPrioridad;
-        private ComboBox ComboPrioridad;
+        private TextBox TextBuscar;        
         private Label LabelStatus;
         private ComboBox ComboStatus;
         private Button BtnBuscar;
@@ -54,8 +52,6 @@
             lblSuplente = new Label();
             LabelBuscar = new Label();
             TextBuscar = new TextBox();
-            LabelPrioridad = new Label();
-            ComboPrioridad = new ComboBox();
             LabelStatus = new Label();
             ComboStatus = new ComboBox();
             BtnBuscar = new Button();
@@ -142,8 +138,6 @@
             PanelFiltros.Controls.Add(lblSuplente);
             PanelFiltros.Controls.Add(LabelBuscar);
             PanelFiltros.Controls.Add(TextBuscar);
-            PanelFiltros.Controls.Add(LabelPrioridad);
-            PanelFiltros.Controls.Add(ComboPrioridad);
             PanelFiltros.Controls.Add(LabelStatus);
             PanelFiltros.Controls.Add(ComboStatus);
             PanelFiltros.Controls.Add(BtnBuscar);
@@ -208,27 +202,10 @@
             TextBuscar.Size = new Size(199, 23);
             TextBuscar.TabIndex = 1;
             // 
-            // LabelPrioridad
-            // 
-            LabelPrioridad.AutoSize = true;
-            LabelPrioridad.Location = new Point(15, 80);
-            LabelPrioridad.Name = "LabelPrioridad";
-            LabelPrioridad.Size = new Size(55, 15);
-            LabelPrioridad.TabIndex = 2;
-            LabelPrioridad.Text = "Prioridad";
-            // 
-            // ComboPrioridad
-            // 
-            ComboPrioridad.DropDownStyle = ComboBoxStyle.DropDownList;
-            ComboPrioridad.Location = new Point(15, 100);
-            ComboPrioridad.Name = "ComboPrioridad";
-            ComboPrioridad.Size = new Size(199, 23);
-            ComboPrioridad.TabIndex = 3;
-            // 
             // LabelStatus
             // 
             LabelStatus.AutoSize = true;
-            LabelStatus.Location = new Point(15, 140);
+            LabelStatus.Location = new Point(15, 79);
             LabelStatus.Name = "LabelStatus";
             LabelStatus.Size = new Size(39, 15);
             LabelStatus.TabIndex = 4;
@@ -237,14 +214,14 @@
             // ComboStatus
             // 
             ComboStatus.DropDownStyle = ComboBoxStyle.DropDownList;
-            ComboStatus.Location = new Point(15, 160);
+            ComboStatus.Location = new Point(15, 99);
             ComboStatus.Name = "ComboStatus";
             ComboStatus.Size = new Size(199, 23);
             ComboStatus.TabIndex = 5;
             // 
             // BtnBuscar
             // 
-            BtnBuscar.Location = new Point(15, 210);
+            BtnBuscar.Location = new Point(15, 142);
             BtnBuscar.Name = "BtnBuscar";
             BtnBuscar.Size = new Size(180, 35);
             BtnBuscar.TabIndex = 6;
@@ -253,7 +230,7 @@
             // 
             // BtnLimpiar
             // 
-            BtnLimpiar.Location = new Point(15, 255);
+            BtnLimpiar.Location = new Point(15, 200);
             BtnLimpiar.Name = "BtnLimpiar";
             BtnLimpiar.Size = new Size(180, 35);
             BtnLimpiar.TabIndex = 5;
@@ -316,7 +293,7 @@
             btnSinTicket.Name = "btnSinTicket";
             btnSinTicket.Size = new Size(121, 28);
             btnSinTicket.TabIndex = 5;
-            btnSinTicket.Text = "Numeros Oficio";
+            btnSinTicket.Text = "Números Oficio";
             btnSinTicket.UseVisualStyleBackColor = true;
             btnSinTicket.Click += btnSinTicket_Click_1;
             // 
@@ -326,7 +303,7 @@
             btnOficios.Name = "btnOficios";
             btnOficios.Size = new Size(106, 28);
             btnOficios.TabIndex = 4;
-            btnOficios.Text = "OFicios";
+            btnOficios.Text = "Oficios";
             btnOficios.UseVisualStyleBackColor = true;
             btnOficios.Click += btnOficios_Click;
             // 
@@ -422,7 +399,7 @@
             Name = "FrmTickets";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Tickets TI";
-       //     Load += FrmTickets_Load;
+            Load += FrmTickets_Load;
             PanelHeader.ResumeLayout(false);
             PanelHeader.PerformLayout();
             PanelFiltros.ResumeLayout(false);

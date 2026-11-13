@@ -8,9 +8,9 @@
         private Label lblTicketId;
 
         private Panel PanelDatos;
-        private Label labelPersona;
-        private Label labelAsunto;
-        private Label labelMensaje;
+        private Label lblRemitente;
+        private Label lblAsunto;
+        private Label lblMensajeOficio;
 
         private TextBox txtPersona;
         private TextBox txtAsunto;
@@ -43,24 +43,24 @@
             BtnGenerarOficio = new Button();
             BtnGuardarRespuesta = new Button();
             labelRespuesta = new Label();
-            label5 = new Label();
+            lblInstruccion = new Label();
             btnAsignarTicket = new Button();
             txtInstruccion = new RichTextBox();
             cmbAnalistas = new ComboBox();
-            label4 = new Label();
-            label3 = new Label();
+            lblAsignar = new Label();
+            lblPrioridad = new Label();
             txtPrioridad = new TextBox();
             txtExtension = new TextBox();
-            label2 = new Label();
-            labelPersona = new Label();
+            lblExtension = new Label();
+            lblRemitente = new Label();
             txtPersona = new TextBox();
-            labelAsunto = new Label();
+            lblMensajeOficio = new Label();
             txtAsunto = new TextBox();
-            labelMensaje = new Label();
+            lblAsunto = new Label();
             txtMensaje = new TextBox();
             PanelHilo = new Panel();
             dataGridRelacion = new DataGridView();
-            label1 = new Label();
+            lblTicketsRelacionados = new Label();
             labelHilo = new Label();
             dataGridHilo = new DataGridView();
             PanelHeader.SuspendLayout();
@@ -100,20 +100,20 @@
             PanelDatos.Controls.Add(BtnGenerarOficio);
             PanelDatos.Controls.Add(BtnGuardarRespuesta);
             PanelDatos.Controls.Add(labelRespuesta);
-            PanelDatos.Controls.Add(label5);
+            PanelDatos.Controls.Add(lblInstruccion);
             PanelDatos.Controls.Add(btnAsignarTicket);
             PanelDatos.Controls.Add(txtInstruccion);
             PanelDatos.Controls.Add(cmbAnalistas);
-            PanelDatos.Controls.Add(label4);
-            PanelDatos.Controls.Add(label3);
+            PanelDatos.Controls.Add(lblAsignar);
+            PanelDatos.Controls.Add(lblPrioridad);
             PanelDatos.Controls.Add(txtPrioridad);
             PanelDatos.Controls.Add(txtExtension);
-            PanelDatos.Controls.Add(label2);
-            PanelDatos.Controls.Add(labelPersona);
+            PanelDatos.Controls.Add(lblExtension);
+            PanelDatos.Controls.Add(lblRemitente);
             PanelDatos.Controls.Add(txtPersona);
-            PanelDatos.Controls.Add(labelAsunto);
+            PanelDatos.Controls.Add(lblMensajeOficio);
             PanelDatos.Controls.Add(txtAsunto);
-            PanelDatos.Controls.Add(labelMensaje);
+            PanelDatos.Controls.Add(lblAsunto);
             PanelDatos.Controls.Add(txtMensaje);
             PanelDatos.Dock = DockStyle.Top;
             PanelDatos.Location = new Point(0, 50);
@@ -174,20 +174,20 @@
             labelRespuesta.Name = "labelRespuesta";
             labelRespuesta.Size = new Size(122, 23);
             labelRespuesta.TabIndex = 0;
-            labelRespuesta.Text = "Agregar Respuesta";
+            labelRespuesta.Text = "Agregar respuesta";
             // 
-            // label5
+            // lblInstruccion
             // 
-            label5.AutoSize = true;
-            label5.Location = new Point(264, 150);
-            label5.Name = "label5";
-            label5.Size = new Size(66, 15);
-            label5.TabIndex = 14;
-            label5.Text = "Instrucción";
+            lblInstruccion.AutoSize = true;
+            lblInstruccion.Location = new Point(264, 150);
+            lblInstruccion.Name = "lblInstruccion";
+            lblInstruccion.Size = new Size(66, 15);
+            lblInstruccion.TabIndex = 14;
+            lblInstruccion.Text = "Instrucción";
             // 
             // btnAsignarTicket
             // 
-            btnAsignarTicket.Location = new Point(702, 214);
+            btnAsignarTicket.Location = new Point(15, 204);
             btnAsignarTicket.Name = "btnAsignarTicket";
             btnAsignarTicket.Size = new Size(98, 23);
             btnAsignarTicket.TabIndex = 13;
@@ -212,23 +212,23 @@
             cmbAnalistas.Size = new Size(243, 23);
             cmbAnalistas.TabIndex = 11;
             // 
-            // label4
+            // lblAsignar
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(15, 150);
-            label4.Name = "label4";
-            label4.Size = new Size(62, 15);
-            label4.TabIndex = 10;
-            label4.Text = "Asignar a: ";
+            lblAsignar.AutoSize = true;
+            lblAsignar.Location = new Point(15, 150);
+            lblAsignar.Name = "lblAsignar";
+            lblAsignar.Size = new Size(62, 15);
+            lblAsignar.TabIndex = 10;
+            lblAsignar.Text = "Asignar a: ";
             // 
-            // label3
+            // lblPrioridad
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(702, 70);
-            label3.Name = "label3";
-            label3.Size = new Size(55, 15);
-            label3.TabIndex = 9;
-            label3.Text = "Prioridad";
+            lblPrioridad.AutoSize = true;
+            lblPrioridad.Location = new Point(702, 70);
+            lblPrioridad.Name = "lblPrioridad";
+            lblPrioridad.Size = new Size(55, 15);
+            lblPrioridad.TabIndex = 9;
+            lblPrioridad.Text = "Prioridad";
             // 
             // txtPrioridad
             // 
@@ -246,22 +246,22 @@
             txtExtension.Size = new Size(100, 23);
             txtExtension.TabIndex = 7;
             // 
-            // label2
+            // lblExtension
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(700, 15);
-            label2.Name = "label2";
-            label2.Size = new Size(57, 15);
-            label2.TabIndex = 6;
-            label2.Text = "Extensión";
+            lblExtension.AutoSize = true;
+            lblExtension.Location = new Point(700, 15);
+            lblExtension.Name = "lblExtension";
+            lblExtension.Size = new Size(57, 15);
+            lblExtension.TabIndex = 6;
+            lblExtension.Text = "Extensión";
             // 
-            // labelPersona
+            // lblRemitente
             // 
-            labelPersona.Location = new Point(15, 15);
-            labelPersona.Name = "labelPersona";
-            labelPersona.Size = new Size(100, 23);
-            labelPersona.TabIndex = 0;
-            labelPersona.Text = "Persona";
+            lblRemitente.Location = new Point(15, 15);
+            lblRemitente.Name = "lblRemitente";
+            lblRemitente.Size = new Size(100, 23);
+            lblRemitente.TabIndex = 0;
+            lblRemitente.Text = "Remitente";
             // 
             // txtPersona
             // 
@@ -271,13 +271,13 @@
             txtPersona.Size = new Size(300, 23);
             txtPersona.TabIndex = 1;
             // 
-            // labelAsunto
+            // lblMensajeOficio
             // 
-            labelAsunto.Location = new Point(330, 15);
-            labelAsunto.Name = "labelAsunto";
-            labelAsunto.Size = new Size(100, 23);
-            labelAsunto.TabIndex = 2;
-            labelAsunto.Text = "Asunto";
+            lblMensajeOficio.Location = new Point(330, 15);
+            lblMensajeOficio.Name = "lblMensajeOficio";
+            lblMensajeOficio.Size = new Size(355, 23);
+            lblMensajeOficio.TabIndex = 2;
+            lblMensajeOficio.Text = "Mensaje / Oficio: ";
             // 
             // txtAsunto
             // 
@@ -287,13 +287,13 @@
             txtAsunto.Size = new Size(355, 23);
             txtAsunto.TabIndex = 3;
             // 
-            // labelMensaje
+            // lblAsunto
             // 
-            labelMensaje.Location = new Point(15, 70);
-            labelMensaje.Name = "labelMensaje";
-            labelMensaje.Size = new Size(100, 23);
-            labelMensaje.TabIndex = 4;
-            labelMensaje.Text = "Mensaje";
+            lblAsunto.Location = new Point(15, 70);
+            lblAsunto.Name = "lblAsunto";
+            lblAsunto.Size = new Size(100, 23);
+            lblAsunto.TabIndex = 4;
+            lblAsunto.Text = "Asunto:";
             // 
             // txtMensaje
             // 
@@ -308,7 +308,7 @@
             // 
             PanelHilo.BackColor = Color.White;
             PanelHilo.Controls.Add(dataGridRelacion);
-            PanelHilo.Controls.Add(label1);
+            PanelHilo.Controls.Add(lblTicketsRelacionados);
             PanelHilo.Controls.Add(labelHilo);
             PanelHilo.Controls.Add(dataGridHilo);
             PanelHilo.Dock = DockStyle.Fill;
@@ -325,14 +325,14 @@
             dataGridRelacion.Size = new Size(788, 114);
             dataGridRelacion.TabIndex = 3;
             // 
-            // label1
+            // lblTicketsRelacionados
             // 
-            label1.Font = new Font("Gotham", 9.749999F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(12, 258);
-            label1.Name = "label1";
-            label1.Size = new Size(180, 18);
-            label1.TabIndex = 2;
-            label1.Text = "Tickets Relacionados";
+            lblTicketsRelacionados.Font = new Font("Gotham", 9.749999F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTicketsRelacionados.Location = new Point(12, 258);
+            lblTicketsRelacionados.Name = "lblTicketsRelacionados";
+            lblTicketsRelacionados.Size = new Size(180, 18);
+            lblTicketsRelacionados.TabIndex = 2;
+            lblTicketsRelacionados.Text = "Tickets Relacionados";
             // 
             // labelHilo
             // 
@@ -341,7 +341,7 @@
             labelHilo.Name = "labelHilo";
             labelHilo.Size = new Size(149, 18);
             labelHilo.TabIndex = 0;
-            labelHilo.Text = "Hilo del Ticket";
+            labelHilo.Text = "Hilo del ticket";
             // 
             // dataGridHilo
             // 
@@ -365,6 +365,7 @@
             Name = "FrmTicketDetalle";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Detalle del Ticket";
+            FormClosing += FrmTicketDetalle_FormClosing;
             PanelHeader.ResumeLayout(false);
             PanelHeader.PerformLayout();
             PanelDatos.ResumeLayout(false);
@@ -375,18 +376,18 @@
             ResumeLayout(false);
         }
 
-        private Label label1;
+        private Label lblTicketsRelacionados;
         private DataGridView dataGridRelacion;
         private CheckBox chkCerrarTicket;
         private TextBox txtPrioridad;
         private TextBox txtExtension;
-        private Label label2;
+        private Label lblAsignar;
         private ComboBox cmbAnalistas;
-        private Label label4;
-        private Label label3;
+        private Label lblExtension;
+        private Label lblPrioridad;
         private RichTextBox txtInstruccion;
         private Button btnAsignarTicket;
-        private Label label5;
+        private Label lblInstruccion;
         private Button btnGuardaryCerrar;
     }
 }
