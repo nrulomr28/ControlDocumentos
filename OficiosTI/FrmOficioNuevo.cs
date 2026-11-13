@@ -22,8 +22,7 @@ namespace OficiosTI
     {
         private Ticket _ticket;
         private OficiosContext _context;
-        private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA        
-
+        private OficioRespuesta _oficioActual;   ///OFICIORESPUESTA      
         // private NumOficio _oficioconse;
         private OficioRespuestaService _service;
 
@@ -62,7 +61,6 @@ namespace OficiosTI
                 CargarResp(_oficioActual);
             }
         }
-
         private void CargarFirma()
         {
             var firmantes = _context.Firmante
@@ -73,18 +71,21 @@ namespace OficiosTI
             cmbFirmas.ValueMember = "FirmanteId";
             cmbFirmas.SelectedIndex = -1;
         }
-
         private void CargarCopias()
         {
             var Copias = _context.Cat_Copias
                 .Where(x => x.Activo)
                 .ToList();
-            cmbCopias.DataSource = Copias;
+
+            cmbCopias.DataSource = null;
             cmbCopias.DisplayMember = "NombreCompleto";
             cmbCopias.ValueMember = "CcpId";
+            cmbCopias.DataSource = Copias;
+            // Permitir seleccionar o escribir nuevos nombres
+            cmbCopias.DropDownStyle = ComboBoxStyle.DropDown;
             cmbCopias.SelectedIndex = -1;
+            cmbCopias.Text = "";
         }
-
 
         /*   private void CargarOficios(int idOficinaDeseada)
               {
@@ -158,7 +159,6 @@ namespace OficiosTI
                  cmbOf.ValueMember = "OficioId";
              }
         */
-
 
         /*    private void GuardarOficio()
               {
@@ -266,7 +266,6 @@ namespace OficiosTI
                 {
                     _oficioActual.FirmanteId = (int)cmbFirmas.SelectedValue;
                 }
-
                 if (esRegistroNuevo)
                 {
                     _context.OficioRespuesta.Add(_oficioActual);
@@ -366,7 +365,6 @@ namespace OficiosTI
                 {
                     errorReal = errorReal.InnerException;
                 }
-
                 string mensajeError = $"Ocurrió un error al previsualizar el oficio.\n\n" +
                                       $"MOTIVO:\n{errorReal.Message}\n\n" +
                                       $"UBICACIÓN DEL ERROR (StackTrace):\n{errorReal.StackTrace}";
@@ -378,7 +376,6 @@ namespace OficiosTI
                 this.Cursor = Cursors.Default;
             }
         }
-
         private string ObtenerFundamentoLegal(string cargoFirmante)
         {
             string cargoNormalizado = cargoFirmante.Trim();
@@ -386,7 +383,6 @@ namespace OficiosTI
                            .FirstOrDefault(q => q.Cargo == cargoNormalizado);
             return firma.FundamentoLegal.Trim();
         }
-
         /*
             switch (cargoNormalizado)
             {
@@ -403,7 +399,6 @@ namespace OficiosTI
                     return @"De conformidad con lo dispuesto en los artículos 1, 10 y 13 de la Ley Orgánica del Poder Ejecutivo del Estado de Veracruz de Ignacio de la Llave; 3 segundo párrafo del Código de Procedimientos Administrativos; 186 fracción III del Código Financiero del Estado; así como los artículos 2, 3, 6 fracción XIII, 11 fracciones VI y VIII y 65 del Reglamento Interior vigente de la Secretaría de Seguridad Pública del Estado de Veracruz;";
             }
         */
-
 
         private string ObtenerCopiasDefault()
         {
@@ -471,26 +466,52 @@ namespace OficiosTI
             }
         }
 
+        /*   private void btnAgregar_Click(object sender, EventArgs e)
+           {
+               if (cmbCopias.SelectedIndex == -1)
+               {
+                   MessageBox.Show("Seleccione un elemento primero.");
+                   return;
+               }
+               string itemSeleccionado = cmbCopias.Text;
+               if (txtCcp.Text.Contains(itemSeleccionado))
+               {
+                   MessageBox.Show("Este elemento ya está en la lista.");
+                   return;
+               }
+               if (!string.IsNullOrEmpty(txtCcp.Text) && !txtCcp.Text.EndsWith(Environment.NewLine))
+               {
+                   txtCcp.AppendText(Environment.NewLine);
+               }
+
+               txtCcp.AppendText("C.C.P. " + itemSeleccionado + "- Para su conocimiento.- Presente");
+               cmbCopias.SelectedIndex = -1;
+           }
+        */
+
         private void btnAgregar_Click(object sender, EventArgs e)
-        {
-            if (cmbCopias.SelectedIndex == -1)
+        {            
+            string itemSeleccionado = cmbCopias.Text.Trim();          
+            if (string.IsNullOrWhiteSpace(itemSeleccionado))
             {
-                MessageBox.Show("Seleccione un elemento primero.");
+                MessageBox.Show("Seleccione o escriba un elemento primero.");
                 return;
-            }
-            string itemSeleccionado = cmbCopias.Text;
-            if (txtCcp.Text.Contains(itemSeleccionado))
+            }                        
+            string nuevoCcp = "C.C.P. " + itemSeleccionado +
+                              "- Para su conocimiento.- Presente";            
+            if (txtCcp.Lines.Any(line =>
+                line.Trim().Equals(nuevoCcp, StringComparison.OrdinalIgnoreCase)))
             {
                 MessageBox.Show("Este elemento ya está en la lista.");
                 return;
-            }
-            if (!string.IsNullOrEmpty(txtCcp.Text) && !txtCcp.Text.EndsWith(Environment.NewLine))
+            }                       
+            if (!string.IsNullOrWhiteSpace(txtCcp.Text))
             {
                 txtCcp.AppendText(Environment.NewLine);
-            }
-
-            txtCcp.AppendText("C.C.P. " + itemSeleccionado + "- Para su conocimiento.- Presente");
+            }                        
+            txtCcp.AppendText(nuevoCcp);         
             cmbCopias.SelectedIndex = -1;
+            cmbCopias.Text = "";
         }
     }
 }

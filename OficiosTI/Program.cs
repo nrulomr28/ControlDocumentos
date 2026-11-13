@@ -16,9 +16,9 @@ namespace OficiosTI
         // ==========================================
         // CADENA DE CONEXIÓN
         // ==========================================
-        //const string ConnectionString = "Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True";
+      //  const string ConnectionString = "Server=10.8.3.115;Database=OficiosTI;User Id=usrOficiosTI;Password=tyNmYDb3Vk;TrustServerCertificate=True";
           const string ConnectionString = "Server=CSOSAG-PC\\SQLEXPRESS01;Database=OficiosTI;User Id=prueba;Password=s1st3m40MS$P;TrustServerCertificate=True";
-           var options = new DbContextOptionsBuilder<OficiosContext>()
+          var options = new DbContextOptionsBuilder<OficiosContext>()
                 .UseSqlServer(ConnectionString)
                 .Options;
             using var context = new OficiosContext(options);            
@@ -32,8 +32,7 @@ namespace OficiosTI
                 MessageBox.Show($"Error al cargar el perfil de usuario: {ex.Message}", "Error de inicio", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return; 
                 // Cierra la aplicación si hay un error crítico
-            }                      
-                    //  Application.Run(new FrmMenuPrincipal(context, contextoUsuario));
+            }        //  Application.Run(new FrmMenuPrincipal(context, contextoUsuario));
                     //  Application.Run(new FrmCrearTicket(context, contextoUsuario));
                     //  USUARIO GLOBAL  VE LA CAPTURA DE LOS OFICIOS Y EL PANEL DE TICKETS DE TODOS 
              if (contextoUsuario.EsGlobal)

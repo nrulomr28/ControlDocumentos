@@ -17,8 +17,9 @@ namespace OficiosTI
 {
     public partial class FrmOficioSin : Form
     {
-        private OficiosContext _context;            
-        /*
+        private OficiosContext _context;     
+        
+     /*
         public FrmOficioSin(OficiosContext context)
         {         
             InitializeComponent(); 
@@ -27,7 +28,7 @@ namespace OficiosTI
             dataGridOficios.CellDoubleClick += dataGridOficios_CellDoubleClick;
             btnCrearOficio.Enabled = false;
         }
-        */
+    */
         public FrmOficioSin(OficiosContext context)
         {
             InitializeComponent();
@@ -71,15 +72,15 @@ namespace OficiosTI
             }
         }
      
-    /*  private void btnCrearOficio_Click(object sender, EventArgs e)
-        {
-            FrmOficioNuevo frmNuevo = new FrmOficioNuevo(_context, null);
-            if (frmNuevo.ShowDialog() == DialogResult.OK)
+        /*  private void btnCrearOficio_Click(object sender, EventArgs e)
             {
-                InicializarGrid(oficina);
+                FrmOficioNuevo frmNuevo = new FrmOficioNuevo(_context, null);
+                if (frmNuevo.ShowDialog() == DialogResult.OK)
+                {
+                    InicializarGrid(oficina);
+                }
             }
-        }
-    */
+        */
 
         private void dataGridOficios_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {

@@ -63,7 +63,6 @@ namespace OficiosTI
                     row.Cells["NumOficio"].Style.ForeColor = Color.DarkGreen;
                     row.Cells["NumOficio"].Style.Font = boldFont;
                 }
-
                 if (!string.IsNullOrWhiteSpace(estado))
                 {
                     switch (estado.ToUpper())
@@ -80,7 +79,6 @@ namespace OficiosTI
                             break;
                     }
                 }
-
                 if (!string.IsNullOrWhiteSpace(Ticket))
                 {
                     switch (Ticket.ToUpper())
@@ -298,7 +296,6 @@ namespace OficiosTI
                                       //OficioRespuesta = resp.OficioRespuestaId,
                                       ListaTickets = ticketGroup.Select(t => t.TicketId)
                                   }).ToList();
-
                 var historialOficios = consultaBD.Select(x =>
                 {
                     bool requiere = x.RequiereTicket != null && x.RequiereTicket.ToString().Trim().ToUpper() == "SI";    /// SE MUESTRAN LOS TICKETS DEL OFICIO       
@@ -362,8 +359,8 @@ namespace OficiosTI
                 {
                     e.CellStyle.ForeColor = Color.Red;
                     e.CellStyle.Font = new Font(DataGridOficios.Font, FontStyle.Bold);
-                    //    e.CellStyle.BackColor = Color.Orange;
-                    //    e.CellStyle.ForeColor = Color.White; 
+              //    e.CellStyle.BackColor = Color.Orange;
+              //    e.CellStyle.ForeColor = Color.White; 
                 }
             }
         }
@@ -392,19 +389,15 @@ namespace OficiosTI
             SetColumnHeader("Destinatario", "Destinatario");
             SetColumnHeader("OficioRespuestaId", "Oficio Respuesta");
             SetColumnHeader("RequiereTicket", "Ticket");
-
             if (DataGridOficios.Columns.Count > 0)
             {
                 var col0 = DataGridOficios.Columns[0];
                 col0.ReadOnly = true;
                 col0.SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-
             DataGridOficios.ResumeLayout();
             ResaltarOficios();
         }
-
-
         private void SetColumnHeader(string columnName, string headerText, Color? backColor = null, Color? foreColor = null)
         {
             if (DataGridOficios.Columns.Contains(columnName))
@@ -415,7 +408,6 @@ namespace OficiosTI
                 {
                     col.HeaderCell.Style.BackColor = backColor.Value;
                 }
-
                 if (foreColor.HasValue)
                 {
                     col.HeaderCell.Style.ForeColor = foreColor.Value;
@@ -424,25 +416,24 @@ namespace OficiosTI
         }
 
         /*
-          private void SetColumnHeader(string columnName, string headerText)
-          {
+        private void SetColumnHeader(string columnName, string headerText)
+        {
               if (DataGridOficios.Columns.Contains(columnName))
               {
                   DataGridOficios.Columns[columnName].HeaderText = headerText;
               }
-          }
+        }
         */
 
         private void ResaltarOficios()
         {
-
             Font boldFont = new Font(DataGridOficios.Font, FontStyle.Bold);
             foreach (DataGridViewRow row in DataGridOficios.Rows)
             {
                 if (row.IsNewRow) continue;
                 string oficio = row.Cells["NumOficio"].Value?.ToString();
                 string estado = row.Cells["Estado"].Value?.ToString();
-                //   string Ticket = row.Cells["RequiereTicket"].Value?.ToString();
+           //   string Ticket = row.Cells["RequiereTicket"].Value?.ToString();
 
                 row.DefaultCellStyle.BackColor = Color.Honeydew;
                 if (!string.IsNullOrWhiteSpace(oficio))
@@ -549,8 +540,6 @@ namespace OficiosTI
                                       OficioRespuesta = resp.OficioRespuestaId,
                                       ListaTickets = ticketGroup.Select(t => t.TicketId)
                                   }).ToList();
-
-
                 var historialOficios = consultaBD.Select(x =>
                 {
                     bool requiere = x.RequiereTicket != null && x.RequiereTicket.ToString().Trim().ToUpper() == "SI";
@@ -601,7 +590,6 @@ namespace OficiosTI
                 //  frmTicket.IdOficioVinculado = idOficioGuardado;
                 //  frmTicket.AsuntoPredefinido = TextAsunto.Text.Trim();
                 //  frmTicket.Instruccion = TextPeticion.Text.Trim();
-
             }
         }
 

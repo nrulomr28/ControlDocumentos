@@ -46,13 +46,11 @@ namespace OficiosTI.Services
         {
             string nombreUsuarioCorto = Environment.UserName;
             string nombreMostrar = "Usuario Desconocido";
-
             try
             {
                 using (PrincipalContext contexto = new PrincipalContext(ContextType.Domain))
                 {
                     UserPrincipal usuarioAD = UserPrincipal.FindByIdentity(contexto, nombreUsuarioCorto);
-
                     if (usuarioAD != null)
                     {
                         nombreMostrar = usuarioAD.DisplayName;
@@ -73,7 +71,7 @@ namespace OficiosTI.Services
            string dominio = Environment.UserDomainName;
            string usuario = Environment.UserName;
            return $"{dominio}\\{usuario}";
-         //   return $"{dominioCompleto}\\{usuario}";
+         //return $"{dominioCompleto}\\{usuario}";
         }
 
         public string ObtenerSegmentoDeRed()
@@ -91,9 +89,7 @@ namespace OficiosTI.Services
                         {
                             string ip = ipInfo.Address.ToString();
                             string mascara = ipInfo.IPv4Mask.ToString();
-
                             string segmentoBase = CalcularDireccionDeRed(ipInfo.Address, ipInfo.IPv4Mask);
-
                             return $": {segmentoBase} (IP: {ip} / Máscara: {mascara})";
                         }
                     }
@@ -113,7 +109,6 @@ namespace OficiosTI.Services
             }
             return new IPAddress(networkBytes).ToString();
         }
-
 
         public string ObtenerUnidadOrganizativa()
         {
@@ -314,7 +309,8 @@ namespace OficiosTI.Services
             int Tipo,
             int Anio,
             int TicketId,
-            string UsuarioId)
+            string UsuarioId,
+            int Borrado)
         {
             var nuevoNumOficio = new NumOficio
             {
@@ -325,7 +321,8 @@ namespace OficiosTI.Services
                 Anio = Anio,
                 FechaCaptura=DateTime.Now,
                 TicketId= TicketId,
-                UsuarioId = UsuarioId
+                UsuarioId = UsuarioId,
+                Borrado= Borrado
 
             };
             _context.NumOficio.Add(nuevoNumOficio);

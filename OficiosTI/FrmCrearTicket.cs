@@ -37,7 +37,6 @@ namespace OficiosTI
             this.Text = $"Captura de Tickets - {_usuarioActual.NombreMostrar} ({_usuarioActual.UnidadOrganizativa})";
             CargarPrioridad();
         }
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);           
@@ -56,7 +55,6 @@ namespace OficiosTI
                 textInstruccion.Text = Instruccion;
             }
         }
-
         private void CargarPrioridad()
         {
             var listaPrioridad = new[]
@@ -82,35 +80,30 @@ namespace OficiosTI
                 txtNombre.Focus();
                 return;
             }
-
             if (string.IsNullOrWhiteSpace(txtAsunto.Text))
             {
                 MessageBox.Show("Falta el asunto del ticket", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtAsunto.Focus();
                 return;
             }
-
             if (string.IsNullOrWhiteSpace(cmbPrioridad.Text))
             {
                 MessageBox.Show("Falta la prioridad del ticket", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cmbPrioridad.Focus();
                 return;
             }
-
             if (string.IsNullOrWhiteSpace(textInstruccion.Text))
             {
                 MessageBox.Show("Falta el mensaje del ticket", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 textInstruccion.Focus();
                 return;
             }
-
             if (string.IsNullOrWhiteSpace(txtExtension.Text))
             {
                 MessageBox.Show("Falta la extensión del usuario", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 textInstruccion.Focus();
                 return;
-            }                       
-
+            }                     
             List<int> oficinasSeleccionadas = new List<int>();
             if (chcOficina1.Checked) oficinasSeleccionadas.Add(1); // REDES
             if (chcOficina2.Checked) oficinasSeleccionadas.Add(2); // CONTROL Y RESGUARDO
@@ -118,13 +111,11 @@ namespace OficiosTI
             if (chcOficina4.Checked) oficinasSeleccionadas.Add(4); // GESTION ADMINISTRATIVA
             if (chcOficina5.Checked) oficinasSeleccionadas.Add(5); // JEFATURA
             if (chcOficina6.Checked) oficinasSeleccionadas.Add(6); // DISEÑO
-
             if (oficinasSeleccionadas.Count == 0)
             {
                 MessageBox.Show("Por favor, seleccione al menos una oficina a la que va dirigido el ticket.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())

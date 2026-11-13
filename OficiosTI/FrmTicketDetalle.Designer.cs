@@ -47,9 +47,7 @@
             BtnGenerarOficio = new Button();
             BtnGuardarRespuesta = new Button();
             labelRespuesta = new Label();
-            label5 = new Label();
             btnAsignarTicket = new Button();
-            txtInstruccion = new RichTextBox();
             cmbAnalistas = new ComboBox();
             label4 = new Label();
             label3 = new Label();
@@ -82,7 +80,7 @@
             PanelHeader.Dock = DockStyle.Top;
             PanelHeader.Location = new Point(0, 0);
             PanelHeader.Name = "PanelHeader";
-            PanelHeader.Size = new Size(817, 50);
+            PanelHeader.Size = new Size(812, 50);
             PanelHeader.TabIndex = 4;
             // 
             // lblOficina
@@ -119,9 +117,7 @@
             PanelDatos.Controls.Add(BtnGenerarOficio);
             PanelDatos.Controls.Add(BtnGuardarRespuesta);
             PanelDatos.Controls.Add(labelRespuesta);
-            PanelDatos.Controls.Add(label5);
             PanelDatos.Controls.Add(btnAsignarTicket);
-            PanelDatos.Controls.Add(txtInstruccion);
             PanelDatos.Controls.Add(cmbAnalistas);
             PanelDatos.Controls.Add(label4);
             PanelDatos.Controls.Add(label3);
@@ -137,12 +133,12 @@
             PanelDatos.Dock = DockStyle.Top;
             PanelDatos.Location = new Point(0, 50);
             PanelDatos.Name = "PanelDatos";
-            PanelDatos.Size = new Size(817, 425);
+            PanelDatos.Size = new Size(812, 371);
             PanelDatos.TabIndex = 1;
             // 
             // btnAsignarTicketOf
             // 
-            btnAsignarTicketOf.Location = new Point(702, 243);
+            btnAsignarTicketOf.Location = new Point(707, 119);
             btnAsignarTicketOf.Name = "btnAsignarTicketOf";
             btnAsignarTicketOf.Size = new Size(96, 23);
             btnAsignarTicketOf.TabIndex = 18;
@@ -152,9 +148,9 @@
             // 
             // CmbAsignarOficina
             // 
-            CmbAsignarOficina.BackColor = SystemColors.Control;
+            CmbAsignarOficina.BackColor = SystemColors.Window;
             CmbAsignarOficina.FormattingEnabled = true;
-            CmbAsignarOficina.Location = new Point(17, 240);
+            CmbAsignarOficina.Location = new Point(278, 174);
             CmbAsignarOficina.Name = "CmbAsignarOficina";
             CmbAsignarOficina.Size = new Size(240, 23);
             CmbAsignarOficina.TabIndex = 17;
@@ -162,7 +158,7 @@
             // lblAsignarOficina
             // 
             lblAsignarOficina.AutoSize = true;
-            lblAsignarOficina.Location = new Point(15, 213);
+            lblAsignarOficina.Location = new Point(274, 150);
             lblAsignarOficina.Name = "lblAsignarOficina";
             lblAsignarOficina.Size = new Size(111, 15);
             lblAsignarOficina.TabIndex = 16;
@@ -170,89 +166,79 @@
             // 
             // btnGuardaryCerrar
             // 
-            btnGuardaryCerrar.Location = new Point(339, 371);
+            btnGuardaryCerrar.BackColor = SystemColors.Window;
+            btnGuardaryCerrar.Location = new Point(538, 317);
             btnGuardaryCerrar.Name = "btnGuardaryCerrar";
-            btnGuardaryCerrar.Size = new Size(150, 30);
+            btnGuardaryCerrar.Size = new Size(150, 46);
             btnGuardaryCerrar.TabIndex = 15;
-            btnGuardaryCerrar.Text = "Guardar y Cerrar Ticket";
-            btnGuardaryCerrar.UseVisualStyleBackColor = true;
+            btnGuardaryCerrar.Text = "Guardar Respuesta y Cerrar Ticket";
+            btnGuardaryCerrar.UseVisualStyleBackColor = false;
             btnGuardaryCerrar.Click += btnGuardaryCerrar_Click;
             // 
             // chkCerrarTicket
             // 
             chkCerrarTicket.AutoSize = true;
-            chkCerrarTicket.Location = new Point(15, 369);
+            chkCerrarTicket.BackColor = Color.WhiteSmoke;
+            chkCerrarTicket.Location = new Point(15, 323);
             chkCerrarTicket.Name = "chkCerrarTicket";
             chkCerrarTicket.Size = new Size(109, 19);
             chkCerrarTicket.TabIndex = 2;
             chkCerrarTicket.Text = "Cerrar sin oficio";
-            chkCerrarTicket.UseVisualStyleBackColor = true;
+            chkCerrarTicket.UseVisualStyleBackColor = false;
             // 
             // txtRespuesta
             // 
-            txtRespuesta.Location = new Point(12, 303);
+            txtRespuesta.Location = new Point(12, 234);
             txtRespuesta.Multiline = true;
             txtRespuesta.Name = "txtRespuesta";
-            txtRespuesta.Size = new Size(794, 60);
+            txtRespuesta.Size = new Size(794, 77);
             txtRespuesta.TabIndex = 1;
             // 
             // BtnGenerarOficio
             // 
-            BtnGenerarOficio.Location = new Point(519, 371);
+            BtnGenerarOficio.BackColor = SystemColors.Window;
+            BtnGenerarOficio.Location = new Point(650, 167);
             BtnGenerarOficio.Name = "BtnGenerarOficio";
             BtnGenerarOficio.Size = new Size(150, 30);
             BtnGenerarOficio.TabIndex = 1;
             BtnGenerarOficio.Text = "Ver Oficio Solicitud";
+            BtnGenerarOficio.UseVisualStyleBackColor = false;
             BtnGenerarOficio.Click += BtnGenerarOficio_Click;
             // 
             // BtnGuardarRespuesta
             // 
-            BtnGuardarRespuesta.Location = new Point(167, 370);
+            BtnGuardarRespuesta.BackColor = SystemColors.Window;
+            BtnGuardarRespuesta.Location = new Point(377, 317);
             BtnGuardarRespuesta.Name = "BtnGuardarRespuesta";
-            BtnGuardarRespuesta.Size = new Size(150, 30);
+            BtnGuardarRespuesta.Size = new Size(150, 48);
             BtnGuardarRespuesta.TabIndex = 0;
             BtnGuardarRespuesta.Text = "Guardar Respuesta";
+            BtnGuardarRespuesta.UseVisualStyleBackColor = false;
             BtnGuardarRespuesta.Click += BtnGuardarRespuesta_Click;
             // 
             // labelRespuesta
             // 
             labelRespuesta.Font = new Font("Gotham", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            labelRespuesta.Location = new Point(15, 277);
+            labelRespuesta.Location = new Point(14, 211);
             labelRespuesta.Name = "labelRespuesta";
-            labelRespuesta.Size = new Size(122, 23);
+            labelRespuesta.Size = new Size(221, 19);
             labelRespuesta.TabIndex = 0;
-            labelRespuesta.Text = "Agregar Respuesta";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(264, 150);
-            label5.Name = "label5";
-            label5.Size = new Size(66, 15);
-            label5.TabIndex = 14;
-            label5.Text = "Instrucción";
+            labelRespuesta.Text = "Agregar Respuesta/Instrucción";
             // 
             // btnAsignarTicket
             // 
-            btnAsignarTicket.Location = new Point(700, 175);
+            btnAsignarTicket.BackColor = SystemColors.Window;
+            btnAsignarTicket.Location = new Point(177, 317);
             btnAsignarTicket.Name = "btnAsignarTicket";
-            btnAsignarTicket.Size = new Size(98, 23);
+            btnAsignarTicket.Size = new Size(189, 48);
             btnAsignarTicket.TabIndex = 13;
-            btnAsignarTicket.Text = "Asignar Ticket";
-            btnAsignarTicket.UseVisualStyleBackColor = true;
+            btnAsignarTicket.Text = "Asignar / Responder Ticket";
+            btnAsignarTicket.UseVisualStyleBackColor = false;
             btnAsignarTicket.Click += btnAsignarTicket_Click;
-            // 
-            // txtInstruccion
-            // 
-            txtInstruccion.Location = new Point(264, 170);
-            txtInstruccion.Name = "txtInstruccion";
-            txtInstruccion.Size = new Size(421, 96);
-            txtInstruccion.TabIndex = 12;
-            txtInstruccion.Text = "";
             // 
             // cmbAnalistas
             // 
-            cmbAnalistas.BackColor = SystemColors.Control;
+            cmbAnalistas.BackColor = SystemColors.Window;
             cmbAnalistas.FormattingEnabled = true;
             cmbAnalistas.Location = new Point(15, 175);
             cmbAnalistas.Name = "cmbAnalistas";
@@ -279,7 +265,7 @@
             // 
             // txtPrioridad
             // 
-            txtPrioridad.BackColor = SystemColors.Control;
+            txtPrioridad.BackColor = SystemColors.Window;
             txtPrioridad.Location = new Point(700, 90);
             txtPrioridad.Name = "txtPrioridad";
             txtPrioridad.Size = new Size(100, 23);
@@ -287,7 +273,7 @@
             // 
             // txtExtension
             // 
-            txtExtension.BackColor = SystemColors.Control;
+            txtExtension.BackColor = SystemColors.Window;
             txtExtension.Location = new Point(700, 35);
             txtExtension.Name = "txtExtension";
             txtExtension.Size = new Size(100, 23);
@@ -312,6 +298,7 @@
             // 
             // txtPersona
             // 
+            txtPersona.BackColor = SystemColors.Window;
             txtPersona.Location = new Point(15, 35);
             txtPersona.Name = "txtPersona";
             txtPersona.ReadOnly = true;
@@ -328,6 +315,7 @@
             // 
             // txtAsunto
             // 
+            txtAsunto.BackColor = SystemColors.Window;
             txtAsunto.Location = new Point(330, 35);
             txtAsunto.Name = "txtAsunto";
             txtAsunto.ReadOnly = true;
@@ -344,6 +332,7 @@
             // 
             // txtMensaje
             // 
+            txtMensaje.BackColor = SystemColors.Window;
             txtMensaje.Location = new Point(15, 90);
             txtMensaje.Multiline = true;
             txtMensaje.Name = "txtMensaje";
@@ -359,15 +348,15 @@
             PanelHilo.Controls.Add(labelHilo);
             PanelHilo.Controls.Add(dataGridHilo);
             PanelHilo.Dock = DockStyle.Fill;
-            PanelHilo.Location = new Point(0, 475);
+            PanelHilo.Location = new Point(0, 421);
             PanelHilo.Name = "PanelHilo";
-            PanelHilo.Size = new Size(817, 420);
+            PanelHilo.Size = new Size(812, 410);
             PanelHilo.TabIndex = 0;
             // 
             // dataGridRelacion
             // 
             dataGridRelacion.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridRelacion.Location = new Point(15, 279);
+            dataGridRelacion.Location = new Point(12, 242);
             dataGridRelacion.Name = "dataGridRelacion";
             dataGridRelacion.Size = new Size(788, 114);
             dataGridRelacion.TabIndex = 3;
@@ -375,7 +364,7 @@
             // label1
             // 
             label1.Font = new Font("Gotham", 9.749999F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(12, 258);
+            label1.Location = new Point(12, 218);
             label1.Name = "label1";
             label1.Size = new Size(180, 18);
             label1.TabIndex = 2;
@@ -384,7 +373,7 @@
             // labelHilo
             // 
             labelHilo.Font = new Font("Gotham", 9.749999F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            labelHilo.Location = new Point(12, 26);
+            labelHilo.Location = new Point(12, 6);
             labelHilo.Name = "labelHilo";
             labelHilo.Size = new Size(149, 18);
             labelHilo.TabIndex = 0;
@@ -393,7 +382,7 @@
             // dataGridHilo
             // 
             dataGridHilo.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridHilo.Location = new Point(12, 47);
+            dataGridHilo.Location = new Point(12, 28);
             dataGridHilo.MultiSelect = false;
             dataGridHilo.Name = "dataGridHilo";
             dataGridHilo.ReadOnly = true;
@@ -405,7 +394,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(817, 895);
+            ClientSize = new Size(812, 831);
             Controls.Add(PanelHilo);
             Controls.Add(PanelDatos);
             Controls.Add(PanelHeader);
@@ -431,9 +420,7 @@
         private ComboBox cmbAnalistas;
         private Label label4;
         private Label label3;
-        private RichTextBox txtInstruccion;
         private Button btnAsignarTicket;
-        private Label label5;
         private Button btnGuardaryCerrar;
         private ComboBox CmbAsignarOficina;
         private Label lblAsignarOficina;

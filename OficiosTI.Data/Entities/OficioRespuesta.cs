@@ -28,6 +28,7 @@ namespace OficiosTI.Data.Entities
         public Firmante? Firmante { get; set; }
         public int?OficioId { get; set; }   //// OFICIO DE DONDE SALIO EL TICKET
         public int? RespuestaId { get; set; }   /// TABLA DONDE SE ENCUENTRA EL CONSECUTIVO DEL OFICIO 
+        public int Borrado {  get; set; }
 
     }
 }

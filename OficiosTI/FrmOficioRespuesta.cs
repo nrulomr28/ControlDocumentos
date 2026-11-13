@@ -20,7 +20,7 @@ namespace OficiosTI
         
     //  private DestinatarioService _destinatarioService;
     //  private List<DestinatarioItem> _destinatariosCache;
-        private bool _autocompletando = false;
+    //  private bool _autocompletando = false;
         public FrmOficioRespuesta(Ticket ticket, OficiosContext context)
         {
             InitializeComponent();
@@ -154,7 +154,7 @@ namespace OficiosTI
         }
 
         private void GuardarOficio()
-        {
+        {   
             if (_ticket == null)
             {
                 MessageBox.Show("No hay un ticket válido seleccionado para esta operación.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -220,7 +220,6 @@ namespace OficiosTI
                 _oficioActual.FirmanteId = firmanteSeleccionado;
                 _service.ActualizarOficio(_oficioActual);
             }
-
             //  PROCESO ANTERIOR PARA MODIFICAR TICKETS SIN ALTERAR A LOS DEMAS .....
             /*  
                bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
@@ -243,7 +242,6 @@ namespace OficiosTI
            }
            */
             //  PROCESO ANTERIOR PARA MODIFICAR TICKETS SIN ALTERAR A LOS DEMAS .....
-
             bool huboCambios = esNuevo || HayCambios(snapshotAnterior, _oficioActual);
             if (huboCambios)
             {
@@ -608,14 +606,14 @@ namespace OficiosTI
         private bool HayCambios(OficioRespuesta anterior, OficioRespuesta actual)    //// VERIFICAR SI HAY CAMBIOS EN LA RESPUESTA 
         {
             if (anterior == null) return true;
-            return
-                Normalizar(anterior.NumeroOficio) != Normalizar(actual.NumeroOficio) ||
-                Normalizar(anterior.OficioReferencia) != Normalizar(actual.OficioReferencia) ||
-                Normalizar(anterior.Asunto) != Normalizar(actual.Asunto) ||
-            //  Normalizar(anterior.Destinatario) != Normalizar(actual.Destinatario)  ||
-            //  Normalizar(anterior.CargoDestinatario) != Normalizar(actual.CargoDestinatario) ||
-                Normalizar(anterior.CuerpoRespuesta) != Normalizar(actual.CuerpoRespuesta);
-            //  Normalizar(anterior.Copias) != Normalizar(actual.Copias);
+                return
+                    Normalizar(anterior.NumeroOficio) != Normalizar(actual.NumeroOficio) ||
+                    Normalizar(anterior.OficioReferencia) != Normalizar(actual.OficioReferencia) ||
+                    Normalizar(anterior.Asunto) != Normalizar(actual.Asunto) ||
+                //  Normalizar(anterior.Destinatario) != Normalizar(actual.Destinatario)  ||
+                //  Normalizar(anterior.CargoDestinatario) != Normalizar(actual.CargoDestinatario) ||
+                    Normalizar(anterior.CuerpoRespuesta) != Normalizar(actual.CuerpoRespuesta);
+                //  Normalizar(anterior.Copias) != Normalizar(actual.Copias);
         }
 
         private string Normalizar(string valor)
@@ -643,7 +641,6 @@ namespace OficiosTI
                 comboBox1.SelectedIndex = -1;
             }
         }
-
 
         /*   private string ObtenerFundamentoLegal()
                 {
@@ -730,7 +727,6 @@ namespace OficiosTI
                 }
             }
         */
-
         private void CargarFirmantes()
         {
             var firmantes = _context.Firmante
@@ -846,7 +842,6 @@ namespace OficiosTI
              }
 
         */
-
 
     }
 }

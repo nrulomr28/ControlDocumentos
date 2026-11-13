@@ -416,7 +416,7 @@ namespace OficiosTI
             _todosLosRemitentes = _context.Remitente.ToList();
             CmbRemitente.DataSource = _todosLosRemitentes;
             CmbRemitente.DisplayMember = "RemitenteNombre";
-            CmbRemitente.ValueMember = "RemitenteId";
+            CmbRemitente.ValueMember   = "RemitenteId";
             CmbRemitente.SelectedIndex = -1;
             CmbRemitente.DropDownStyle = ComboBoxStyle.DropDown;
             CmbRemitente.AutoCompleteMode = AutoCompleteMode.None;
@@ -483,7 +483,6 @@ namespace OficiosTI
                     CmbRemitente.DroppedDown = false;
                 }
             }
-
             CmbRemitente.Text = textoBusqueda;
             CmbRemitente.SelectionStart = cursorPosition;
             CmbRemitente.SelectionLength = 0;

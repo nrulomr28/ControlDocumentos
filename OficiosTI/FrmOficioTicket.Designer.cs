@@ -39,6 +39,7 @@
             AsignarF = new Button();
             PanelHeader = new Panel();
             TicketTitulo = new Label();
+            btnEliminarOficio = new Button();
             ((System.ComponentModel.ISupportInitialize)ticketBindingSource).BeginInit();
             PanelHeader.SuspendLayout();
             SuspendLayout();
@@ -63,7 +64,6 @@
             txtNumOf.ScrollBars = ScrollBars.Vertical;
             txtNumOf.Size = new Size(125, 23);
             txtNumOf.TabIndex = 2;
-         //   txtNumOf.TextChanged += txtNumOf_TextChanged;
             // 
             // label2
             // 
@@ -130,11 +130,22 @@
             TicketTitulo.TabIndex = 0;
             TicketTitulo.Text = "Asignar Oficio";
             // 
+            // btnEliminarOficio
+            // 
+            btnEliminarOficio.Location = new Point(150, 148);
+            btnEliminarOficio.Name = "btnEliminarOficio";
+            btnEliminarOficio.Size = new Size(117, 31);
+            btnEliminarOficio.TabIndex = 9;
+            btnEliminarOficio.Text = "Eliminar Oficio";
+            btnEliminarOficio.UseVisualStyleBackColor = true;
+            btnEliminarOficio.Click += btnEliminarOficio_Click;
+            // 
             // FrmOficioTicket
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(492, 222);
+            Controls.Add(btnEliminarOficio);
             Controls.Add(PanelHeader);
             Controls.Add(AsignarF);
             Controls.Add(cmbTipos);
@@ -165,5 +176,6 @@
         private Button AsignarF;
         private Panel PanelHeader;
         private Label TicketTitulo;
+        private Button btnEliminarOficio;
     }
 }

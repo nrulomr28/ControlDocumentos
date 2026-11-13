@@ -27,7 +27,6 @@ namespace OficiosTI
             tabControlMain.SelectedIndexChanged += tabControlMain_SelectedIndexChanged;
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
         }
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -37,7 +36,6 @@ namespace OficiosTI
             tabControlMain.TabPages.Remove(tabPendientes);    // ocultar los tab 
             tabControlMain.TabPages.Remove(tabCerrados);      // ocultar los tab
             tabControlMain.TabPages.Remove(tabTodos);         // ocultar los tab
-
         }
         private void tabControlMain_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -49,18 +47,17 @@ namespace OficiosTI
                     CargarPorAnalista();
                     permitirAcciones = false;
                     break;
-         /*     case 1:
-                    CargarCerradosSinOficio();
-                    break;
-                case 2:
-                    CargarPendientes();
-                    break;
-                case 3:
-                    CargarTodos();
-                    break;
-        */
+                 /*     case 1:
+                            CargarCerradosSinOficio();
+                            break;
+                        case 2:
+                            CargarPendientes();
+                            break;
+                        case 3:
+                            CargarTodos();
+                            break;
+                */
             }
-
             btnAdjuntos.Enabled = permitirAcciones;
             btnAbrir.Enabled    = permitirAcciones; 
             btnGenerar.Enabled  = permitirAcciones; 
@@ -74,17 +71,13 @@ namespace OficiosTI
             var frm = new FrmAdjuntos(ticket.TicketId, _context);
             frm.ShowDialog();
         }
-
         private void BtnAbrirTicket_Click(object sender, EventArgs e)
         {
             var ticket = ObtenerTicketSeleccionado();
-
             if (ticket == null)
                 return;
-
             new FrmTicketDetalle(ticket, _context).ShowDialog();
         }
-
         private void BtnGenerarOficio_Click(object sender, EventArgs e)
         {
             try
@@ -94,7 +87,6 @@ namespace OficiosTI
                 var gridItem = (TicketGridModel)gridPendientes.CurrentRow.DataBoundItem;
                 if (gridItem == null)
                     return;
-
                 if (!string.IsNullOrEmpty(gridItem.NumeroOficio))
                 {
                     var r = MessageBox.Show(
@@ -265,7 +257,7 @@ namespace OficiosTI
                 .ThenByDescending(x => x.Total)
                 .ToList();
             gridAnalista.DataSource = data;
-            // gridAnalista.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+         // gridAnalista.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             gridAnalista.Columns[0].Width = 80;
             gridAnalista.Columns[1].Width = 250;
             gridAnalista.Columns[2].Width = 200;
@@ -273,11 +265,8 @@ namespace OficiosTI
             gridAnalista.Columns[4].Width = 70;
             gridAnalista.Columns[5].Width = 75;
             gridAnalista.Columns[6].Width = 300;
-
         }
-
-
-        
+  
 
         private void CargarCerradosSinOficio()
         {
@@ -325,20 +314,20 @@ namespace OficiosTI
             gridCerrados.DataSource = bs;
         }
 
-        private IQueryable<Ticket> BaseQuery()
+        private IQueryable<Ticket> BaseQuery()   /// TODOS LOS TICKETS INCLUYENDO CON O SIN OFICIO 
         {
             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
             var query = _context.Ticket.AsQueryable();
-
             if (_service.EsUsuarioGlobal())
-            {
-             
-                return query.Where(t => t.id_of != null && t.Cat_TicketStatusId >= 1);
+            {             
+               // return query.Where(t => t.id_of != null && t.Cat_TicketStatusId >= 1);
+                return query.Where(t => t.Cat_TicketStatusId >= 1);
             }
             else
             {
+            //    return query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId >= 1);
 
-                return query.Where(t => t.OficinasId == miOficinaId && t.id_of != null && t.Cat_TicketStatusId >= 1);
+                return query.Where(t => t.OficinasId == miOficinaId  && t.Cat_TicketStatusId >= 1);
             }
         }
 

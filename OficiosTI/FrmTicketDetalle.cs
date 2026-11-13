@@ -6,7 +6,6 @@ using OficiosTI.Documents;
 using OficiosTI.Services;
 using QuestPDF.Fluent;
 using System;
-
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -23,13 +22,12 @@ namespace OficiosTI
         public FrmTicketDetalle(Ticket ticket, OficiosContext context)
         {
             InitializeComponent();
-            _ticket = ticket;
-            _context = context;
-            _service = new OficioRespuestaService(_context);
+            _ticket =   ticket;
+            _context =  context;
+            _service =  new OficioRespuestaService(_context);
             this.Font = new Font("Gotham", 10F, FontStyle.Regular, GraphicsUnit.Point);
             this.Load += FrmTicketDetalle_Load;
         }
-
         private void FrmTicketDetalle_Load(object sender, EventArgs e)
         {
             CargarDatosTicket();
@@ -38,7 +36,6 @@ namespace OficiosTI
             CargarTicketsR();
             CargarAsignarOficinas();
         }
-
         private void CargarDatosTicket()      /// MOSTRAR LOS DATOS DEL TICKET EN PANTALLA 
         {
             var ticket = _ticket.TicketId;
@@ -84,7 +81,6 @@ namespace OficiosTI
                }
            }
         */
-
         private void CargarComboAnalista()
         {
             try
@@ -106,13 +102,10 @@ namespace OficiosTI
                         .Where(y => y.UsuarioDominio == usuariodominio)
                         .Select(y => y.UsuarioAnterior)
                         .FirstOrDefault();
-
                     status = _context.Usuarios
                         .Where(x => x.IdOficina == miOficinaId && x.Activo == 1 && x.UsuarioAnterior != idusuario)
                         .ToList();
                 }
-
-
                 if (status == null || status.Count == 0)
                 {
                     cmbAnalistas.DataSource = null;
@@ -120,7 +113,6 @@ namespace OficiosTI
                 }
                 else
                 {
-
                     cmbAnalistas.DisplayMember = "NombreCompleto";
                     cmbAnalistas.ValueMember = "UsuarioAnterior";
                     cmbAnalistas.DataSource = status;
@@ -133,15 +125,13 @@ namespace OficiosTI
             }
         }
 
-
-
         private void CargarAsignarOficinas()
         {
             try
             {
                 int? idOficinaUsuario = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
                 var oficinasDisponibles = _context.Oficinas
-                    .Where(x => x.OficinasId != idOficinaUsuario && x.OficinasId != 7)
+                    .Where(x => x.OficinasId != idOficinaUsuario && x.OficinasId < 7)
                     .Select(x => new
                     {
                         x.OficinasId,
@@ -413,93 +403,6 @@ namespace OficiosTI
                 }
         */
 
-        private void BtnGuardarRespuesta_Click(object sender, EventArgs e)    /// SE UTILIZA SOLO UN PROCESO PARA GENERAR LA RESPUESTA DE TICKET CON O SIN OFICIO 
-        {
-            bool cerrarYsinOficio = chkCerrarTicket.Checked;
-            ProcesarRespuesta(cerrarTicket: cerrarYsinOficio, esSinOficio: cerrarYsinOficio);
-        }
-
-        private void btnGuardaryCerrar_Click(object sender, EventArgs e)    /// SE PUEDE CERRAR CON OFICIO O SIN OFICIO 
-        {
-
-            ProcesarRespuesta(cerrarTicket: true, esSinOficio: false);
-        }
-
-        private void ProcesarRespuesta(bool cerrarTicket, bool esSinOficio)   /// SE UTILIZA SOLO UN BOTON PARA GENERAR LA RESPUESTA DE TICKET CON O SIN OFICIO 
-        {
-            if (_ticket.Cat_TicketStatusId == 3)
-            {
-                MessageBox.Show("Este ticket ya se encuentra cerrado. No se pueden agregar más respuestas.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(txtRespuesta.Text))
-            {
-                MessageBox.Show("Por favor, escribe una respuesta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            this.Enabled = false;
-            try
-            {
-                string usuariodominio = _service.ObtenerDominioYUsuario();
-                int idanalista = _context.Usuarios
-                    .Where(y => y.UsuarioDominio == usuariodominio)
-                    .Select(y => y.UsuarioAnterior)
-                    .FirstOrDefault();
-                var hilo = new HiloTicket
-                {
-                    TicketId = _ticket.TicketId,
-                    HiloTicketFecha = DateTime.Now,
-                    HiloTicketAccion = cerrarTicket ? "CERRADO" : "RESPUESTA",
-                    HiloTicketMensaje = txtRespuesta.Text.Trim().ToUpper(),
-                    UsuarioId = idanalista
-                };
-
-                _context.HiloTicket.Add(hilo);
-                if (cerrarTicket)
-                {
-
-                    if (esSinOficio)
-                    {
-                        var sinOficio = new Ticket_SinOficio
-                        {
-                            TicketId = _ticket.TicketId,
-                            Cat_TicketStatusId = 3,
-                            Cat_TicketStatusStatus = "CERRADO - SIN OFICIO",
-                            Fecha = DateTime.Now,
-                        };
-                        _context.Add(sinOficio);
-                    }
-
-                    _ticket.Cat_TicketStatusId = 3;
-                    _context.Ticket.Update(_ticket);
-                }
-
-                _context.SaveChanges();
-                if (cerrarTicket)
-                {
-                    MessageBox.Show("Respuesta guardada y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.Close();
-                }
-                else
-                {
-                    txtRespuesta.Clear();
-                    chkCerrarTicket.Checked = false;
-                    CargarHilo();
-                    MessageBox.Show("Respuesta guardada.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ocurrió un error al guardar la respuesta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                this.Enabled = true;
-            }
-        }
-
-
-
         // boton para reasginar oficina 
         /* private void btnAsignarTicketOf_Click(object sender, EventArgs e)
            {
@@ -556,8 +459,6 @@ namespace OficiosTI
            }
         */
 
-
-
         private void btnAsignarTicketOf_Click(object sender, EventArgs e)
         {
             if (_ticket.Cat_TicketStatusId == 3)
@@ -566,7 +467,7 @@ namespace OficiosTI
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(txtInstruccion.Text))
+            if (string.IsNullOrWhiteSpace(txtRespuesta.Text))
             {
                 MessageBox.Show("Por favor, agregue una indicación.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -597,7 +498,7 @@ namespace OficiosTI
                 TicketId = _ticket.TicketId,
                 HiloTicketFecha = DateTime.Now,
                 HiloTicketAccion = "ASIGNADO",
-                HiloTicketMensaje = $"REASIGNADO - {txtInstruccion.Text.Trim().ToUpper()}",
+                HiloTicketMensaje = $"REASIGNADO - {txtRespuesta.Text.Trim().ToUpper()}",
                 UsuarioId = jefeOficina.UsuarioAnterior   /// usuario anterior 
             };
 
@@ -609,7 +510,7 @@ namespace OficiosTI
                 _ticket.OficinasId = idOficina.Value;
                 _context.Ticket.Update(_ticket);
                 _context.SaveChanges();
-                txtInstruccion.Clear();
+                txtRespuesta.Clear();
                 CmbAsignarOficina.SelectedIndex = -1;
                 CargarHilo();
 
@@ -621,7 +522,96 @@ namespace OficiosTI
             }
         }
 
+        ///--------------------------------------------------
+        ///
+        /// BOTON PARA GUARDAR RESPUESTA 
+        ///---------------------------------------------------
+        
+        private void BtnGuardarRespuesta_Click(object sender, EventArgs e)    /// SE UTILIZA SOLO UN PROCESO PARA GENERAR LA RESPUESTA DE TICKET CON O SIN OFICIO 
+        {
+            bool cerrarYsinOficio = chkCerrarTicket.Checked;
+            ProcesarRespuesta(cerrarTicket: cerrarYsinOficio, esSinOficio: cerrarYsinOficio);
+        }
 
+        private void btnGuardaryCerrar_Click(object sender, EventArgs e)    /// SE PUEDE CERRAR CON OFICIO O SIN OFICIO 
+        {
+
+            ProcesarRespuesta(cerrarTicket: true, esSinOficio: false);
+        }
+
+        private void ProcesarRespuesta(bool cerrarTicket, bool esSinOficio)   /// SE UTILIZA SOLO UN BOTON PARA GENERAR LA RESPUESTA DE TICKET CON O SIN OFICIO 
+        {
+            if (_ticket.Cat_TicketStatusId == 3)
+            {
+                MessageBox.Show("Este ticket ya se encuentra cerrado. No se pueden agregar más respuestas.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(txtRespuesta.Text))   /// txtRespuesta.Text
+            {
+                MessageBox.Show("Por favor, escribe una respuesta.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            this.Enabled = false;
+            try
+            {
+                string usuariodominio = _service.ObtenerDominioYUsuario();
+                int idanalista = _context.Usuarios
+                    .Where(y => y.UsuarioDominio == usuariodominio)
+                    .Select(y => y.UsuarioAnterior)
+                    .FirstOrDefault();
+                var hilo = new HiloTicket
+                {
+                    TicketId = _ticket.TicketId,
+                    HiloTicketFecha = DateTime.Now,
+                    HiloTicketAccion = cerrarTicket ? "CERRADO" : "RESPUESTA",
+                    HiloTicketMensaje = txtRespuesta.Text.Trim().ToUpper(),
+                    UsuarioId = idanalista
+                };
+                _context.HiloTicket.Add(hilo);
+                if (cerrarTicket)
+                {
+                    if (esSinOficio)
+                    {
+                        var sinOficio = new Ticket_SinOficio
+                        {
+                            TicketId = _ticket.TicketId,
+                            Cat_TicketStatusId = 3,
+                            Cat_TicketStatusStatus = "CERRADO - SIN OFICIO",
+                            Fecha = DateTime.Now,
+                        };
+                        _context.Add(sinOficio);
+                    }
+                    _ticket.Cat_TicketStatusId = 3;
+                    _context.Ticket.Update(_ticket);
+                }
+                _context.SaveChanges();
+                if (cerrarTicket)
+                {
+                    MessageBox.Show("Respuesta guardada y ticket cerrado correctamente.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                }
+                else
+                {
+                    txtRespuesta.Clear();
+                    chkCerrarTicket.Checked = false;
+                    CargarHilo();
+                    MessageBox.Show("Respuesta guardada.", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ocurrió un error al guardar la respuesta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                this.Enabled = true;
+            }
+        }
+
+        ///--------------------------------------------------
+        ///  BOTON PARA ASIGNAR TICKET A ANALISTA O A OFICINA       
+        ///--------------------------------------------------
+        ///
         private void btnAsignarTicket_Click(object sender, EventArgs e)
         {
             if (_ticket.Cat_TicketStatusId == 3)
@@ -651,12 +641,12 @@ namespace OficiosTI
                 CmbAsignarOficina.SelectedIndex = -1;
                 return;
             }
-            if (string.IsNullOrWhiteSpace(txtInstruccion.Text))
+            if (string.IsNullOrWhiteSpace(txtRespuesta.Text))  /// txtInstruccion
             {
                 MessageBox.Show("Por favor, agregue una indicación.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            int usuarioDestinoId;
+            int    usuarioDestinoId;
             string NombreusuarioDestino;
             string mensajeHilo;
             if (idOficina != null)
@@ -680,9 +670,9 @@ namespace OficiosTI
                     return;
                 }
                 usuarioDestinoId = jefeOficina.UsuarioAnterior;
-                mensajeHilo = $"REASIGNADO - {txtInstruccion.Text.Trim().ToUpper()}";
+                mensajeHilo = $"REASIGNADO - {txtRespuesta.Text.Trim().ToUpper()}";
                 _ticket.OficinasId = idOficina.Value;
-                // NombreusuarioDestino = $"a la oficina de - {jefeOficina.NombreOficina} - {jefeOficina.NombreCompleto}";
+             // NombreusuarioDestino = $"a la oficina de - {jefeOficina.NombreOficina} - {jefeOficina.NombreCompleto}";
                 NombreusuarioDestino = $"a la oficina de - {jefeOficina.NombreOficina}";
             }
             else
@@ -690,7 +680,7 @@ namespace OficiosTI
                 var nombreUsuario = _context.Usuarios
                     .FirstOrDefault(u => u.UsuarioAnterior == idAnalista.Value);
                 usuarioDestinoId = idAnalista.Value;
-                mensajeHilo = txtInstruccion.Text.Trim().ToUpper();
+                mensajeHilo = txtRespuesta.Text.Trim().ToUpper();
                 NombreusuarioDestino = $"al usuario - {nombreUsuario.NombreCompleto}";
             }
             var hilo = new HiloTicket
@@ -708,12 +698,12 @@ namespace OficiosTI
                 _ticket.Cat_TicketStatusId = 2;
                 _context.Ticket.Update(_ticket);
                 _context.SaveChanges();
-                txtInstruccion.Clear();
+                txtRespuesta.Clear();
                 cmbAnalistas.SelectedIndex = -1;
                 CmbAsignarOficina.SelectedIndex = -1;
                 CargarHilo();
                 MessageBox.Show($"Ticket asignado correctamente {NombreusuarioDestino}", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                // MessageBox.Show("Ticket asignado correctamente.{jefeOficina.NombreCompleto}", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    //          MessageBox.Show($"Ticket asignado correctamente.{jefeOficina.NombreCompleto}", "Proceso Completado", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {

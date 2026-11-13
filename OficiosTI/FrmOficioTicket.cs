@@ -32,7 +32,7 @@ namespace OficiosTI
             if (_ticket != null)
             {
                 CargarDatosTicket();
-                var oficioExistente = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId);
+                var oficioExistente = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId && x.Borrado==0);
                 if (oficioExistente != null)
                 {
                     //  AsignarF.Enabled = false;
@@ -40,44 +40,66 @@ namespace OficiosTI
                     cmbOficinas.SelectedValue = Convert.ToInt32(oficioExistente.Oficinas_Id);
                     cmbTipos.SelectedValue = Convert.ToInt32(oficioExistente.Tipo);
                     // txtNumOf.ReadOnly = true;
+                    btnEliminarOficio.Enabled = true;
                 }
                 else
                 {
                     AsignarF.Enabled = true;
                     txtNumOf.ReadOnly = false;
+                    btnEliminarOficio.Enabled = false;
                 }
             }
             else
             {
                 AsignarF.Enabled = true;
                 txtNumOf.ReadOnly = false;
+               
                 txtNumOf.Clear();
             }
         }
 
         private void CargarOficinas()
         {
+            bool esUsuarioGlobal = _service.EsUsuarioGlobal();
+
             var query = _context.Oficinas.AsQueryable();
-            if (_service.EsUsuarioGlobal())
+
+            if (esUsuarioGlobal)
             {
                 query = query.Where(x => x.OficinasId <= 5);
-
             }
             else
             {
                 var organizacion = _service.ObtenerUnidadOrganizativa();
-                query = query.Where(x => x.UnidadOrganizativa == organizacion);
+
+                query = query.Where(x =>
+                    x.UnidadOrganizativa == organizacion);
             }
-            var listaOficinas = query.Select(x => new
-            {
-                OficinasId = x.OficinasId,
-                OficinasNombre = x.OficinasNombre
-            }).ToList();
-            cmbOficinas.DataSource = listaOficinas;
+
+            var listaOficinas = query
+                .Select(x => new
+                {
+                    OficinasId = x.OficinasId,
+                    OficinasNombre = x.OficinasNombre
+                })
+                .ToList();
             cmbOficinas.DisplayMember = "OficinasNombre";
             cmbOficinas.ValueMember = "OficinasId";
+            cmbOficinas.DataSource = listaOficinas;
             cmbOficinas.SelectedIndex = -1;
-         // cmbOficinas.Enabled = _service.EsUsuarioGlobal();
+
+            if (_ticket != null)
+            {
+
+                cmbOficinas.SelectedValue = _ticket.OficinasId;
+            }
+            else if (!esUsuarioGlobal && listaOficinas.Any())
+            {
+                cmbOficinas.SelectedValue = listaOficinas.First().OficinasId;
+            }
+
+            // Opcional: permitir cambiar oficina solo a usuarios globales
+            // cmbOficinas.Enabled = esUsuarioGlobal;
         }
 
         private void CargarTiposD()
@@ -97,6 +119,7 @@ namespace OficiosTI
         private void CargarDatosTicket()
         {
             TicketTitulo.Text = $"Ticket #{_ticket.TicketId}";
+
         }
 
         private void txtNumOf_KeyPress(object sender, KeyPressEventArgs e)
@@ -106,8 +129,6 @@ namespace OficiosTI
                 e.Handled = true;
             }
         }
-
-
 
         private void AsignarF_Click(object sender, EventArgs e)
         {
@@ -129,6 +150,7 @@ namespace OficiosTI
             }
             string conse = txtNumOf.Text.Trim();   /// NUMERO DE OFICIO
             int anioActual = DateTime.Now.Year;
+
             /*  if (_ticket != null)
                 {
                     var yaTieneOficio = _context.NumOficio.Any(x => x.TicketId == _ticket.TicketId);
@@ -148,12 +170,11 @@ namespace OficiosTI
 
             //muestra el nombre de la oficina que tiene el ticket 
 
-
             //// MOSTRAR TODOS LOS OFICIOS SI HAY 
             var oficiosExistentes = (from ofi in _context.NumOficio
                                      join oficinas in _context.Oficinas
                                           on ofi.Oficinas_Id equals oficinas.OficinasId
-                                     where ofi.NumeroConsecutivo == conse && ofi.Anio == anioActual
+                                     where ofi.NumeroConsecutivo == conse && ofi.Anio == anioActual && ofi.Borrado == 0
                                      select new
                                      {
                                          TicketId = ofi.TicketId,
@@ -163,7 +184,6 @@ namespace OficiosTI
             {
                 string listaTickets = string.Join("\n", oficiosExistentes.Select(o =>
                    $"• Ticket #: {o.TicketId}, OFICINA: {o.Oficina}"));
-
                 string mensaje = $"El número de oficio '{conse}' ya está asignado actualmente a los siguientes registros:\n\n" +
                                 $"{listaTickets}\n\n" +
                                 $"¿Desea continuar y usar este número de todos modos?";
@@ -177,7 +197,6 @@ namespace OficiosTI
                     return;
                 }
             }
-
             ////MOSTRAR SOLO 1 OFICIO 
             /*  var oficioExistente = (from ofi in _context.NumOficio
                                        join oficinas in _context.Oficinas
@@ -187,8 +206,6 @@ namespace OficiosTI
                                        {
                                            TicketId = ofi.TicketId,
                                            Oficina = oficinas.OficinasNombre
-
-
                                        }).ToList();
 
                 if (oficioExistente.Any())
@@ -209,8 +226,8 @@ namespace OficiosTI
             if (_ticket != null)
             {
                 // Buscamos el registro del oficio que ya pertenece a este ticket
-                var oficioDelTicket = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId);
-
+                var oficioDelTicket = _context.NumOficio.FirstOrDefault(x => x.TicketId == _ticket.TicketId &&
+                                      x.Borrado == 0);
                 if (oficioDelTicket != null)
                 {
                     var RespueDelTicket = _context.OficioRespuesta.FirstOrDefault(x => x.RespuestaId == oficioDelTicket.OficioId);
@@ -256,7 +273,8 @@ namespace OficiosTI
                 int tipo = Convert.ToInt32(cmbTipos.SelectedValue);
                 int ticketId = _ticket != null ? _ticket.TicketId : 0;
                 string UsuarioId = _service.ObtenerDominioYUsuario();
-                var nuevoNumeroCreado = _service.CrearNumero(conse, bis, oficinasId, tipo, anioActual, ticketId, UsuarioId);
+                int Borrado = 0;
+                var nuevoNumeroCreado = _service.CrearNumero(conse, bis, oficinasId, tipo, anioActual, ticketId, UsuarioId, Borrado);   // se agrego el campo de borrado
                 var registroRespuesta = new OficioRespuesta
                 {
                     TicketId = _ticket != null ? ticketId : 0,
@@ -285,21 +303,109 @@ namespace OficiosTI
                 {
                     errorReal = errorReal.InnerException;
                 }
-
                 MessageBox.Show("Error de Base de Datos:\n\n" + errorReal.Message,
                                 "Error Detallado", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        private void btnEliminarOficio_Click(object sender, EventArgs e)
+        {
+            if (_ticket.Cat_TicketStatusId == 3)
+            {
+                MessageBox.Show("Este ticket ya se encuentra cerrado. No se puede borrar el Oficio.", "Atención", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (_ticket == null)
+            {
+                MessageBox.Show(
+                    "No existe un ticket seleccionado.",
+                    "Validación",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+            var oficio = _context.NumOficio
+                .FirstOrDefault(x =>
+                    x.TicketId == _ticket.TicketId &&
+                    x.Borrado == 0);
+            if (oficio == null)
+            {
+                MessageBox.Show(
+                    "Este ticket no tiene un número de oficio activo.",
+                    "Información",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+            DialogResult confirmar = MessageBox.Show(
+                $"¿Está seguro de eliminar la asignación del oficio " +
+                $"'{oficio.NumeroConsecutivo}'?\n\n" +
+                "El registro se conservará en el historial " +
+                "y el ticket podrá recibir un nuevo número.",
+                "Confirmar eliminación",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+            if (confirmar != DialogResult.Yes)
+                return;
+            try
+            {
+                using (var transaccion = _context.Database.BeginTransaction())
+                {
+                    try
+                    {                        
+                        oficio.Borrado = 1;                      
+                        var respuesta = _context.OficioRespuesta
+                            .FirstOrDefault(x =>
+                                x.RespuestaId == oficio.OficioId);
+                        if (respuesta != null)
+                        {                            
+                            respuesta.Borrado = 1;
+                        }
+                        _context.SaveChanges();
+                        transaccion.Commit();
+                    }
+                    catch
+                    {
+                        transaccion.Rollback();
+                        throw;
+                    }
+                }              
+                txtNumOf.Clear();
+                txtNumOf.ReadOnly = false;
+                btnEliminarOficio.Enabled = false;
+                AsignarF.Enabled = true;
+
+                MessageBox.Show(
+                    "El número de oficio fue eliminado correctamente.\n\n" +
+                    "Ahora puede asignar un nuevo número al ticket.",
+                    "Operación exitosa",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex);
+            }
+        }
 
 
+        private void MostrarError(Exception ex)
+        {
+            Exception errorReal = ex;
 
+            while (errorReal.InnerException != null)
+            {
+                errorReal = errorReal.InnerException;
+            }
 
-
-
+            MessageBox.Show(
+                "Ocurrió un error al guardar el oficio:\n\n" +
+                errorReal.Message,
+                "Error de base de datos",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
     
-
-        
     }
 }
 

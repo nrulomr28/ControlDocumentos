@@ -32,7 +32,7 @@ namespace OficiosTI
             string org = _service.ObtenerUnidadOrganizativa();
             int idOficina = _service.ObtenerUnidadOrgId(org);
             ObtenerSegmentoDeRed();
-            AplicarPermisosInterfaz(idOficina, org);   //// BOTONES PARA ASIGNAR NUMERO DE OFICIO 
+            AplicarPermisosInterfaz(idOficina);   //// BOTONES PARA ASIGNAR NUMERO DE OFICIO   /// FALTA MOVERLO A TABLA DE USUARIOS 
             // permisos a los botones
             string usuarioDominioLogueado = _service.ObtenerDominioYUsuario();     
             /// MOSTRAR EL COMBO DE SUPLENTE SOLO AL JEFE O AL SUPLENTE 
@@ -86,7 +86,7 @@ namespace OficiosTI
          }
         */
 
-        private void AplicarPermisosInterfaz(int oficinaId, string nombreOU)    
+        private void AplicarPermisosInterfaz(int oficinaId)    
         {   /// permisos del boton para asignar los oficios de los demas departamentos 
             int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
             bool tienePermiso = _context.Oficinas
@@ -150,7 +150,6 @@ namespace OficiosTI
             ComboPrioridad.ValueMember = "Id";
             ComboPrioridad.SelectedIndex = 0;
         }
-
         /*private void CargarTickets()
           {
 
@@ -281,12 +280,10 @@ namespace OficiosTI
                     UsuarioAnterior = 0,
                     Jefe = 0
                 });
-
                 listaCombo.AddRange(usuariosSuplentes);                
                 cmbSuplente.DisplayMember = "NombreCompleto";
                 cmbSuplente.ValueMember = "UsuarioAnterior";
                 cmbSuplente.DataSource = listaCombo;
-
                 var idsuplente = usuariosSuplentes.FirstOrDefault(x => x.SuplenteJefe == 1);
                 if (idsuplente != null)
                 {
@@ -396,7 +393,7 @@ namespace OficiosTI
                         .Select(o => o.OficinasNombre)
                         .FirstOrDefault(),
                     NumeroOficio = _context.OficioRespuesta
-                        .Where(o => o.TicketId == t.TicketId)
+                        .Where(o => o.TicketId == t.TicketId && o.Borrado==0)
                         .Select(o => o.NumeroOficio)
                         .FirstOrDefault(),
                     /// TABLA DE TICKETS SIN OFICIOS 
@@ -761,10 +758,9 @@ namespace OficiosTI
                         .FirstOrDefault(),
 
                     NumeroOficio = _context.OficioRespuesta
-                        .Where(o => o.TicketId == t.TicketId)
+                        .Where(o => o.TicketId == t.TicketId && o.Borrado == 0)
                         .Select(o => o.NumeroOficio)
                         .FirstOrDefault(),
-
                     /// TABLA DE ESTADOS SIN OFICIO 
                     EstadoSinOficio = _context.Ticket_SinOficio
                         .Where(s => s.TicketId == t.TicketId)
@@ -777,7 +773,6 @@ namespace OficiosTI
             DataGridTickets.DataSource = new BindingSource { DataSource = tickets };
             ConfigurarGrid();
         }
-
 
         //private void BtnGenerarOficio_Click(object sender, EventArgs e)
         //{
@@ -866,11 +861,11 @@ namespace OficiosTI
             DataGridTickets.Columns["NumeroOficio"].HeaderText = "Oficio";
             DataGridTickets.Columns["OficinasNombre"].HeaderText = "Oficina";
             ResaltarOficios();
-            //  AgregarColumnaOficio();    
+        //  AgregarColumnaOficio();    
             var col0 = DataGridTickets.Columns[0];
             col0.ReadOnly = true;
             col0.SortMode = DataGridViewColumnSortMode.NotSortable;
-            //  col0.DefaultCellStyle.SelectionBackColor = DataGridTickets.DefaultCellStyle.BackColor;
+        //  col0.DefaultCellStyle.SelectionBackColor = DataGridTickets.DefaultCellStyle.BackColor;
         }
 
         private void ResaltarOficios()
@@ -940,27 +935,21 @@ namespace OficiosTI
         {
             if (e.RowIndex < 0)
                 return;
-
             if (e.ColumnIndex < 0)
                 return;
-
             if (e.ColumnIndex == 0)
                 return;
-
             if (DataGridTickets.Columns[e.ColumnIndex].Name != "AbrirOficio")
                 return;
-
             var gridItem = DataGridTickets.Rows[e.RowIndex].DataBoundItem as TicketGridModel;
             if (gridItem == null)
                 return;
-
             if (string.IsNullOrEmpty(gridItem.NumeroOficio))
             {
                 MessageBox.Show("Este ticket no tiene oficio generado.");
                 return;
             }
             var ticket = _context.Ticket.Find(gridItem.TicketId);
-
             if (ticket == null)
                 return;
 
@@ -989,8 +978,6 @@ namespace OficiosTI
             ComboStatus.SelectedIndex = -1;
             CargarTickets();
         }
-
-
         private void ActualizarIndicadores(List<TicketGridModel> tickets)
         {
             int total = tickets.Count;
@@ -1110,7 +1097,6 @@ namespace OficiosTI
                 MessageBox.Show("Por favor, seleccione una opción de la lista.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             try
             {
                 int miOficinaId = _service.ObtenerUnidadOrgId(_service.ObtenerUnidadOrganizativa());
@@ -1140,17 +1126,14 @@ namespace OficiosTI
                     MessageBox.Show("Este usuario ya es el suplente actual.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-
                 if (suplenteActual != null)
                 {
                     suplenteActual.SuplenteJefe = 0;
-                }
-                
+                }                
                 var nuevoSuplente = _context.Usuarios
                     .FirstOrDefault(x => x.IdOficina == miOficinaId &&
                                          x.Activo == 1 &&
                                          x.UsuarioAnterior == idSeleccionado);
-
                 if (nuevoSuplente != null)
                 {
                     nuevoSuplente.SuplenteJefe = 1;
